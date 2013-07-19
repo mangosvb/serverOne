@@ -54,7 +54,7 @@ Public Module WorldCluster
         <XmlElement(ElementName:="ServerLimit")> Public ServerLimit As Integer = 10
 
         <XmlElement(ElementName:="LogType")> Public LogType As String = "COLORCONSOLE"
-        <XmlElement(ElementName:="LogLevel")> Public LogLevel As LogType = Spurious.Common.BaseWriter.LogType.NETWORK
+        <XmlElement(ElementName:="LogLevel")> Public LogLevel As LogType = mangosVB.Common.BaseWriter.LogType.NETWORK
         <XmlElement(ElementName:="LogConfig")> Public LogConfig As String = ""
         <XmlElement(ElementName:="SQLUser")> Public SQLUser As String = "root"
         <XmlElement(ElementName:="SQLPass")> Public SQLPass As String = "Spurious"
