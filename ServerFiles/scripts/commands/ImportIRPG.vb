@@ -10,7 +10,7 @@ Imports System.Collections
 Imports System.Data
 Imports Microsoft.VisualBasic
 Imports System.IO
-Imports Spurious.WorldServer
+Imports mangosvb.WorldServer
 
 
 Namespace Scripts

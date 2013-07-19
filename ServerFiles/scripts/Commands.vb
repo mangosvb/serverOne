@@ -5,7 +5,7 @@
 
 Imports System
 Imports Microsoft.VisualBasic
-Imports Spurious.WorldServer
+Imports mangosvb.WorldServer
 
 Namespace Scripts
 	Public Module CustomCommands

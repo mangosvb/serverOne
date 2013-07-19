@@ -5,7 +5,7 @@
 Imports System
 Imports System.IO
 Imports Microsoft.VisualBasic
-Imports Spurious.Common
+Imports Common
 
 Namespace Scripts
 	Public Module CustomCommands
