@@ -1,0 +1,1 @@
+START WorldServer.exe config=Cluster-Configs/InstanceServer.ini

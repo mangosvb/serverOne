@@ -1,5 +1,5 @@
-' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 Imports System.Threading
 Imports System.Runtime.CompilerServices
-Imports Spurious.Common.BaseWriter
+Imports mangosVB.Common.BaseWriter
 
 Public Module WS_GameObjects
 
@@ -160,11 +160,12 @@ Public Module WS_GameObjects
             Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_ENTRY, CType(ID, Integer))
             Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_SCALE_X, Size)
 
-            Update.SetUpdateFlag(EGameObjectFields.OBJECT_FIELD_CREATED_BY, Owner)
+            If Owner Then Update.SetUpdateFlag(EGameObjectFields.OBJECT_FIELD_CREATED_BY, Owner)
             Update.SetUpdateFlag(EGameObjectFields.GAMEOBJECT_POS_X, positionX)
             Update.SetUpdateFlag(EGameObjectFields.GAMEOBJECT_POS_Y, positionY)
             Update.SetUpdateFlag(EGameObjectFields.GAMEOBJECT_POS_Z, positionZ)
             Update.SetUpdateFlag(EGameObjectFields.GAMEOBJECT_FACING, orientation)
+
             'If a game object has bit 4 set in the flag it needs to be activated (used for quests)
             'DynFlags = Activate a game object (Chest = 9, Goober = 1)
             Dim DynFlags As Integer = 0
@@ -365,7 +366,7 @@ Public Module WS_GameObjects
             Log.WriteLine(LogType.DEBUG, "Gameobject {0:X} respawning.", GUID)
 
             'DONE: Remove the timer
-            RespawnTimer.dispose()
+            RespawnTimer.Dispose()
             RespawnTimer = Nothing
             Despawned = False
 
@@ -423,15 +424,13 @@ Public Module WS_GameObjects
         End Sub
     End Class
 
-    Public Enum GameObjectLootState As Integer
+    Public Enum GameObjectLootState As Byte
         DOOR_OPEN = 0
         DOOR_CLOSED = 1
         LOOT_UNAVIABLE = 0
         LOOT_UNLOOTED = 1
         LOOT_LOOTED = 2
     End Enum
-
-
 
 #End Region
 #Region "WS.GameObjects.HelperSubs"
@@ -592,30 +591,21 @@ Public Module WS_GameObjects
                 'TODO: Remove one charge
 
             Case GameObjectType.GAMEOBJECT_TYPE_MEETINGSTONE
-                    If Client.Character.Level < WORLD_GAMEOBJECTs(GameObjectGUID).Sound(0) Then 'Too low level
-                        'TODO: Send the correct packet.
-                        SendCastResult(SpellFailedReason.CAST_FAIL_LEVEL_REQUIREMENT, Client, 23598, 0)
-                        Exit Sub
-                    End If
-                    If Client.Character.Level > WORLD_GAMEOBJECTs(GameObjectGUID).Sound(1) Then 'Too high level
-                        'TODO: Send the correct packet.
-                        SendCastResult(SpellFailedReason.CAST_FAIL_LEVEL_REQUIREMENT, Client, 23598, 0)
-                        Exit Sub
-                    End If
-                    Client.Character.CastOnSelf(23598)
+                If Client.Character.Level < WORLD_GAMEOBJECTs(GameObjectGUID).Sound(0) Then 'Too low level
+                    'TODO: Send the correct packet.
+                    SendCastResult(SpellFailedReason.CAST_FAIL_LEVEL_REQUIREMENT, Client, 23598, 0)
+                    Exit Sub
+                End If
+                If Client.Character.Level > WORLD_GAMEOBJECTs(GameObjectGUID).Sound(1) Then 'Too high level
+                    'TODO: Send the correct packet.
+                    SendCastResult(SpellFailedReason.CAST_FAIL_LEVEL_REQUIREMENT, Client, 23598, 0)
+                    Exit Sub
+                End If
+                Client.Character.CastOnSelf(23598)
 
         End Select
     End Sub
 
 #End Region
 
-
 End Module
-
-
-
-#Region "WS.GameObjects.HelperTypes"
-#End Region
-
-
-

@@ -1,5 +1,5 @@
-' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
 
-
 Imports System.Threading
 Imports System.Net.Sockets
 Imports System.Xml.Serialization
@@ -24,12 +23,10 @@ Imports System.IO
 Imports System.Net
 Imports System.Reflection
 Imports System.Runtime.CompilerServices
-Imports Spurious.Common.BaseWriter
-Imports Spurious.Common
-
+Imports mangosVB.Common.BaseWriter
+Imports mangosVB.Common
 
 Public Module WorldCluster
-
 
 #Region "Global.Variables"
 
@@ -48,14 +45,13 @@ Public Module WorldCluster
         <XmlElement(ElementName:="VSPort")> Public VSPort As Integer = 4720
         <XmlElement(ElementName:="VSHost")> Public VSHost As String = "127.0.0.1"
         <XmlElement(ElementName:="LogType")> Public LogType As String = "COLORCONSOLE"
-        <XmlElement(ElementName:="LogLevel")> Public LogLevel As LogType = Spurious.Common.BaseWriter.LogType.NETWORK
+        <XmlElement(ElementName:="LogLevel")> Public LogLevel As LogType = mangosVB.Common.BaseWriter.LogType.NETWORK
         <XmlElement(ElementName:="LogConfig")> Public LogConfig As String = ""
         <XmlElement(ElementName:="ClusterConnectMethod")> Public ClusterMethod As String = "tcp"
         <XmlElement(ElementName:="ClusterConnectHost")> Public ClusterHost As String = "127.0.0.1"
         <XmlElement(ElementName:="ClusterConnectPort")> Public ClusterPort As Integer = 50001
         <XmlElement(ElementName:="LocalConnectHost")> Public LocalHost As String = "127.0.0.1"
         <XmlElement(ElementName:="LocalConnectPort")> Public LocalPort As Integer = 50009
-
 
         Public Function GetVSHost() As UInteger
             Dim b As Byte() = IPAddress.Parse(VSHost).GetAddressBytes()
@@ -82,9 +78,7 @@ Public Module WorldCluster
             Config = oXS.Deserialize(oStmR)
             oStmR.Close()
 
-
             Console.WriteLine(".[done]")
-
 
             'DONE: Creating logger
             Common.BaseWriter.CreateLog(Config.LogType, Config.LogConfig, Log)
@@ -95,12 +89,6 @@ Public Module WorldCluster
         End Try
     End Sub
 #End Region
-
-
-
-
-
-
 
     <System.MTAThreadAttribute()> _
     Sub Main()
@@ -113,14 +101,13 @@ Public Module WorldCluster
         Console.WriteLine()
 
         Console.ForegroundColor = System.ConsoleColor.Magenta
-        Console.WriteLine("http://www.SpuriousEmu.com")
+        Console.WriteLine("http://www.getMangos.co.uk")
         Console.WriteLine()
 
         Console.ForegroundColor = System.ConsoleColor.White
         Console.WriteLine(CType([Assembly].GetExecutingAssembly().GetCustomAttributes(GetType(System.Reflection.AssemblyTitleAttribute), False)(0), AssemblyTitleAttribute).Title)
         Console.Write("version {0}", [Assembly].GetExecutingAssembly().GetName().Version)
         Console.ForegroundColor = System.ConsoleColor.White
-
 
         Console.WriteLine("")
         Console.ForegroundColor = System.ConsoleColor.Gray
@@ -143,7 +130,6 @@ Public Module WorldCluster
 
         WaitConsoleCommand()
     End Sub
-
 
     Public Sub WaitConsoleCommand()
         Dim tmp As String = "", CommandList() As String, cmds() As String
@@ -168,7 +154,7 @@ Public Module WorldCluster
                                 Log.WriteLine(LogType.INFORMATION, "Used memory: {0}", Format(GC.GetTotalMemory(False), "### ### ##0 bytes"))
                             Case Else
                                 Console.ForegroundColor = System.ConsoleColor.Red
-                                Console.WriteLine("Error! Cannot find specified command. Please type 'help' for information on 'Spurious.WorldServer' console commands.")
+                                Console.WriteLine("Error! Cannot find specified command. Please type 'help' for information on 'mangosVB.WorldServer' console commands.")
                                 Console.ForegroundColor = System.ConsoleColor.White
                         End Select
                         '<<<<<<<<<<</END COMMAND STRUCTURE>>>>>>>>>>>>
@@ -185,18 +171,12 @@ Public Module WorldCluster
         EX = e.ExceptionObject
 
         Log.WriteLine(LogType.CRITICAL, EX.ToString & vbNewLine)
-        Log.WriteLine(LogType.FAILED, "Unexpected error has occured. An 'Error-yyyy-mmm-d-h-mm.log' file has been created. Please post the file in the BUG SECTION at SpuriousEmu.com (http://www.SpuriousEmu.com)!")
+        Log.WriteLine(LogType.FAILED, "Unexpected error has occured. An 'Error-yyyy-mmm-d-h-mm.log' file has been created. Please post the file in the BUG SECTION at getMaNGOS.co.uk (http://www.getMangos.co.uk/community)!")
 
         Dim tw As TextWriter
         tw = New StreamWriter(New FileStream(String.Format("Error-{0}.log", Format(Now, "yyyy-MMM-d-H-mm")), FileMode.Create))
         tw.Write(EX.ToString)
         tw.Close()
     End Sub
-
-
-
-
-
-
 
 End Module

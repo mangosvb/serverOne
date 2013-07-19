@@ -1,5 +1,5 @@
-' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -19,14 +19,12 @@
 Imports System.Threading
 Imports System.IO
 Imports System.Runtime.InteropServices
-Imports Spurious.Common.BaseWriter
-Imports Spurious.Common
+Imports mangosVB.Common.BaseWriter
+Imports mangosVB.Common
 
 Public Module WS_DBCDatabase
- 
 
 #Region "Maps"
-
 
     Public Maps As New Dictionary(Of Integer, MapInfo)
     Public Class MapInfo
@@ -71,7 +69,6 @@ Public Module WS_DBCDatabase
 
     End Class
 
-
 #End Region
 #Region "Chat Channels"
 
@@ -95,8 +92,6 @@ Public Module WS_DBCDatabase
         Public Name As String
     End Class
 
-
 #End Region
-
 
 End Module

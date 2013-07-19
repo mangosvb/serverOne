@@ -1,5 +1,5 @@
-' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -82,7 +82,6 @@ Namespace DBC
             End Get
         End Property
 
-
     End Class
     <Description("DBC wrapper class using buffered stream for file access.")> _
     Public Class BufferedDBC
@@ -143,7 +142,6 @@ Namespace DBC
             End Get
         End Property
 
-
     End Class
 
     <Description("DBC wrapper class.")> _
@@ -161,7 +159,6 @@ Namespace DBC
 
         Protected buffer(3) As Byte
         Protected tmpOffset As Long = 0
-
 
         'Default Functions
         <Description("Close file and dispose the dbc reader.")> _
@@ -241,7 +238,6 @@ Namespace DBC
             End Get
         End Property
     End Class
-
 
     Public Enum DBCValueType
         DBC_STRING

@@ -1,0 +1,1 @@
+START WorldServer.exe config=Cluster-Configs/OtherServer.ini

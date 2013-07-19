@@ -1,5 +1,5 @@
-' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -18,16 +18,14 @@
 
 Imports System.Threading
 Imports System.Runtime.CompilerServices
-Imports Spurious.Common.BaseWriter
-
+Imports mangosVB.Common.BaseWriter
+Imports mangosVB.Common
 
 Public Module WS_Creatures
 
-#Region "WS.Cretures.Constants"
-
+#Region "WS.Creatures.Constants"
 
     Public Const SKILL_DETECTION_PER_LEVEL As Integer = 5
-
 
 #End Region
 #Region "WS.Creatures.TypeDef"
@@ -91,7 +89,7 @@ Public Module WS_Creatures
 
             Id = CreatureID
 
-            If Dir(System.AppDomain.CurrentDomain.BaseDirectory() & "scripts\creatures\" & Replace(Name, """", "'") & ".vb") <> "" Then
+            If Dir(System.AppDomain.CurrentDomain.BaseDirectory() & "scripts\creatures\" & Name.Replace("""", "'").Replace("<", "").Replace(">", "").Replace("*", "").Replace("/", "").Replace("\", "").Replace(":", "").Replace("|", "").Replace("?", "") & ".vb") <> "" Then
                 Dim tmpScript As New ScriptedObject("scripts\creatures\" & Replace(Name, """", "'") & ".vb", "", True)
                 TalkScript = tmpScript.Invoke("TalkScript")
                 tmpScript.Dispose()
@@ -109,16 +107,18 @@ Public Module WS_Creatures
                     TalkScript = New TDefaultTalk
                 End If
             End If
-
             CREATURESDatabase.Add(Id, Me)
         End Sub
+
         Public Sub New()
             Damage.Minimum = (0.8F * BaseAttackTime / 1000.0F) * (LevelMin * 10.0F)
             Damage.Maximum = (1.2F * BaseAttackTime / 1000.0F) * (LevelMax * 10.0F)
         End Sub
+
         Public Sub Dispose() Implements System.IDisposable.Dispose
             CREATURESDatabase.Remove(Id)
         End Sub
+
         Public Sub Save()
             If found_ = False Then
                 Database.Update("INSERT INTO creatures (creature_id)  VALUES (" & Id & ");")
@@ -166,6 +166,7 @@ Public Module WS_Creatures
             tmp = tmp + String.Format(" WHERE creature_id = ""{0}"";", Id)
             Database.Update(tmp)
         End Sub
+
         Private found_ As Boolean = False
 
         Public Id As Integer = 0
@@ -324,7 +325,7 @@ Public Module WS_Creatures
 
             Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_SUMMONEDBY, SummonedBy)
             Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_CREATEDBY, CreatedBy)
-            Update.SetUpdateFlag(EUnitFields.UNIT_CREATED_BY_SPELL, createdbyspell)
+            Update.SetUpdateFlag(EUnitFields.UNIT_CREATED_BY_SPELL, CreatedBySpell)
 
             Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_DISPLAYID, Me.Model)
             Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_NATIVEDISPLAYID, CREATURESDatabase(ID).Model)
@@ -374,7 +375,6 @@ Public Module WS_Creatures
             Update.SetUpdateFlag(EUnitFields.UNIT_VIRTUAL_ITEM_INFO + 4, 0)
             Update.SetUpdateFlag(EUnitFields.UNIT_VIRTUAL_ITEM_INFO + 4 + 1, 0)
 
-
             'Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_BASEATTACKTIME, CREATURESDatabase(ID).BaseAttackTime)
             'Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_OFFHANDATTACKTIME, CREATURESDatabase(ID).BaseAttackTime)
             'Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_RANGEDATTACKTIME, CREATURESDatabase(ID).BaseRangedAttackTime)
@@ -398,7 +398,7 @@ Public Module WS_Creatures
                 Dim packet As New PacketClass(OPCODES.MSG_MOVE_HEARTBEAT)
                 packet.AddPackGUID(GUID)
                 packet.AddInt32(0) 'Movementflags
-                packet.AddInt8(0)
+                packet.AddInt8(0) '2.3.0
                 packet.AddInt32(timeGetTime)
                 packet.AddSingle(positionX)
                 packet.AddSingle(positionY)
@@ -494,7 +494,7 @@ Public Module WS_Creatures
                 Dim packet As New PacketClass(OPCODES.MSG_MOVE_HEARTBEAT)
                 packet.AddPackGUID(GUID)
                 packet.AddInt32(0) 'Movementflags
-                packet.AddInt8(0)
+                packet.AddInt8(0) '2.3.0
                 packet.AddInt32(timeGetTime)
                 packet.AddSingle(positionX)
                 packet.AddSingle(positionY)
@@ -519,7 +519,7 @@ Public Module WS_Creatures
                 Dim packet As New PacketClass(OPCODES.MSG_MOVE_HEARTBEAT)
                 packet.AddPackGUID(GUID)
                 packet.AddInt32(0) 'Movementflags
-                packet.AddInt8(0)
+                packet.AddInt8(0) ' 2.3.0
                 packet.AddInt32(timeGetTime)
                 packet.AddSingle(positionX)
                 packet.AddSingle(positionY)
@@ -619,6 +619,7 @@ Public Module WS_Creatures
             If Life.Current = 0 Then Exit Sub
 
             If (Not Attacker Is Nothing) AndAlso (Not aiScript Is Nothing) Then aiScript.OnGetHit(Attacker, Damage)
+
             Life.Current -= Damage
 
             'DONE: Check for dead
@@ -644,7 +645,6 @@ Public Module WS_Creatures
 
             Life.Current += Damage
 
-
             'DONE: Do health update
             If SeenBy.Count > 0 Then
                 Dim packetForNear As New UpdatePacketClass
@@ -664,7 +664,6 @@ Public Module WS_Creatures
 
             Mana.Current += Damage
 
-
             'DONE: Do health update
             If SeenBy.Count > 0 Then
                 Dim packetForNear As New UpdatePacketClass
@@ -683,7 +682,7 @@ Public Module WS_Creatures
                 cDynamicFlags = DynamicFlags.UNIT_DYNFLAG_LOOTABLE
 
                 'ElseIf CType(CREATURESDatabase(ID), CreatureInfo).Loot_Skinning <> 0 Then
-                'GenerateLoot(Character, LootType.LOOTTYPE_SKINNNING) 
+                'GenerateLoot(Character, LootType.LOOTTYPE_SKINNNING)
                 'cUnitFlags += UnitFlags.UNIT_FLAG_SKINNABLE
                 '
                 ''DONE: Send skinnable and exit
@@ -704,7 +703,6 @@ Public Module WS_Creatures
                 Exit Sub
             End If
 
-
             'DONE: Create packet
             Dim packet As New PacketClass(OPCODES.SMSG_UPDATE_OBJECT)
             packet.AddInt32(1)
@@ -714,7 +712,6 @@ Public Module WS_Creatures
             UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_FLAGS, cUnitFlags)
             UpdateData.AddToPacket(packet, ObjectUpdateType.UPDATETYPE_VALUES, Me, 0)
             UpdateData.Dispose()
-
 
             If Character.IsInGroup Then
                 'DONE: Group loot rulles
@@ -728,7 +725,7 @@ Public Module WS_Creatures
                                 CHARACTERs(c).Client.Send(packet)
                             End If
                         Next
-                        
+
                     Case GroupLootMethod.LOOT_MASTER
                         If Character.Group.LocalLootMaster Is Nothing Then
                             LootTable(GUID).LootOwner = Character.GUID
@@ -926,13 +923,12 @@ Public Module WS_Creatures
 
             Me.StandState = Me.cStandState
 
-
             'DONE: Load scripted AI
             If CREATURESDatabase(ID).AIScriptSource <> "" Then
                 aiScript = AI.Invoke(CREATURESDatabase(ID).AIScriptSource, New Object() {Me})
             End If
 
-            'DONE: Load default AI 
+            'DONE: Load default AI
             If aiScript Is Nothing Then
                 If isGuard Then
                     aiScript = New GuardAI(Me)
@@ -999,7 +995,7 @@ Public Module WS_Creatures
             WORLD_CREATUREs_Lock.ReleaseWriterLock()
         End Sub
         Public Sub New(ByVal ID_ As Integer)
-            'WARNING: Use only for spawning new crature
+            'WARNING: Use only for spawning new creature
 
             If Not CREATURESDatabase.ContainsKey(ID_) Then
                 Dim baseCreature As New CreatureInfo(ID_)
@@ -1173,6 +1169,7 @@ Public Module WS_Creatures
 
                 'If creature changes cell then it's sent back to spawn, if the creature is a waypoint walker this won't be very good :/
                 If Maps(MapID).Tiles(CellX, CellY) Is Nothing Then
+
                     aiScript.State = TBaseAI.AIState.AI_WANDERING
                     MoveTo(SpawnX, SpawnY, SpawnZ, True)
                     Exit Sub
@@ -1198,6 +1195,7 @@ Public Module WS_Creatures
             If CREATURESDatabase.ContainsKey(CreatureID) = False Then
                 Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_CREATURE_QUERY [Creature {2} not loaded.]", Client.IP, Client.Port, CreatureID)
                 Creature = New CreatureInfo(CreatureID)
+
             Else
                 Creature = CREATURESDatabase(CreatureID)
                 'Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_CREATURE_QUERY [CreatureID={2} CreatureGUID={3:X}]", Format(TimeOfDay, "hh:mm:ss"), Client.IP, Client.Port, CreatureID, CreatureGUID - GUID_UNIT)
@@ -1240,7 +1238,6 @@ Public Module WS_Creatures
         Dim TextID As Long = packet.GetInt32
         Dim TargetGUID As ULong = packet.GetUInt64
         Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_NPC_TEXT_QUERY [TextID={2}]", Client.IP, Client.Port, TextID)
-
 
         Dim MySQLQuery As New DataTable
         Database.Query(String.Format("SELECT * FROM npcText WHERE entry = {0};", TextID), MySQLQuery)
@@ -1414,8 +1411,6 @@ Public Module WS_Creatures
         Client.Character.ApplySpell(15007)
     End Sub
 
-
-
     <MethodImplAttribute(MethodImplOptions.Synchronized)> _
     Private Function GetNewGUID() As ULong
         CreatureGUIDCounter += 1
@@ -1490,10 +1485,7 @@ Public Module WS_Creatures
     End Class
 #End Region
 
-
 End Module
-
-
 
 #Region "WS.Creatures.HelperTypes"
 Public Class TLoot
@@ -1551,7 +1543,6 @@ Public Class TBaseTalk
     End Function
 End Class
 
-
 Public Enum MenuIcon As Integer
     MENUICON_GOSSIP = &H0
     MENUICON_VENDOR = &H1
@@ -1568,5 +1559,3 @@ Public Enum MenuIcon As Integer
     MENUICON_GOSSIP3 = &HC
 End Enum
 #End Region
-
-

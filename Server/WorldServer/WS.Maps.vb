@@ -1,5 +1,5 @@
-﻿' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+﻿'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@ Imports System.Threading
 Imports System.IO
 Imports System.Runtime.InteropServices
 Imports System.Collections.Generic
-Imports Spurious.Common.BaseWriter
-
+Imports mangosVB.Common.BaseWriter
+Imports mangosVB.Common
 
 Public Module WS_Maps
 #Region "Zones"
@@ -80,10 +80,7 @@ Public Module WS_Maps
     End Class
 #End Region
 
-
 #Region "Continents"
-
-
 
     Public Class TMapTile
         Implements IDisposable
@@ -180,9 +177,6 @@ Public Module WS_Maps
                 f.Close()
             End If
 
-            
-
-
 #If ENABLE_PPOINTS Then
             'DONE: Initializing PPoints to unused values
             For x = 0 To RESOLUTION_ZMAP
@@ -231,7 +225,6 @@ Public Module WS_Maps
         Public ResetTime_Heroic As Integer = 0
 
         Public Tiles(63, 63) As TMapTile
-
 
         Public ReadOnly Property IsDungeon() As Boolean
             Get
@@ -456,8 +449,6 @@ Public Module WS_Maps
 
             If Maps(Map).Tiles(MapTileX, MapTileY) Is Nothing Then Return 0
 
-
-
             Return Maps(Map).Tiles(MapTileX, MapTileY).ZCoord_PP(MapTile_LocalX, MapTile_LocalY)
         Catch e As Exception
             Return 0
@@ -591,7 +582,6 @@ Public Module WS_Maps
             MaxY = tmpSng
         End If
 
-
         Try
             WORLD_CREATUREs_Lock.AcquireReaderLock(DEFAULT_LOCK_TIMEOUT)
             For Each Creature As KeyValuePair(Of ULong, CreatureObject) In WORLD_CREATUREs
@@ -605,7 +595,6 @@ Public Module WS_Maps
             WORLD_CREATUREs_Lock.ReleaseReaderLock()
         End Try
 
-
         For Each Gameobject As KeyValuePair(Of ULong, GameObjectObject) In WORLD_GAMEOBJECTs
             If CType(Gameobject.Value, GameObjectObject).MapID = TileMap AndAlso CType(Gameobject.Value, GameObjectObject).positionX >= MinX AndAlso CType(Gameobject.Value, GameObjectObject).positionX <= MaxX AndAlso CType(Gameobject.Value, GameObjectObject).positionY >= MinY AndAlso CType(Gameobject.Value, GameObjectObject).positionY <= MaxY Then
                 CType(Gameobject.Value, GameObjectObject).Destroy()
@@ -618,13 +607,10 @@ Public Module WS_Maps
             End If
         Next
 
-
     End Sub
-
 
 #End Region
 #Region "Instances"
-
 
     Public Enum TransferAbortReason As Short
         TRANSFER_ABORT_MAX_PLAYERS = &H1                ' Transfer Aborted: instance is full
@@ -646,7 +632,6 @@ Public Module WS_Maps
         p.Dispose()
     End Sub
 
-
 #End Region
 
 #Region "Graveyards"
@@ -664,7 +649,7 @@ Public Module WS_Maps
             Map = pMap
         End Sub
     End Class
-    Public Sub GoToNearestGraveyard(ByVal Character As CharacterObject, Optional ByVal Alive As Boolean = False)
+    Public Sub GoToNearestGraveyard(ByRef Character As CharacterObject, Optional ByVal Alive As Boolean = False)
         Dim minDistance As Single = 9999999.0F
         Dim tmp As Single
         Dim selectedGraveyard As TGraveyard = Nothing
@@ -704,6 +689,5 @@ Public Module WS_Maps
     End Sub
 
 #End Region
-
 
 End Module

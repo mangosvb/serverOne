@@ -1,5 +1,5 @@
-' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -18,15 +18,13 @@
 
 Imports System.Threading
 Imports System.Collections.Generic
-Imports Spurious.Common.BaseWriter
+Imports mangosVB.Common.BaseWriter
 
 Public Module WS_Group
-
 
     Public GROUPs As New Dictionary(Of Long, Group)
     Public Class Group
         Implements IDisposable
-
 
         Public ID As Long
         Public Type As GroupType = GroupType.PARTY
@@ -38,7 +36,6 @@ Public Module WS_Group
         Public LocalMembers As List(Of ULong)
         Public LocalLootMaster As CharacterObject
 
-
         Public Sub New(ByVal GroupID As Long)
             ID = GroupID
             GROUPs.Add(ID, Me)
@@ -47,12 +44,10 @@ Public Module WS_Group
             GROUPs.Remove(ID)
         End Sub
 
-
         Public Sub Broadcast(ByVal p As PacketClass)
             p.UpdateLength()
             WS.Cluster.BroadcastGroup(ID, p.Data)
         End Sub
-
 
         Private LastLooter As ULong = 0
         Public Function GetNextLooter() As CharacterObject
@@ -81,7 +76,6 @@ Public Module WS_Group
         End Function
 
     End Class
-
 
     Function BuildPartyMemberStats(ByRef c As CharacterObject, ByVal Flag As Integer) As PacketClass
         Dim OpCode As OPCODES = OPCODES.SMSG_PARTY_MEMBER_STATS
@@ -169,6 +163,5 @@ Public Module WS_Group
 
         Return packet
     End Function
-
 
 End Module

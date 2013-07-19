@@ -1,5 +1,5 @@
-' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -19,12 +19,11 @@
 Imports System.Threading
 Imports System.Reflection
 Imports System.Collections.Generic
-Imports Spurious.Common.BaseWriter
-
+Imports mangosVB.Common.BaseWriter
 
 #Region "WS.Commands.Attributes"
 <AttributeUsage(AttributeTargets.Method, Inherited:=False, AllowMultiple:=True)> _
-    Public Class ChatCommandAttribute
+Public Class ChatCommandAttribute
     Inherits System.Attribute
 
     Private Command As String = ""
@@ -65,12 +64,9 @@ Imports Spurious.Common.BaseWriter
 End Class
 #End Region
 
-
 Public Module WS_Commands
 
-
 #Region "WS.Commands.Framework"
-
 
     Public Const WardenGUID As ULong = Integer.MaxValue
     Public Const WardenNAME As String = "Warden"
@@ -83,8 +79,6 @@ Public Module WS_Commands
         Developer = 5
     End Enum
 
-
-
     Public ChatCommands As New Dictionary(Of String, ChatCommand)
     Public ScriptedChatCommands As ScriptedObject
     Public Class ChatCommand
@@ -94,9 +88,8 @@ Public Module WS_Commands
     End Class
     Public Delegate Function ChatCommandDelegate(ByRef c As CharacterObject, ByVal Message As String) As Boolean
 
-
     Public Sub RegisterChatCommands()
-        ScriptedChatCommands = New ScriptedObject("scripts\Commands.vb", "Spurious.Commands.dll", False)
+        ScriptedChatCommands = New ScriptedObject("scripts\Commands.vb", "modules\Commands.dll", False)
 
         For Each tmpModule As Type In [Assembly].GetExecutingAssembly.GetTypes
             For Each tmpMethod As MethodInfo In tmpModule.GetMethods
@@ -110,35 +103,29 @@ Public Module WS_Commands
                         cmd.CommandDelegate = ChatCommandDelegate.CreateDelegate(GetType(ChatCommandDelegate), tmpMethod)
 
                         ChatCommands.Add(UCase(info.cmdName), cmd)
-#If DEBUG Then
-                        Log.WriteLine(Spurious.Common.BaseWriter.LogType.INFORMATION, "Command found: {0}", UCase(info.cmdName))
-#End If
                     Next
                 End If
             Next
         Next
 
-        For Each tmpModule As Type In ScriptedChatCommands.ass.GetTypes
-            For Each tmpMethod As MethodInfo In tmpModule.GetMethods
-                Dim infos() As ChatCommandAttribute = tmpMethod.GetCustomAttributes(GetType(ChatCommandAttribute), True)
+        If ScriptedChatCommands.ass IsNot Nothing Then
+            For Each tmpModule As Type In ScriptedChatCommands.ass.GetTypes
+                For Each tmpMethod As MethodInfo In tmpModule.GetMethods
+                    Dim infos() As ChatCommandAttribute = tmpMethod.GetCustomAttributes(GetType(ChatCommandAttribute), True)
 
-                If infos.Length <> 0 Then
-                    For Each info As ChatCommandAttribute In infos
-                        Dim cmd As New ChatCommand
-                        cmd.CommandHelp = info.cmdHelp
-                        cmd.CommandAccess = info.cmdAccess
-                        cmd.CommandDelegate = ChatCommandDelegate.CreateDelegate(GetType(ChatCommandDelegate), tmpMethod)
+                    If infos.Length <> 0 Then
+                        For Each info As ChatCommandAttribute In infos
+                            Dim cmd As New ChatCommand
+                            cmd.CommandHelp = info.cmdHelp
+                            cmd.CommandAccess = info.cmdAccess
+                            cmd.CommandDelegate = ChatCommandDelegate.CreateDelegate(GetType(ChatCommandDelegate), tmpMethod)
 
-                        ChatCommands.Add(UCase(info.cmdName), cmd)
-#If DEBUG Then
-                        Log.WriteLine(Spurious.Common.BaseWriter.LogType.INFORMATION, "Command found: {0}", UCase(info.cmdName))
-#End If
-                    Next
-                End If
+                            ChatCommands.Add(UCase(info.cmdName), cmd)
+                        Next
+                    End If
+                Next
             Next
-        Next
-
-
+        End If
     End Sub
     Public Sub OnCommand(ByRef Client As ClientClass, ByVal Message As String)
         Try
@@ -156,7 +143,6 @@ Public Module WS_Commands
             'DONE: Get character name (there can be no character after the command)
             Dim Name As String = Client.Character.Name
 
-
             If Command Is Nothing Then
                 Client.Character.CommandResponse("Unknown command.")
             ElseIf Command.CommandAccess > Client.Character.Access Then
@@ -173,10 +159,8 @@ Public Module WS_Commands
         End Try
     End Sub
 
-
 #End Region
 #Region "WS.Commands.InternalCommands"
-
 
     <ChatCommandAttribute("Help", "HELP <CMD>" & vbNewLine & "Displays usage information about command, if no command specified - displays list of available commands.")> _
     Public Function Help(ByRef c As CharacterObject, ByVal Message As String) As Boolean
@@ -262,6 +246,7 @@ Public Module WS_Commands
         c.CommandResponse(String.Format("Sent spell failed message:{2} {0} = {1}", currentSpError, CType(currentSpError, Integer), vbNewLine))
         Return True
     End Function
+
     Dim currentInvError As InventoryChangeFailure = InventoryChangeFailure.EQUIP_ERR_OK
     <ChatCommandAttribute("InvFailedMSG", "INVFAILEDMSG <optional ID> - Sends test inventory failed message.", AccessLevel.Developer)> _
     Public Function cmdInventoryFailed(ByRef c As CharacterObject, ByVal Message As String) As Boolean
@@ -280,6 +265,7 @@ Public Module WS_Commands
         c.CommandResponse(String.Format("Sent spell failed message:{2} {0} = {1}", currentInvError, CType(currentInvError, Integer), vbNewLine))
         Return True
     End Function
+
     Dim currentInstanceResetError As ResetFailedReason = ResetFailedReason.INSTANCE_RESET_FAILED_ZONING
     <ChatCommandAttribute("InstanceResetFailedMSG", "INSTANCERESETFAILEDMSG <optional ID> - Sends test inventory failed message.", AccessLevel.Developer)> _
     Public Function cmdInstanceResetFailedReason(ByRef c As CharacterObject, ByVal Message As String) As Boolean
@@ -312,6 +298,7 @@ Public Module WS_Commands
 
         Return True
     End Function
+
     <ChatCommandAttribute("CreateGuild", "CreateGuild <Name> - Creates a guild.", AccessLevel.Developer)> _
     Public Function cmdCreateGuild(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         Dim tmp As String() = Split(Message, "", 2)
@@ -323,6 +310,7 @@ Public Module WS_Commands
         AddCharacterToGuild(c, MySQLQuery.Rows(0).Item("guild_id"), 0)
         Return True
     End Function
+
     <ChatCommandAttribute("Cast", "CAST <SpellID> - You will start casting spell on selected target.", AccessLevel.Developer)> _
     Public Function cmdCastSpell(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         Dim tmp As String() = Split(Message, " ", 2)
@@ -332,9 +320,9 @@ Public Module WS_Commands
             Dim Targets As New SpellTargets
             Targets.SetTarget_UNIT(WORLD_CREATUREs(c.TargetGUID))
             CType(SPELLs(SpellID), SpellInfo).Cast(CType(c, CharacterObject), Targets, 0)
-        ElseIf CHARACTERS.ContainsKey(c.TargetGUID) Then
+        ElseIf CHARACTERs.ContainsKey(c.TargetGUID) Then
             Dim Targets As New SpellTargets
-            Targets.SetTarget_UNIT(CHARACTERS(c.TargetGUID))
+            Targets.SetTarget_UNIT(CHARACTERs(c.TargetGUID))
             CType(SPELLs(SpellID), SpellInfo).Cast(CType(c, CharacterObject), Targets, 0)
         Else
             c.CommandResponse(String.Format("GUID=[{0:X}] not found or unsupported.", c.TargetGUID))
@@ -342,6 +330,7 @@ Public Module WS_Commands
 
         Return True
     End Function
+
     <ChatCommandAttribute("Save", "SAVE - Saves your character.", AccessLevel.GameMaster)> _
     Public Function cmdSave(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         c.Save()
@@ -371,6 +360,7 @@ Public Module WS_Commands
 
         Return True
     End Function
+
     <ChatCommandAttribute("Near", "NEAR - Tells you the near objects count.", AccessLevel.Developer)> _
     Public Function cmdNear(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         c.CommandResponse("Near objects:")
@@ -404,6 +394,7 @@ Public Module WS_Commands
             Return True
         End If
     End Function
+
     <ChatCommandAttribute("AI", "AI <ENABLE/DISABLE> - Enables/Disables AI updating.", AccessLevel.Developer)> _
     Public Function cmdAI(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         If UCase(Message) = "ENABLE" Then
@@ -418,6 +409,7 @@ Public Module WS_Commands
 
         Return True
     End Function
+
     <ChatCommandAttribute("AIState", "AIState - Shows debug information about AI state of selected creature.", AccessLevel.Developer)> _
     Public Function cmdAIState(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         If c.TargetGUID = 0 Then
@@ -440,11 +432,9 @@ Public Module WS_Commands
                 Next
             End With
         End If
-       
+
         Return True
     End Function
-
-
 
     '****************************************** CHAT COMMANDs ******************************************************
     <ChatCommandAttribute("Broadcast", "BROADCAST <TEXT> - Send text message to all players on the server.", AccessLevel.GameMaster)> _
@@ -488,7 +478,6 @@ Public Module WS_Commands
         Dim Type As Integer = tmp(0)
         Dim Text As String = tmp(1)
 
-
         Dim packet As New PacketClass(OPCODES.SMSG_SERVER_MESSAGE)
         packet.AddInt32(Type)
         packet.AddString(Text)
@@ -513,6 +502,7 @@ Public Module WS_Commands
 
         Return True
     End Function
+
     <ChatCommandAttribute("Say", "SAY <TEXT> - Target Player / NPC will say this.", AccessLevel.GameMaster)> _
     Public Function cmdSay(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         If Message = "" Then Return False
@@ -566,6 +556,7 @@ Public Module WS_Commands
 
         Return True
     End Function
+
     <ChatCommandAttribute("SetLevel", "SETLEVEL <LEVEL> - Set the level of selected character.", AccessLevel.Admin)> _
     Public Function cmdSetLevel(ByRef c As CharacterObject, ByVal tLevel As String) As Boolean
         If IsNumeric(tLevel) = False Then Return False
@@ -592,6 +583,7 @@ Public Module WS_Commands
 
         Return True
     End Function
+
     <ChatCommandAttribute("AddXP", "ADDXP <XP> - Add X experience points to selected character.", AccessLevel.Admin)> _
     Public Function cmdAddXP(ByRef c As CharacterObject, ByVal tXP As String) As Boolean
         If IsNumeric(tXP) = False Then Return False
@@ -606,6 +598,7 @@ Public Module WS_Commands
 
         Return True
     End Function
+
     <ChatCommandAttribute("AddTP", "ADDTP <POINTs> - Add X talent points to selected character.", AccessLevel.Admin)> _
     Public Function cmdAddTP(ByRef c As CharacterObject, ByVal tTP As String) As Boolean
         If IsNumeric(tTP) = False Then Return False
@@ -636,6 +629,7 @@ Public Module WS_Commands
 
         Return True
     End Function
+
     <ChatCommandAttribute("EditPlayerFlag", "EDITPLAYERFLAG <PLAYERFLAG> - Change your playerflag.", AccessLevel.Developer)> _
     Public Function cmdEditPlayerflag(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         If IsNumeric(Message) = False AndAlso InStr(Message, "0x") = 0 Then Return False
@@ -665,7 +659,6 @@ Public Module WS_Commands
     Public Function cmdAddItem(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         Dim tmp() As String = Split(Message, " ", 2)
         If tmp.Length < 1 Then Return False
-
 
         Dim id As Integer = tmp(0)
         Dim Count As Integer = 1
@@ -697,10 +690,10 @@ Public Module WS_Commands
 
         Return True
     End Function
+
     <ChatCommandAttribute("LearnSkill", "LearnSkill <ID> <CURRENT> <MAX> - Add skill id X with value Y of Z to selected character.")> _
     Public Function cmdLearnSkill(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         If Message = "" Then Return False
-
 
         If CHARACTERs.ContainsKey(c.TargetGUID) Then
             Dim tmp() As String
@@ -725,6 +718,7 @@ Public Module WS_Commands
 
         Return True
     End Function
+
     <ChatCommandAttribute("LearnSpell", "LearnSpell <ID> - Add spell X to selected character.")> _
     Public Function cmdLearnSpell(ByRef c As CharacterObject, ByVal tID As String) As Boolean
         If tID = "" Then Return False
@@ -745,6 +739,7 @@ Public Module WS_Commands
         c.TaxiZones.SetAll(True)
         Return True
     End Function
+
     <ChatCommandAttribute("SET", "SET <INDEX> <VALUE> - Set update value (A9).")> _
     Public Function cmdSetUpdateField(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         If Message = "" Then Return False
@@ -753,6 +748,7 @@ Public Module WS_Commands
         SetUpdateValue(c.TargetGUID, tmp(0), tmp(1), c.Client)
         Return True
     End Function
+
     <ChatCommandAttribute("SetRunSpeed", "SETRUNSPEED <VALUE> - Change your run speed.")> _
     Public Function cmdSetRunSpeed(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         If Message = "" Then Return False
@@ -760,6 +756,7 @@ Public Module WS_Commands
         c.CommandResponse("Your RunSpeed is changed to " & Message)
         Return True
     End Function
+
     <ChatCommandAttribute("SetSwimSpeed", "SETSWIMSPEED <VALUE> - Change your swim speed.")> _
     Public Function cmdSetSwimSpeed(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         If Message = "" Then Return False
@@ -767,6 +764,7 @@ Public Module WS_Commands
         c.CommandResponse("Your SwimSpeed is changed to " & Message)
         Return True
     End Function
+
     <ChatCommandAttribute("SetRunBackSpeed", "SETRUNBACKSPEED <VALUE> - Change your run back speed.")> _
     Public Function cmdSetRunBackSpeed(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         If Message = "" Then Return False
@@ -774,6 +772,7 @@ Public Module WS_Commands
         c.CommandResponse("Your RunBackSpeed is changed to " & Message)
         Return True
     End Function
+
     <ChatCommandAttribute("SetFlySpeed", "SETFLYSPEED <VALUE> - Change your fly speed.", AccessLevel.GameMaster)> _
     Public Function cmdSetFlySpeed(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         If Message = "" Then Return False
@@ -781,6 +780,7 @@ Public Module WS_Commands
         c.CommandResponse("Your FlySpeed is changed to " & Message)
         Return True
     End Function
+
     <ChatCommandAttribute("SetFlyBackSpeed", "SETFLYBACKSPEED <VALUE> - Change your fly back speed.", AccessLevel.GameMaster)> _
     Public Function cmdSetFlyBackSpeed(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         If Message = "" Then Return False
@@ -788,6 +788,7 @@ Public Module WS_Commands
         c.CommandResponse("Your FlyBackSpeed is changed to " & Message)
         Return True
     End Function
+
     <ChatCommandAttribute("SetReputation", "SETREPUTATION <FACTION> <VALUE> - Change your reputation standings.", AccessLevel.GameMaster)> _
     Public Function cmdSetReputation(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         If Message = "" Then Return False
@@ -803,11 +804,13 @@ Public Module WS_Commands
         c.SendCharacterUpdate(True)
         Return True
     End Function
+
     <ChatCommandAttribute("FlyMountEnable", "Will enable fly mount mode.", AccessLevel.GameMaster)> _
     Public Function cmdFlyMountEnable(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         c.SetCanFly()
         Return True
     End Function
+
     <ChatCommandAttribute("FlyMountDisable", "Will disable fly mount mode.", AccessLevel.GameMaster)> _
     Public Function cmdFlyMountDisable(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         c.UnSetCanFly()
@@ -830,6 +833,7 @@ Public Module WS_Commands
 
         Return True
     End Function
+
     <ChatCommandAttribute("Root", "Instantly root selected character.", AccessLevel.GameMaster)> _
     Public Function cmdRoot(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         If c.TargetGUID = 0 Then
@@ -844,6 +848,7 @@ Public Module WS_Commands
 
         Return True
     End Function
+
     <ChatCommandAttribute("UnRoot", "Instantly unroot selected character.", AccessLevel.GameMaster)> _
     Public Function cmdUnRoot(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         If c.TargetGUID = 0 Then
@@ -873,6 +878,7 @@ Public Module WS_Commands
 
         Return True
     End Function
+
     <ChatCommandAttribute("GoToGraveyard", "Instantly teleports selected character to nearest graveyard.", AccessLevel.GameMaster)> _
     Public Function cmdGoToGraveyard(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         If c.TargetGUID = 0 Then
@@ -887,6 +893,7 @@ Public Module WS_Commands
 
         Return True
     End Function
+
     <ChatCommandAttribute("GoToStart", "GOTOSTART <RACE> - Instantly teleports selected character to specified race start location.", AccessLevel.GameMaster)> _
     Public Function cmdGoToStart(ByRef c As CharacterObject, ByVal StringRace As String) As Boolean
         If c.TargetGUID = 0 Then
@@ -921,7 +928,7 @@ Public Module WS_Commands
                 Case "UNDEAD", "UN"
                     Race = Races.RACE_UNDEAD
                 Case Else
-                    c.CommandResponse("Unknown race. Use DR,BE,DW,GN,HU,NE,OR,TA,TR,UN for race.")
+                    c.CommandResponse("Unknown race. Use DR, BE, DW, GN, HU, NE, OR, TA, TR, UN for race.")
                     Return True
             End Select
 
@@ -932,6 +939,7 @@ Public Module WS_Commands
 
         Return True
     End Function
+
     <ChatCommandAttribute("Summon", "SUMMON <NAME> - Instantly teleports the player to you.", AccessLevel.GameMaster)> _
     Public Function cmdSummon(ByRef c As CharacterObject, ByVal Name As String) As Boolean
         Dim GUID As ULong = GetGUID(CapitalizeName(Name))
@@ -943,6 +951,7 @@ Public Module WS_Commands
             Return True
         End If
     End Function
+
     <ChatCommandAttribute("Appear", "APPEAR <NAME> - Instantly teleports you to the player.", AccessLevel.GameMaster)> _
     Public Function cmdAppear(ByRef c As CharacterObject, ByVal Name As String) As Boolean
         Dim GUID As ULong = GetGUID(CapitalizeName(Name))
@@ -1021,7 +1030,6 @@ Public Module WS_Commands
             c.CommandResponse(String.Format("Location {0} NOT found in Database", location))
         End If
 
-
         Return True
     End Function
 
@@ -1041,6 +1049,7 @@ Public Module WS_Commands
 
         Return True
     End Function
+
     <ChatCommandAttribute("Kick", "KICK <optional NAME> - Kick selected player or character with name specified if found.")> _
     Public Function cmdKick(ByRef c As CharacterObject, ByVal Name As String) As Boolean
         If Name = "" Then
@@ -1077,6 +1086,7 @@ Public Module WS_Commands
         End If
         Return True
     End Function
+
     <ChatCommandAttribute("KickReason", "KICKREASON <TEXT> - Display message for 2 seconds and kick selected player.")> _
     Public Function cmdKickReason(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         If c.TargetGUID = 0 Then
@@ -1090,6 +1100,7 @@ Public Module WS_Commands
 
         Return True
     End Function
+
     <ChatCommandAttribute("Disconnect", "DISCONNECT <optional NAME> - Disconnects selected player or character with name specified if found.")> _
     Public Function cmdDisconnect(ByRef c As CharacterObject, ByVal Name As String) As Boolean
         If Name = "" Then
@@ -1138,6 +1149,7 @@ Public Module WS_Commands
 
         Return True
     End Function
+
     <ChatCommandAttribute("ForceLock", "FORCELOCK - Selected player won't be able to login next time with this character.")> _
     Public Function cmdForceLock(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         If c.TargetGUID = 0 Then
@@ -1151,7 +1163,6 @@ Public Module WS_Commands
 
         Return True
     End Function
-
 
     <ChatCommandAttribute("Ban", "BAN <ACCOUNT> - Ban specified account from server.")> _
     Public Function cmdBan(ByRef c As CharacterObject, ByVal Name As String) As Boolean
@@ -1173,6 +1184,7 @@ Public Module WS_Commands
 
         Return True
     End Function
+
     <ChatCommandAttribute("UnBan", "UNBAN <ACCOUNT> - Remove ban of specified account from server.")> _
     Public Function cmdUnBan(ByRef c As CharacterObject, ByVal Name As String) As Boolean
         If Name = "" Then Return False
@@ -1250,6 +1262,7 @@ Public Module WS_Commands
 
         Return True
     End Function
+
     <ChatCommandAttribute("Where", "WHERE - Display your position information.")> _
     Public Function cmdWhere(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         c.SystemMessage(String.Format("Coords: x={0}, y={1}, z={2}, or={3}, map={4}", c.positionX, c.positionY, c.positionZ, c.orientation, c.MapID))
@@ -1264,14 +1277,12 @@ Public Module WS_Commands
         Return True
     End Function
 
-
     '****************************************** MISC COMMANDs *******************************************************
     <ChatCommandAttribute("SetGM", "SETGM <FLAG> <INVISIBILITY> - Toggles gameMaster status. You can use values like On/Off/1/0.")> _
     Public Function cmdSetGM(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         Dim tmp() As String = Split(Message, " ", 2)
         Dim value1 As String = tmp(0)
         Dim value2 As String = tmp(1)
-
 
         'Commnad: .setgm <gmflag:0/1/off/on> <invisibility:0/1/off/on>
         If value1 = "0" Or UCase(value1) = "OFF" Then
@@ -1296,12 +1307,12 @@ Public Module WS_Commands
 
         Return True
     End Function
+
     <ChatCommandAttribute("SetWeather", "SETWEATHER <TYPE> <INTENSITY> - Change weather in current zone. Intensity is float value!")> _
     Public Function cmdSetWeather(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         Dim tmp() As String = Split(Message, " ", 2)
         Dim Type As Integer = tmp(0)
         Dim Intensity As Single = tmp(1)
-
 
         Dim MySQLQuery As New DataTable
         Database.Query(String.Format("SELECT * FROM weather WHERE weather_zone = {0};", c.ZoneID), MySQLQuery)
@@ -1314,7 +1325,6 @@ Public Module WS_Commands
 
         Return True
     End Function
-
 
     '****************************************** SPAWNING COMMANDs ***************************************************
     <ChatCommandAttribute("Del", "DEL <ID> - Delete selected creature or gameobject."), _
@@ -1348,11 +1358,9 @@ Public Module WS_Commands
 
         End If
 
-
-
-
         Return True
     End Function
+
     <ChatCommandAttribute("Turn", "TURN - Selected creature or game object will turn to your position.")> _
     Public Function cmdTurnObject(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         If c.TargetGUID = 0 Then
@@ -1398,6 +1406,7 @@ Public Module WS_Commands
 
         Return True
     End Function
+
     <ChatCommandAttribute("NPCFlood", "NPCFLOOD <Amount> - Spawn a number of creatures at your position.")> _
     Public Function cmdCreatureFlood(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         If IsNumeric(Message) = False OrElse CInt(Message) <= 0 Then Return False
@@ -1410,6 +1419,7 @@ Public Module WS_Commands
 
         Return True
     End Function
+
     <ChatCommandAttribute("Come", "COME - Selected creature will come to your position.")> _
     Public Function cmdComeCreature(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         If c.TargetGUID = 0 Then
@@ -1425,6 +1435,7 @@ Public Module WS_Commands
 
         Return True
     End Function
+
     <ChatCommandAttribute("Kill", "KILL - Selected creature or character will die.")> _
     Public Function cmdKillCreature(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         If c.TargetGUID = 0 Then
@@ -1464,7 +1475,6 @@ Public Module WS_Commands
             c.CommandResponse(String.Format("Selected [{0}] game object at distance {1}.", WORLD_GAMEOBJECTs(c.TargetGUID).Name, minDistance))
         End If
 
-
         Return True
     End Function
     <ChatCommandAttribute("AddGO", "ADDGO <ID> - Spawn game object at your position."), _
@@ -1479,6 +1489,7 @@ Public Module WS_Commands
 
         Return True
     End Function
+
     <ChatCommandAttribute("CreateAccount", "CreateAccount <Name> <Password> <Email> - Add a new account using Name, Password, and Email.")> _
     Public Function cmdCreateAccount(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         If Message = "" Then Return False
@@ -1501,12 +1512,9 @@ Public Module WS_Commands
         Return True
     End Function
 
-
-
-
 #End Region
-#Region "WS.Commands.InternalCommands.HelperSubs"
 
+#Region "WS.Commands.InternalCommands.HelperSubs"
 
     Public Function GetGUID(ByVal Name As String) As ULong
         Dim MySQLQuery As New DataTable
@@ -1518,6 +1526,7 @@ Public Module WS_Commands
             Return 0
         End If
     End Function
+
     Public Sub SystemMessage(ByVal Message As String)
         Dim packet As PacketClass = BuildChatMessage(0, "System Message: " & Message, ChatMsg.CHAT_MSG_SYSTEM, LANGUAGES.LANG_UNIVERSAL, 0, "")
 
@@ -1525,6 +1534,7 @@ Public Module WS_Commands
         WS.Cluster.Broadcast(packet.Data)
         packet.Dispose()
     End Sub
+
     Public Function SetUpdateValue(ByVal GUID As ULong, ByVal Index As Integer, ByVal Value As Integer, ByVal Client As ClientClass) As Boolean
         Dim packet As New PacketClass(OPCODES.SMSG_UPDATE_OBJECT)
         packet.AddInt32(1)      'Operations.Count
@@ -1547,10 +1557,6 @@ Public Module WS_Commands
         UpdateData.Dispose()
     End Function
 
-
 #End Region
 
-
 End Module
-
-

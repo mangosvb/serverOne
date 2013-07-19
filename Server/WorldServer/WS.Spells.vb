@@ -1,5 +1,5 @@
-' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 '
 
 Imports System.Threading
-Imports Spurious.Common.BaseWriter
+Imports mangosVB.Common.BaseWriter
 
 Public Module WS_Spells
 #Region "WS.Skills.Constants"
@@ -53,6 +53,7 @@ Public Module WS_Spells
     Public Const MAX_AURA_EFFECT_FLAGs As Integer = MAX_AURA_EFFECTs_VISIBLE \ 4
     Public Const MAX_POSITIVE_AURA_EFFECTs As Integer = 40
     Public Const MAX_NEGATIVE_AURA_EFFECTs As Integer = MAX_AURA_EFFECTs_VISIBLE - MAX_POSITIVE_AURA_EFFECTs
+
 
     Public Enum TargetType
         AllCharacters = -2
@@ -117,7 +118,7 @@ Public Module WS_Spells
         AURA_INTERRUPT_FLAG_NOT_SHEATHED = &H200 'removed by unsheathing
         AURA_INTERRUPT_FLAG_UNK10 = &H400
         AURA_INTERRUPT_FLAG_UNK11 = &H800
-        AURA_INTERRUPT_FLAG_UNK12 = &H1000 'removed by attack? 
+        AURA_INTERRUPT_FLAG_UNK12 = &H1000 'removed by attack?
         AURA_INTERRUPT_FLAG_UNK13 = &H2000
         AURA_INTERRUPT_FLAG_UNK14 = &H4000
         AURA_INTERRUPT_FLAG_UNK15 = &H8000
@@ -476,9 +477,6 @@ Public Module WS_Spells
         TARGET_UNK54 = 54
         TARGET_SELECTED_PARTY_MEMBER = 57           'Puts a pirate costume on targeted party member.
 
-
-
-
     End Enum
 
     Public Enum ShapeshiftForm As Byte
@@ -590,7 +588,6 @@ Public Module WS_Spells
                 Return manaType
         End Select
     End Function
-
 
 #End Region
 #Region "WS.Spells.Framework"
@@ -759,7 +756,6 @@ Public Module WS_Spells
             spellStart.Dispose()
 
             'TODO: If ChannelInterruptFlags <>0 then START_CHANNEL
-
 
             'PREPEARING SPELL
             Dim tmpRandom As Integer
@@ -1175,8 +1171,6 @@ SkipShapeShift:
                     Exit Sub
             End Select
 
-
-
             If TypeOf Caster Is CharacterObject Then CType(Caster, CharacterObject).Client.SendMultiplyPackets(packet)
             Caster.SendToNearPlayers(packet)
             packet.Dispose()
@@ -1387,7 +1381,6 @@ SkipShapeShift:
         End Sub
     End Class
 
-
     Public Class CastSpellParameters
         Public tmpTargets As SpellTargets
         Public tmpCaster As BaseObject
@@ -1466,7 +1459,7 @@ SkipShapeShift:
         Else
             packet.AddInt8(0)
         End If
-        packet.AddInt8(0) 'Unk
+        packet.AddInt8(0) 'Unknown
         If TypeOf Caster Is CharacterObject Then CType(Caster, CharacterObject).Client.SendMultiplyPackets(packet)
         Caster.SendToNearPlayers(packet)
     End Sub
@@ -1545,7 +1538,6 @@ SkipShapeShift:
 #End Region
 #Region "WS.Spells.Database"
 
-
     Public SPELLs As New Dictionary(Of Integer, SpellInfo)(29000)
 
     Public SpellCastTime As New Dictionary(Of Integer, Integer)
@@ -1554,129 +1546,127 @@ SkipShapeShift:
     Public SpellDuration As New Dictionary(Of Integer, Integer)
     Public SpellFocusObject As New Dictionary(Of Integer, String)
 
-
     Public Sub InitializeSpellDB()
         Dim i As Integer
         For i = 0 To SPELL_EFFECT_COUNT
             SPELL_EFFECTs(i) = AddressOf SPELL_EFFECT_NOTHING
         Next
 
-        SPELL_EFFECTs(0) = AddressOf SPELL_EFFECT_NOTHING                   'None		
-        SPELL_EFFECTs(1) = AddressOf SPELL_EFFECT_INSTAKILL                 'Instakill		
-        SPELL_EFFECTs(2) = AddressOf SPELL_EFFECT_SCHOOL_DAMAGE             'School Damage		
-        SPELL_EFFECTs(3) = AddressOf SPELL_EFFECT_DUMMY                     'Dummy		
-        'SPELL_EFFECTs(4) = AddressOf SPELL_EFFECT_PORTAL_TELEPORT           'Portal Teleport		
-        SPELL_EFFECTs(5) = AddressOf SPELL_EFFECT_TELEPORT_UNITS            'Teleport Units		
-        SPELL_EFFECTs(6) = AddressOf SPELL_EFFECT_APPLY_AURA                'Apply Aura		
-        SPELL_EFFECTs(7) = AddressOf SPELL_EFFECT_ENVIRONMENTAL_DAMAGE      'Environmental Damage		
-        SPELL_EFFECTs(8) = AddressOf SPELL_EFFECT_MANA_DRAIN                'Power Drain		
-        'SPELL_EFFECTs(9) = AddressOf SPELL_EFFECT_HEALTH_LEECH              'Health Leech		
-        SPELL_EFFECTs(10) = AddressOf SPELL_EFFECT_HEAL                     'Heal		
-        SPELL_EFFECTs(11) = AddressOf SPELL_EFFECT_BIND                     'Bind		
-        'SPELL_EFFECTs(12) = AddressOf SPELL_EFFECT_PORTAL                   'Portal		
-        'SPELL_EFFECTs(13) = AddressOf SPELL_EFFECT_RITUAL_BASE              'Ritual Base		
-        'SPELL_EFFECTs(14) = AddressOf SPELL_EFFECT_RITUAL_SPECIALIZE        'Ritual Specialize		
-        'SPELL_EFFECTs(15) = AddressOf SPELL_EFFECT_RITUAL_ACTIVATE_PORTAL   'Ritual Activate Portal		
-        SPELL_EFFECTs(16) = AddressOf SPELL_EFFECT_QUEST_COMPLETE           'Quest Complete		
-        SPELL_EFFECTs(17) = AddressOf SPELL_EFFECT_WEAPON_DAMAGE_NOSCHOOL   'Weapon Damage + (noschool)		
-        SPELL_EFFECTs(18) = AddressOf SPELL_EFFECT_RESURRECT                'Resurrect		
-        '!! SPELL_EFFECTs(19) = AddressOf SPELL_EFFECT_ADD_EXTRA_ATTACKS        'Extra Attacks		
-        SPELL_EFFECTs(20) = AddressOf SPELL_EFFECT_DODGE                    'Dodge		
-        SPELL_EFFECTs(21) = AddressOf SPELL_EFFECT_EVADE                    'Evade		
-        SPELL_EFFECTs(22) = AddressOf SPELL_EFFECT_PARRY                    'Parry		
-        SPELL_EFFECTs(23) = AddressOf SPELL_EFFECT_BLOCK                    'Block		
-        SPELL_EFFECTs(24) = AddressOf SPELL_EFFECT_CREATE_ITEM              'Create Item		
-        'SPELL_EFFECTs(25) = AddressOf SPELL_EFFECT_WEAPON                   'Weapon		
-        'SPELL_EFFECTs(26) = AddressOf SPELL_EFFECT_DEFENSE                  'Defense		
-        SPELL_EFFECTs(27) = AddressOf SPELL_EFFECT_PERSISTENT_AREA_AURA     'Persistent Area Aura		
-        SPELL_EFFECTs(28) = AddressOf SPELL_EFFECT_SUMMON                   'Summon		
-        SPELL_EFFECTs(29) = AddressOf SPELL_EFFECT_LEAP                     'Leap		
-        SPELL_EFFECTs(30) = AddressOf SPELL_EFFECT_ENERGIZE                 'Energize		
-        'SPELL_EFFECTs(31) = AddressOf SPELL_EFFECT_WEAPON_PERCENT_DAMAGE    'Weapon % Dmg		
-        'SPELL_EFFECTs(32) = AddressOf SPELL_EFFECT_TRIGGER_MISSILE          'Trigger Missile		
-        SPELL_EFFECTs(33) = AddressOf SPELL_EFFECT_OPEN_LOCK                'Open Lock	
-        'SPELL_EFFECTs(34) = AddressOf SPELL_EFFECT_SUMMON_MOUNT_OBSOLETE	
-        SPELL_EFFECTs(35) = AddressOf SPELL_EFFECT_APPLY_AREA_AURA          'Apply Area Aura		
-        SPELL_EFFECTs(36) = AddressOf SPELL_EFFECT_LEARN_SPELL              'Learn Spell		
-        'SPELL_EFFECTs(37) = AddressOf SPELL_EFFECT_SPELL_DEFENSE            'Spell Defense		
-        '! SPELL_EFFECTs(38) = AddressOf SPELL_EFFECT_DISPEL                   'Dispel		
-        'SPELL_EFFECTs(39) = AddressOf SPELL_EFFECT_LANGUAGE                 'Language		
-        SPELL_EFFECTs(40) = AddressOf SPELL_EFFECT_DUAL_WIELD               'Dual Wield		
-        '!! SPELL_EFFECTs(41) = AddressOf SPELL_EFFECT_SUMMON_WILD              'Summon Wild		
-        '!! SPELL_EFFECTs(42) = AddressOf SPELL_EFFECT_SUMMON_GUARDIAN          'Summon Guardian		
+        SPELL_EFFECTs(0) = AddressOf SPELL_EFFECT_NOTHING                   'None
+        SPELL_EFFECTs(1) = AddressOf SPELL_EFFECT_INSTAKILL                 'Instakill
+        SPELL_EFFECTs(2) = AddressOf SPELL_EFFECT_SCHOOL_DAMAGE             'School Damage
+        SPELL_EFFECTs(3) = AddressOf SPELL_EFFECT_DUMMY                     'Dummy
+        'SPELL_EFFECTs(4) = AddressOf SPELL_EFFECT_PORTAL_TELEPORT           'Portal Teleport
+        SPELL_EFFECTs(5) = AddressOf SPELL_EFFECT_TELEPORT_UNITS            'Teleport Units
+        SPELL_EFFECTs(6) = AddressOf SPELL_EFFECT_APPLY_AURA                'Apply Aura
+        SPELL_EFFECTs(7) = AddressOf SPELL_EFFECT_ENVIRONMENTAL_DAMAGE      'Environmental Damage
+        SPELL_EFFECTs(8) = AddressOf SPELL_EFFECT_MANA_DRAIN                'Power Drain
+        'SPELL_EFFECTs(9) = AddressOf SPELL_EFFECT_HEALTH_LEECH              'Health Leech
+        SPELL_EFFECTs(10) = AddressOf SPELL_EFFECT_HEAL                     'Heal
+        SPELL_EFFECTs(11) = AddressOf SPELL_EFFECT_BIND                     'Bind
+        'SPELL_EFFECTs(12) = AddressOf SPELL_EFFECT_PORTAL                   'Portal
+        'SPELL_EFFECTs(13) = AddressOf SPELL_EFFECT_RITUAL_BASE              'Ritual Base
+        'SPELL_EFFECTs(14) = AddressOf SPELL_EFFECT_RITUAL_SPECIALIZE        'Ritual Specialize
+        'SPELL_EFFECTs(15) = AddressOf SPELL_EFFECT_RITUAL_ACTIVATE_PORTAL   'Ritual Activate Portal
+        SPELL_EFFECTs(16) = AddressOf SPELL_EFFECT_QUEST_COMPLETE           'Quest Complete
+        SPELL_EFFECTs(17) = AddressOf SPELL_EFFECT_WEAPON_DAMAGE_NOSCHOOL   'Weapon Damage + (noschool)
+        SPELL_EFFECTs(18) = AddressOf SPELL_EFFECT_RESURRECT                'Resurrect
+        '!! SPELL_EFFECTs(19) = AddressOf SPELL_EFFECT_ADD_EXTRA_ATTACKS        'Extra Attacks
+        SPELL_EFFECTs(20) = AddressOf SPELL_EFFECT_DODGE                    'Dodge
+        SPELL_EFFECTs(21) = AddressOf SPELL_EFFECT_EVADE                    'Evade
+        SPELL_EFFECTs(22) = AddressOf SPELL_EFFECT_PARRY                    'Parry
+        SPELL_EFFECTs(23) = AddressOf SPELL_EFFECT_BLOCK                    'Block
+        SPELL_EFFECTs(24) = AddressOf SPELL_EFFECT_CREATE_ITEM              'Create Item
+        'SPELL_EFFECTs(25) = AddressOf SPELL_EFFECT_WEAPON                   'Weapon
+        'SPELL_EFFECTs(26) = AddressOf SPELL_EFFECT_DEFENSE                  'Defense
+        SPELL_EFFECTs(27) = AddressOf SPELL_EFFECT_PERSISTENT_AREA_AURA     'Persistent Area Aura
+        SPELL_EFFECTs(28) = AddressOf SPELL_EFFECT_SUMMON                   'Summon
+        SPELL_EFFECTs(29) = AddressOf SPELL_EFFECT_LEAP                     'Leap
+        SPELL_EFFECTs(30) = AddressOf SPELL_EFFECT_ENERGIZE                 'Energize
+        'SPELL_EFFECTs(31) = AddressOf SPELL_EFFECT_WEAPON_PERCENT_DAMAGE    'Weapon % Dmg
+        'SPELL_EFFECTs(32) = AddressOf SPELL_EFFECT_TRIGGER_MISSILE          'Trigger Missile
+        SPELL_EFFECTs(33) = AddressOf SPELL_EFFECT_OPEN_LOCK                'Open Lock
+        'SPELL_EFFECTs(34) = AddressOf SPELL_EFFECT_SUMMON_MOUNT_OBSOLETE
+        SPELL_EFFECTs(35) = AddressOf SPELL_EFFECT_APPLY_AREA_AURA          'Apply Area Aura
+        SPELL_EFFECTs(36) = AddressOf SPELL_EFFECT_LEARN_SPELL              'Learn Spell
+        'SPELL_EFFECTs(37) = AddressOf SPELL_EFFECT_SPELL_DEFENSE            'Spell Defense
+        '! SPELL_EFFECTs(38) = AddressOf SPELL_EFFECT_DISPEL                   'Dispel
+        'SPELL_EFFECTs(39) = AddressOf SPELL_EFFECT_LANGUAGE                 'Language
+        SPELL_EFFECTs(40) = AddressOf SPELL_EFFECT_DUAL_WIELD               'Dual Wield
+        '!! SPELL_EFFECTs(41) = AddressOf SPELL_EFFECT_SUMMON_WILD              'Summon Wild
+        '!! SPELL_EFFECTs(42) = AddressOf SPELL_EFFECT_SUMMON_GUARDIAN          'Summon Guardian
         '! SPELL_EFFECTs(43) = AddressOf SPELL_EFFECT_TELEPORT_UNITS_FACE_CASTER
-        SPELL_EFFECTs(44) = AddressOf SPELL_EFFECT_SCHOOL_DAMAGE            'Skill Step	
+        SPELL_EFFECTs(44) = AddressOf SPELL_EFFECT_SCHOOL_DAMAGE            'Skill Step
         SPELL_EFFECTs(45) = AddressOf SPELL_EFFECT_HONOR
-        'SPELL_EFFECTs(46) = AddressOf SPELL_EFFECT_SPAWN                    'Spawn		
-        'SPELL_EFFECTs(47) = AddressOf SPELL_EFFECT_TRADE_SKILL              'Spell Cast UI		
-        SPELL_EFFECTs(48) = AddressOf SPELL_EFFECT_STEALTH                  'Stealth		
-        SPELL_EFFECTs(49) = AddressOf SPELL_EFFECT_DETECT                   'Detect		
-        SPELL_EFFECTs(50) = AddressOf SPELL_EFFECT_SUMMON_OBJECT            'Summon Object		
-        'SPELL_EFFECTs(51) = AddressOf SPELL_EFFECT_FORCE_CRITICAL_HIT       'Force Critical Hit		
-        'SPELL_EFFECTs(52) = AddressOf SPELL_EFFECT_GUARANTEE_HIT            'Guarantee Hit		
-        'SPELL_EFFECTs(53) = AddressOf SPELL_EFFECT_ENCHANT_ITEM             'Enchant Item Permanent		
-        'SPELL_EFFECTs(54) = AddressOf SPELL_EFFECT_ENCHANT_ITEM_TEMPORARY   'Enchant Item Temporary		
-        'SPELL_EFFECTs(55) = AddressOf SPELL_EFFECT_TAMECREATURE             'Tame Creature		
-        'SPELL_EFFECTs(56) = AddressOf SPELL_EFFECT_SUMMON_PET               'Summon Pet		
-        'SPELL_EFFECTs(57) = AddressOf SPELL_EFFECT_LEARN_PET_SPELL          'Learn Pet Spell		
-        'SPELL_EFFECTs(58) = AddressOf SPELL_EFFECT_WEAPON_DAMAGE            'Weapon Damage +		
-        'SPELL_EFFECTs(59) = AddressOf SPELL_EFFECT_OPEN_LOCK_ITEM           'Open Lock (Item)		
-        'SPELL_EFFECTs(60) = AddressOf SPELL_EFFECT_PROFICIENCY              'Proficiency		
-        'SPELL_EFFECTs(61) = AddressOf SPELL_EFFECT_SEND_EVENT               'Send Event		
-        'SPELL_EFFECTs(62) = AddressOf SPELL_EFFECT_POWER_BURN               'Power Burn		
-        'SPELL_EFFECTs(63) = AddressOf SPELL_EFFECT_THREAT                   'Threat		
-        SPELL_EFFECTs(64) = AddressOf SPELL_EFFECT_TRIGGER_SPELL            'Trigger Spell		
-        'SPELL_EFFECTs(65) = AddressOf SPELL_EFFECT_HEALTH_FUNNEL            'Health Funnel		
-        'SPELL_EFFECTs(66) = AddressOf SPELL_EFFECT_POWER_FUNNEL             'Power Funnel		
-        SPELL_EFFECTs(67) = AddressOf SPELL_EFFECT_HEAL_MAX_HEALTH          'Heal Max Health		
-        SPELL_EFFECTs(68) = AddressOf SPELL_EFFECT_INTERRUPT_CAST           'Interrupt Cast		
-        'SPELL_EFFECTs(69) = AddressOf SPELL_EFFECT_DISTRACT                 'Distract		
-        'SPELL_EFFECTs(70) = AddressOf SPELL_EFFECT_PULL                     'Pull		
-        'SPELL_EFFECTs(71) = AddressOf SPELL_EFFECT_PICKPOCKET               'Pickpocket		
-        'SPELL_EFFECTs(72) = AddressOf SPELL_EFFECT_ADD_FARSIGHT             'Add Farsight		
-        'SPELL_EFFECTs(73) = AddressOf SPELL_EFFECT_SUMMON_POSSESSED         'Summon Possessed		
-        'SPELL_EFFECTs(74) = AddressOf SPELL_EFFECT_SUMMON_TOTEM             'Summon Totem		
-        'SPELL_EFFECTs(75) = AddressOf SPELL_EFFECT_HEAL_MECHANICAL          'Heal Mechanical		
-        'SPELL_EFFECTs(76) = AddressOf SPELL_EFFECT_SUMMON_OBJECT_WILD       'Summon Object (Wild)		
-        'SPELL_EFFECTs(77) = AddressOf SPELL_EFFECT_SCRIPT_EFFECT            'Script Effect		
-        'SPELL_EFFECTs(78) = AddressOf SPELL_EFFECT_ATTACK                   'Attack		
-        'SPELL_EFFECTs(79) = AddressOf SPELL_EFFECT_SANCTUARY                'Sanctuary		
-        'SPELL_EFFECTs(80) = AddressOf SPELL_EFFECT_ADD_COMBO_POINTS         'Add Combo Points		
-        'SPELL_EFFECTs(81) = AddressOf SPELL_EFFECT_CREATE_HOUSE             'Create House		
-        'SPELL_EFFECTs(82) = AddressOf SPELL_EFFECT_BIND_SIGHT               'Bind Sight		
-        SPELL_EFFECTs(83) = AddressOf SPELL_EFFECT_DUEL                     'Duel		
-        'SPELL_EFFECTs(84) = AddressOf SPELL_EFFECT_STUCK                    'Stuck		
-        'SPELL_EFFECTs(85) = AddressOf SPELL_EFFECT_SUMMON_PLAYER            'Summon Player		
-        'SPELL_EFFECTs(86) = AddressOf SPELL_EFFECT_ACTIVATE_OBJECT          'Activate Object		
-        'SPELL_EFFECTs(87) = AddressOf SPELL_EFFECT_SUMMON_TOTEM_SLOT1       'Summon Totem (slot 1)		
-        'SPELL_EFFECTs(88) = AddressOf SPELL_EFFECT_SUMMON_TOTEM_SLOT2       'Summon Totem (slot 2)		
-        'SPELL_EFFECTs(89) = AddressOf SPELL_EFFECT_SUMMON_TOTEM_SLOT3       'Summon Totem (slot 3)		
-        'SPELL_EFFECTs(90) = AddressOf SPELL_EFFECT_SUMMON_TOTEM_SLOT4       'Summon Totem (slot 4)		
-        'SPELL_EFFECTs(91) = AddressOf SPELL_EFFECT_THREAT_ALL               'Threat (All)		
-        'SPELL_EFFECTs(92) = AddressOf SPELL_EFFECT_ENCHANT_HELD_ITEM        'Enchant Held Item		
-        'SPELL_EFFECTs(93) = AddressOf SPELL_EFFECT_SUMMON_PHANTASM          'Summon Phantasm		
-        'SPELL_EFFECTs(94) = AddressOf SPELL_EFFECT_SELF_RESURRECT           'Self Resurrect		
-        'SPELL_EFFECTs(95) = AddressOf SPELL_EFFECT_SKINNING                 'Skinning		
-        'SPELL_EFFECTs(96) = AddressOf SPELL_EFFECT_CHARGE                   'Charge		
-        'SPELL_EFFECTs(97) = AddressOf SPELL_EFFECT_SUMMON_CRITTER           'Summon Critter		
-        'SPELL_EFFECTs(98) = AddressOf SPELL_EFFECT_KNOCK_BACK               'Knock Back		
-        'SPELL_EFFECTs(99) = AddressOf SPELL_EFFECT_DISENCHANT               'Disenchant		
-        'SPELL_EFFECTs(100) = AddressOf SPELL_EFFECT_INEBRIATE               'Inebriate		
-        'SPELL_EFFECTs(101) = AddressOf SPELL_EFFECT_FEED_PET                'Feed Pet		
-        'SPELL_EFFECTs(102) = AddressOf SPELL_EFFECT_DISMISS_PET             'Dismiss Pet		
-        'SPELL_EFFECTs(103) = AddressOf SPELL_EFFECT_REPUTATION              'Reputation		
-        'SPELL_EFFECTs(104) = AddressOf SPELL_EFFECT_SUMMON_OBJECT_SLOT1     'Summon Object (slot 1)		
-        'SPELL_EFFECTs(105) = AddressOf SPELL_EFFECT_SUMMON_OBJECT_SLOT2     'Summon Object (slot 2)		
-        'SPELL_EFFECTs(106) = AddressOf SPELL_EFFECT_SUMMON_OBJECT_SLOT3     'Summon Object (slot 3)		
-        'SPELL_EFFECTs(107) = AddressOf SPELL_EFFECT_SUMMON_OBJECT_SLOT4     'Summon Object (slot 4)		
-        'SPELL_EFFECTs(108) = AddressOf SPELL_EFFECT_DISPEL_MECHANIC         'Dispel Mechanic		
-        'SPELL_EFFECTs(109) = AddressOf SPELL_EFFECT_SUMMON_DEAD_PET         'Summon Dead Pet		
-        'SPELL_EFFECTs(110) = AddressOf SPELL_EFFECT_DESTROY_ALL_TOTEMS      'Destroy All Totems		
-        'SPELL_EFFECTs(111) = AddressOf SPELL_EFFECT_DURABILITY_DAMAGE       'Durability Damage		
-        'SPELL_EFFECTs(112) = AddressOf SPELL_EFFECT_SUMMON_DEMON            'Summon Demon		
-        'SPELL_EFFECTs(113) = AddressOf SPELL_EFFECT_RESURRECT_NEW           'Resurrect (Flat)		
-        'SPELL_EFFECTs(114) = AddressOf SPELL_EFFECT_ATTACK_ME               'Attack Me	
-
+        'SPELL_EFFECTs(46) = AddressOf SPELL_EFFECT_SPAWN                    'Spawn
+        'SPELL_EFFECTs(47) = AddressOf SPELL_EFFECT_TRADE_SKILL              'Spell Cast UI
+        SPELL_EFFECTs(48) = AddressOf SPELL_EFFECT_STEALTH                  'Stealth
+        SPELL_EFFECTs(49) = AddressOf SPELL_EFFECT_DETECT                   'Detect
+        SPELL_EFFECTs(50) = AddressOf SPELL_EFFECT_SUMMON_OBJECT            'Summon Object
+        'SPELL_EFFECTs(51) = AddressOf SPELL_EFFECT_FORCE_CRITICAL_HIT       'Force Critical Hit
+        'SPELL_EFFECTs(52) = AddressOf SPELL_EFFECT_GUARANTEE_HIT            'Guarantee Hit
+        'SPELL_EFFECTs(53) = AddressOf SPELL_EFFECT_ENCHANT_ITEM             'Enchant Item Permanent
+        'SPELL_EFFECTs(54) = AddressOf SPELL_EFFECT_ENCHANT_ITEM_TEMPORARY   'Enchant Item Temporary
+        'SPELL_EFFECTs(55) = AddressOf SPELL_EFFECT_TAMECREATURE             'Tame Creature
+        'SPELL_EFFECTs(56) = AddressOf SPELL_EFFECT_SUMMON_PET               'Summon Pet
+        'SPELL_EFFECTs(57) = AddressOf SPELL_EFFECT_LEARN_PET_SPELL          'Learn Pet Spell
+        'SPELL_EFFECTs(58) = AddressOf SPELL_EFFECT_WEAPON_DAMAGE            'Weapon Damage +
+        'SPELL_EFFECTs(59) = AddressOf SPELL_EFFECT_OPEN_LOCK_ITEM           'Open Lock (Item)
+        'SPELL_EFFECTs(60) = AddressOf SPELL_EFFECT_PROFICIENCY              'Proficiency
+        'SPELL_EFFECTs(61) = AddressOf SPELL_EFFECT_SEND_EVENT               'Send Event
+        'SPELL_EFFECTs(62) = AddressOf SPELL_EFFECT_POWER_BURN               'Power Burn
+        'SPELL_EFFECTs(63) = AddressOf SPELL_EFFECT_THREAT                   'Threat
+        SPELL_EFFECTs(64) = AddressOf SPELL_EFFECT_TRIGGER_SPELL            'Trigger Spell
+        'SPELL_EFFECTs(65) = AddressOf SPELL_EFFECT_HEALTH_FUNNEL            'Health Funnel
+        'SPELL_EFFECTs(66) = AddressOf SPELL_EFFECT_POWER_FUNNEL             'Power Funnel
+        SPELL_EFFECTs(67) = AddressOf SPELL_EFFECT_HEAL_MAX_HEALTH          'Heal Max Health
+        SPELL_EFFECTs(68) = AddressOf SPELL_EFFECT_INTERRUPT_CAST           'Interrupt Cast
+        'SPELL_EFFECTs(69) = AddressOf SPELL_EFFECT_DISTRACT                 'Distract
+        'SPELL_EFFECTs(70) = AddressOf SPELL_EFFECT_PULL                     'Pull
+        'SPELL_EFFECTs(71) = AddressOf SPELL_EFFECT_PICKPOCKET               'Pickpocket
+        'SPELL_EFFECTs(72) = AddressOf SPELL_EFFECT_ADD_FARSIGHT             'Add Farsight
+        'SPELL_EFFECTs(73) = AddressOf SPELL_EFFECT_SUMMON_POSSESSED         'Summon Possessed
+        'SPELL_EFFECTs(74) = AddressOf SPELL_EFFECT_SUMMON_TOTEM             'Summon Totem
+        'SPELL_EFFECTs(75) = AddressOf SPELL_EFFECT_HEAL_MECHANICAL          'Heal Mechanical
+        'SPELL_EFFECTs(76) = AddressOf SPELL_EFFECT_SUMMON_OBJECT_WILD       'Summon Object (Wild)
+        'SPELL_EFFECTs(77) = AddressOf SPELL_EFFECT_SCRIPT_EFFECT            'Script Effect
+        'SPELL_EFFECTs(78) = AddressOf SPELL_EFFECT_ATTACK                   'Attack
+        'SPELL_EFFECTs(79) = AddressOf SPELL_EFFECT_SANCTUARY                'Sanctuary
+        'SPELL_EFFECTs(80) = AddressOf SPELL_EFFECT_ADD_COMBO_POINTS         'Add Combo Points
+        'SPELL_EFFECTs(81) = AddressOf SPELL_EFFECT_CREATE_HOUSE             'Create House
+        'SPELL_EFFECTs(82) = AddressOf SPELL_EFFECT_BIND_SIGHT               'Bind Sight
+        SPELL_EFFECTs(83) = AddressOf SPELL_EFFECT_DUEL                     'Duel
+        'SPELL_EFFECTs(84) = AddressOf SPELL_EFFECT_STUCK                    'Stuck
+        'SPELL_EFFECTs(85) = AddressOf SPELL_EFFECT_SUMMON_PLAYER            'Summon Player
+        'SPELL_EFFECTs(86) = AddressOf SPELL_EFFECT_ACTIVATE_OBJECT          'Activate Object
+        'SPELL_EFFECTs(87) = AddressOf SPELL_EFFECT_SUMMON_TOTEM_SLOT1       'Summon Totem (slot 1)
+        'SPELL_EFFECTs(88) = AddressOf SPELL_EFFECT_SUMMON_TOTEM_SLOT2       'Summon Totem (slot 2)
+        'SPELL_EFFECTs(89) = AddressOf SPELL_EFFECT_SUMMON_TOTEM_SLOT3       'Summon Totem (slot 3)
+        'SPELL_EFFECTs(90) = AddressOf SPELL_EFFECT_SUMMON_TOTEM_SLOT4       'Summon Totem (slot 4)
+        'SPELL_EFFECTs(91) = AddressOf SPELL_EFFECT_THREAT_ALL               'Threat (All)
+        'SPELL_EFFECTs(92) = AddressOf SPELL_EFFECT_ENCHANT_HELD_ITEM        'Enchant Held Item
+        'SPELL_EFFECTs(93) = AddressOf SPELL_EFFECT_SUMMON_PHANTASM          'Summon Phantasm
+        'SPELL_EFFECTs(94) = AddressOf SPELL_EFFECT_SELF_RESURRECT           'Self Resurrect
+        'SPELL_EFFECTs(95) = AddressOf SPELL_EFFECT_SKINNING                 'Skinning
+        'SPELL_EFFECTs(96) = AddressOf SPELL_EFFECT_CHARGE                   'Charge
+        'SPELL_EFFECTs(97) = AddressOf SPELL_EFFECT_SUMMON_CRITTER           'Summon Critter
+        'SPELL_EFFECTs(98) = AddressOf SPELL_EFFECT_KNOCK_BACK               'Knock Back
+        'SPELL_EFFECTs(99) = AddressOf SPELL_EFFECT_DISENCHANT               'Disenchant
+        'SPELL_EFFECTs(100) = AddressOf SPELL_EFFECT_INEBRIATE               'Inebriate
+        'SPELL_EFFECTs(101) = AddressOf SPELL_EFFECT_FEED_PET                'Feed Pet
+        'SPELL_EFFECTs(102) = AddressOf SPELL_EFFECT_DISMISS_PET             'Dismiss Pet
+        'SPELL_EFFECTs(103) = AddressOf SPELL_EFFECT_REPUTATION              'Reputation
+        'SPELL_EFFECTs(104) = AddressOf SPELL_EFFECT_SUMMON_OBJECT_SLOT1     'Summon Object (slot 1)
+        'SPELL_EFFECTs(105) = AddressOf SPELL_EFFECT_SUMMON_OBJECT_SLOT2     'Summon Object (slot 2)
+        'SPELL_EFFECTs(106) = AddressOf SPELL_EFFECT_SUMMON_OBJECT_SLOT3     'Summon Object (slot 3)
+        'SPELL_EFFECTs(107) = AddressOf SPELL_EFFECT_SUMMON_OBJECT_SLOT4     'Summon Object (slot 4)
+        'SPELL_EFFECTs(108) = AddressOf SPELL_EFFECT_DISPEL_MECHANIC         'Dispel Mechanic
+        'SPELL_EFFECTs(109) = AddressOf SPELL_EFFECT_SUMMON_DEAD_PET         'Summon Dead Pet
+        'SPELL_EFFECTs(110) = AddressOf SPELL_EFFECT_DESTROY_ALL_TOTEMS      'Destroy All Totems
+        'SPELL_EFFECTs(111) = AddressOf SPELL_EFFECT_DURABILITY_DAMAGE       'Durability Damage
+        'SPELL_EFFECTs(112) = AddressOf SPELL_EFFECT_SUMMON_DEMON            'Summon Demon
+        'SPELL_EFFECTs(113) = AddressOf SPELL_EFFECT_RESURRECT_NEW           'Resurrect (Flat)
+        'SPELL_EFFECTs(114) = AddressOf SPELL_EFFECT_ATTACK_ME               'Attack Me
 
         'SPELL_EFFECTs(115) = AddressOf SPELL_EFFECT_DURABILITY_DAMAGE_PCT
         'SPELL_EFFECTs(116) = AddressOf SPELL_EFFECT_SKIN_PLAYER_CORPSE
@@ -1700,10 +1690,6 @@ SkipShapeShift:
         'SPELL_EFFECTs(133) = AddressOf SPELL_EFFECT_FORGET
         'SPELL_EFFECTs(134) = AddressOf SPELL_EFFECT_KILL_CREDIT
         'SPELL_EFFECTs(135) = AddressOf SPELL_EFFECT_SUMMON_PET_NEW
-
-
-
-
 
         For i = 0 To AURAs_COUNT
             AURAs(i) = AddressOf SPELL_AURA_NONE
@@ -1873,7 +1859,7 @@ SkipShapeShift:
         'AURAs(	160 ) = AddressOf 	                        			                'Mod Side/Rear PBAE Damage Taken %
         'AURAs(	161 ) = AddressOf 	                        			                'Mod Health Regen In Combat
         'AURAs(	162 ) = AddressOf 	                        			                'Power Burn (Mana)
-        'AURAs(	163 ) = AddressOf 	                        			                'Mod Critical Damage 
+        'AURAs(	163 ) = AddressOf 	                        			                'Mod Critical Damage
         'AURAs(	164 ) = AddressOf  	                        			                'TEST
         'AURAs(	165 ) = AddressOf  	                        			                '
         'AURAs(	166 ) = AddressOf 	                        			                'Mod Attack Power %
@@ -1937,7 +1923,6 @@ SkipShapeShift:
         'AURAs(	225	) = AddressOf 	                                                    '
         AURAs(226) = AddressOf SPELL_AURA_PERIODIC_DUMMY                                'Periodic dummy
     End Sub
-
 
 #End Region
 
@@ -2555,13 +2540,11 @@ SkipShapeShift:
             Exit Function
         End If
 
-
         Dim Damage As Integer = SpellInfo.GetValue(Caster.Level)
 
         If TypeOf Caster Is CharacterObject Then
             Damage += SpellInfo.valuePerLevel * CType(Caster, CharacterObject).Level
         End If
-
 
         '! Only 1 target everytime, so no need to check
         'Select Case SpellInfo.implicitTargetA
@@ -2570,19 +2553,10 @@ SkipShapeShift:
         '    Case SpellImplicitTargets.TARGET_SELECTED_ENEMY
         'End Select
 
-
-
-
-
-
-
-
-
         'DONE: Get mana from victim
         Target.unitTarget.Mana.Current -= Damage
         'DONE: Give mana to caster
         Caster.Mana.Current += Damage
-
 
         'DONE: Send victim mana update, for near
         If GuidIsCreature(Target.unitTarget.GUID) Then
@@ -2815,7 +2789,6 @@ SkipShapeShift:
                 Return SpellFailedReason.CAST_FAIL_BAD_IMPLICIT_TARGETS
         End Select
 
-
         Return SpellFailedReason.CAST_NO_ERROR
     End Function
 
@@ -2980,7 +2953,6 @@ SkipShapeShift:
         Return SpellFailedReason.CAST_NO_ERROR
     End Function
 
-
     Public Function SPELL_EFFECT_WEAPON_DAMAGE_NOSCHOOL(ByRef Target As SpellTargets, ByRef Caster As BaseUnit, ByRef SpellInfo As SpellEffect, ByVal SpellID As Integer, ByRef Infected As ArrayList, ByRef Item As ItemObject) As SpellFailedReason
 
         If TypeOf Caster Is CharacterObject Then
@@ -2992,7 +2964,6 @@ SkipShapeShift:
             'TODO: Creatures still cant cast this spell
             Return SpellFailedReason.CAST_FAIL_NOT_READY
         End If
-
 
         Select Case SpellInfo.implicitTargetA
             Case SpellImplicitTargets.TARGET_SELECTED_ENEMY
@@ -3013,10 +2984,8 @@ SkipShapeShift:
                 Return SpellFailedReason.CAST_FAIL_BAD_IMPLICIT_TARGETS
         End Select
 
-
         Return SpellFailedReason.CAST_NO_ERROR
     End Function
-
 
     Public Function SPELL_EFFECT_HONOR(ByRef Target As SpellTargets, ByRef Caster As BaseUnit, ByRef SpellInfo As SpellEffect, ByVal SpellID As Integer, ByRef Infected As ArrayList, ByRef Item As ItemObject) As SpellFailedReason
 
@@ -3025,107 +2994,107 @@ SkipShapeShift:
             CType(Target.unitTarget, CharacterObject).HonorSave()
         End If
 
-
         Return SpellFailedReason.CAST_NO_ERROR
     End Function
-
-
-
-
 
     Private Const SLOT_NOT_FOUND As Integer = -1
     Private Const SLOT_CREATE_NEW As Integer = -2
     Private Const SLOT_NO_SPACE As Integer = Integer.MaxValue
     Public Function ApplyAura(ByRef auraTarget As BaseUnit, ByRef Caster As BaseUnit, ByRef SpellInfo As SpellEffect, ByVal SpellID As Integer) As SpellFailedReason
-        Dim spellCasted As Integer = SLOT_NOT_FOUND
-        Do
-            'DONE: If active add to visible
-            'TODO: If positive effect add to upper part spells
-            Dim AuraStart As Integer = MAX_AURA_EFFECTs_VISIBLE - 1
-            Dim AuraEnd As Integer = 0
+        Try
+            Dim spellCasted As Integer = SLOT_NOT_FOUND
+            Do
+                'DONE: If active add to visible
+                'TODO: If positive effect add to upper part spells
+                Dim AuraStart As Integer = MAX_AURA_EFFECTs_VISIBLE - 1
+                Dim AuraEnd As Integer = 0
 
-            'DONE: Passives are not displayed
-            If CType(SPELLs(SpellID), SpellInfo).IsPassive Then
-                AuraStart = MAX_AURA_EFFECTs - 1
-                AuraEnd = MAX_AURA_EFFECTs_VISIBLE
-            End If
+                'DONE: Passives are not displayed
+                If CType(SPELLs(SpellID), SpellInfo).IsPassive Then
+                    AuraStart = MAX_AURA_EFFECTs - 1
+                    AuraEnd = MAX_AURA_EFFECTs_VISIBLE
+                End If
 
-            'DONE: Get spell duration
-            Dim Duration As Integer = SPELLs(SpellID).GetDuration
+                'DONE: Get spell duration
+                Dim Duration As Integer = SPELLs(SpellID).GetDuration
 
-            'HACK: Set duration for Resurrection Sickness spell
-            If SpellID = 15007 Then
-                Select Case auraTarget.Level
-                    Case Is < 11
-                        Duration = 0
-                    Case Is > 19
-                        Duration = 10 * 60 * 1000
-                    Case Else
-                        Duration = (auraTarget.Level - 10) * 60 * 1000
-                End Select
-            End If
+                'HACK: Set duration for Resurrection Sickness spell
+                If SpellID = 15007 Then
+                    Select Case auraTarget.Level
+                        Case Is < 11
+                            Duration = 0
+                        Case Is > 19
+                            Duration = 10 * 60 * 1000
+                        Case Else
+                            Duration = (auraTarget.Level - 10) * 60 * 1000
+                    End Select
+                End If
 
-            'DONE: Find spell aura slot
-            For i As Integer = AuraStart To AuraEnd Step -1
-                If (Not auraTarget.ActiveSpells(i) Is Nothing) AndAlso auraTarget.ActiveSpells(i).SpellID = SpellID Then
-                    spellCasted = i
-                    If ((Not auraTarget.ActiveSpells(i).Aura1_Info Is Nothing) AndAlso auraTarget.ActiveSpells(i).Aura1_Info Is SpellInfo) OrElse ((Not auraTarget.ActiveSpells(i).Aura2_Info Is Nothing) AndAlso auraTarget.ActiveSpells(i).Aura2_Info Is SpellInfo) OrElse ((Not auraTarget.ActiveSpells(i).Aura3_Info Is Nothing) AndAlso auraTarget.ActiveSpells(i).Aura3_Info Is SpellInfo) Then
-                        If (Not auraTarget.ActiveSpells(i).Aura1_Info Is Nothing) AndAlso auraTarget.ActiveSpells(i).Aura1_Info Is SpellInfo Then
-                            'DONE: Update the duration
-                            auraTarget.ActiveSpells(i).SpellDuration = Duration
-                            If TypeOf auraTarget Is CharacterObject Then
-                                Dim SMSG_UPDATE_AURA_DURATION As New PacketClass(OPCODES.SMSG_UPDATE_AURA_DURATION)
-                                SMSG_UPDATE_AURA_DURATION.AddInt8(i)
-                                SMSG_UPDATE_AURA_DURATION.AddInt32(Duration)
-                                CType(auraTarget, CharacterObject).Client.Send(SMSG_UPDATE_AURA_DURATION)
-                                SMSG_UPDATE_AURA_DURATION.Dispose()
-                            End If
-                            'DONE: Update the stack if possible
-                            If CType(SPELLs(SpellID), SpellInfo).maxStack > 0 AndAlso auraTarget.ActiveSpells(i).StackCount < (CType(SPELLs(SpellID), SpellInfo).maxStack - 1) Then
-                                auraTarget.ActiveSpells(i).StackCount += 1
-                                auraTarget.SetAuraStackCount(i, auraTarget.ActiveSpells(i).StackCount)
+                'DONE: Find spell aura slot
+                For i As Integer = AuraStart To AuraEnd Step -1
+                    If (Not auraTarget.ActiveSpells(i) Is Nothing) AndAlso auraTarget.ActiveSpells(i).SpellID = SpellID Then
+                        spellCasted = i
+                        If ((Not auraTarget.ActiveSpells(i).Aura1_Info Is Nothing) AndAlso auraTarget.ActiveSpells(i).Aura1_Info Is SpellInfo) OrElse ((Not auraTarget.ActiveSpells(i).Aura2_Info Is Nothing) AndAlso auraTarget.ActiveSpells(i).Aura2_Info Is SpellInfo) OrElse ((Not auraTarget.ActiveSpells(i).Aura3_Info Is Nothing) AndAlso auraTarget.ActiveSpells(i).Aura3_Info Is SpellInfo) Then
+                            If (Not auraTarget.ActiveSpells(i).Aura1_Info Is Nothing) AndAlso auraTarget.ActiveSpells(i).Aura1_Info Is SpellInfo Then
+                                'DONE: Update the duration
+                                auraTarget.ActiveSpells(i).SpellDuration = Duration
                                 If TypeOf auraTarget Is CharacterObject Then
-                                    Dim AuraFlag_Slot As Integer = i \ 4
-                                    CType(auraTarget, CharacterObject).SetUpdateFlag(EUnitFields.UNIT_FIELD_AURAAPPLICATIONS + AuraFlag_Slot, auraTarget.ActiveSpells_Count(AuraFlag_Slot))
-                                    CType(auraTarget, CharacterObject).SendCharacterUpdate()
+                                    Dim SMSG_UPDATE_AURA_DURATION As New PacketClass(OPCODES.SMSG_UPDATE_AURA_DURATION)
+                                    SMSG_UPDATE_AURA_DURATION.AddInt8(i)
+                                    SMSG_UPDATE_AURA_DURATION.AddInt32(Duration)
+                                    CType(auraTarget, CharacterObject).Client.Send(SMSG_UPDATE_AURA_DURATION)
+                                    SMSG_UPDATE_AURA_DURATION.Dispose()
+                                End If
+                                'DONE: Update the stack if possible
+                                If CType(SPELLs(SpellID), SpellInfo).maxStack > 0 AndAlso auraTarget.ActiveSpells(i).StackCount < (CType(SPELLs(SpellID), SpellInfo).maxStack - 1) Then
+                                    auraTarget.ActiveSpells(i).StackCount += 1
+                                    auraTarget.SetAuraStackCount(i, auraTarget.ActiveSpells(i).StackCount)
+                                    If TypeOf auraTarget Is CharacterObject Then
+                                        Dim AuraFlag_Slot As Integer = i \ 4
+                                        CType(auraTarget, CharacterObject).SetUpdateFlag(EUnitFields.UNIT_FIELD_AURAAPPLICATIONS + AuraFlag_Slot, auraTarget.ActiveSpells_Count(AuraFlag_Slot))
+                                        CType(auraTarget, CharacterObject).SendCharacterUpdate()
+                                    End If
                                 End If
                             End If
-                        End If
-                        Return SpellFailedReason.CAST_NO_ERROR
-                    Else
-                        If auraTarget.ActiveSpells(i).Aura1 Is Nothing Then
-                            auraTarget.ActiveSpells(i).Aura1 = AURAs(SpellInfo.ApplyAuraIndex)
-                            auraTarget.ActiveSpells(i).Aura1_Info = SpellInfo
-                            Log.WriteLine(LogType.DEBUG, "APPLYING AURA - {0} - {1}", SpellInfo.ApplyAuraIndex, AURAs(SpellInfo.ApplyAuraIndex).Method.Name)
-                            Exit For
-                        ElseIf auraTarget.ActiveSpells(i).Aura2 Is Nothing Then
-                            auraTarget.ActiveSpells(i).Aura2 = AURAs(SpellInfo.ApplyAuraIndex)
-                            auraTarget.ActiveSpells(i).Aura2_Info = SpellInfo
-                            Log.WriteLine(LogType.DEBUG, "APPLYING AURA - {0} - {1}", SpellInfo.ApplyAuraIndex, AURAs(SpellInfo.ApplyAuraIndex).Method.Name)
-                            Exit For
-                        ElseIf auraTarget.ActiveSpells(i).Aura3 Is Nothing Then
-                            auraTarget.ActiveSpells(i).Aura3 = AURAs(SpellInfo.ApplyAuraIndex)
-                            auraTarget.ActiveSpells(i).Aura3_Info = SpellInfo
-                            Log.WriteLine(LogType.DEBUG, "APPLYING AURA - {0} - {1}", SpellInfo.ApplyAuraIndex, AURAs(SpellInfo.ApplyAuraIndex).Method.Name)
-                            Exit For
+                            Return SpellFailedReason.CAST_NO_ERROR
                         Else
-                            spellCasted = SLOT_NO_SPACE
+                            If auraTarget.ActiveSpells(i).Aura1 Is Nothing Then
+                                auraTarget.ActiveSpells(i).Aura1 = AURAs(SpellInfo.ApplyAuraIndex)
+                                auraTarget.ActiveSpells(i).Aura1_Info = SpellInfo
+                                Log.WriteLine(LogType.DEBUG, "APPLYING AURA - {0} - {1}", SpellInfo.ApplyAuraIndex, AURAs(SpellInfo.ApplyAuraIndex).Method.Name)
+                                Exit For
+                            ElseIf auraTarget.ActiveSpells(i).Aura2 Is Nothing Then
+                                auraTarget.ActiveSpells(i).Aura2 = AURAs(SpellInfo.ApplyAuraIndex)
+                                auraTarget.ActiveSpells(i).Aura2_Info = SpellInfo
+                                Log.WriteLine(LogType.DEBUG, "APPLYING AURA - {0} - {1}", SpellInfo.ApplyAuraIndex, AURAs(SpellInfo.ApplyAuraIndex).Method.Name)
+                                Exit For
+                            ElseIf auraTarget.ActiveSpells(i).Aura3 Is Nothing Then
+                                auraTarget.ActiveSpells(i).Aura3 = AURAs(SpellInfo.ApplyAuraIndex)
+                                auraTarget.ActiveSpells(i).Aura3_Info = SpellInfo
+                                Log.WriteLine(LogType.DEBUG, "APPLYING AURA - {0} - {1}", SpellInfo.ApplyAuraIndex, AURAs(SpellInfo.ApplyAuraIndex).Method.Name)
+                                Exit For
+                            Else
+                                spellCasted = SLOT_NO_SPACE
+                            End If
                         End If
                     End If
-                End If
-            Next
+                Next
 
-            'DONE: Not found same active aura on that player, create new
-            If spellCasted = SLOT_NOT_FOUND Then auraTarget.AddAura(SpellID, Duration, Caster)
-            If spellCasted = SLOT_CREATE_NEW Then spellCasted = SLOT_NO_SPACE
-            If spellCasted < 0 Then spellCasted -= 1
-        Loop While spellCasted < 0
+                'DONE: Not found same active aura on that player, create new
+                If spellCasted = SLOT_NOT_FOUND Then auraTarget.AddAura(SpellID, Duration, Caster)
+                If spellCasted = SLOT_CREATE_NEW Then spellCasted = SLOT_NO_SPACE
+                If spellCasted < 0 Then spellCasted -= 1
+            Loop While spellCasted < 0
 
-        'DONE: No more space for auras
-        If spellCasted = SLOT_NO_SPACE Then Return SpellFailedReason.CAST_FAIL_TRY_AGAIN
+            'DONE: No more space for auras
+            If spellCasted = SLOT_NO_SPACE Then Return SpellFailedReason.CAST_FAIL_TRY_AGAIN
 
-        'DONE: Cast the aura
-        AURAs(SpellInfo.ApplyAuraIndex).Invoke(auraTarget, Caster, SpellInfo, SpellID, 1, AuraAction.AURA_ADD)
+            'DONE: Cast the aura
+            AURAs(SpellInfo.ApplyAuraIndex).Invoke(auraTarget, Caster, SpellInfo, SpellID, 1, AuraAction.AURA_ADD)
+
+        Catch e As Exception
+            Log.WriteLine(LogType.CRITICAL, "Error while applying aura for spell {0}:{1}", SpellID, vbNewLine & e.ToString)
+        End Try
 
         Return SpellFailedReason.CAST_NO_ERROR
     End Function
@@ -3355,7 +3324,7 @@ SkipShapeShift:
         Dim selectedX As Single = Caster.positionX + Math.Cos(Caster.orientation) * SpellInfo.GetRadius
         Dim selectedY As Single = Caster.positionY + Math.Sin(Caster.orientation) * SpellInfo.GetRadius
         Dim selectedZ As Single = GetZCoord(selectedX, selectedY, Caster.positionZ, Caster.MapID)
-        If Caster.positionZ - selectedZ > SpellInfo.GetRadius Then selectedZ = Caster.positionZ - SpellInfo.GetRadius
+        If Math.Abs(Caster.positionZ - selectedZ) > SpellInfo.GetRadius Then selectedZ = Caster.positionZ - SpellInfo.GetRadius
         If TypeOf Caster Is CharacterObject Then
             CType(Caster, CharacterObject).Teleport(selectedX, selectedY, selectedZ, Caster.orientation, Caster.MapID)
         Else
@@ -3464,7 +3433,6 @@ SkipShapeShift:
                 'CAST_FAIL_CANT_START_DUEL_STEALTHED
                 'CAST_FAIL_NO_DUELING_HERE
 
-
                 'DONE: Get middle coordinate
                 Dim flagX As Single = Caster.positionX + (Target.unitTarget.positionX - Caster.positionX) / 2
                 Dim flagY As Single = Caster.positionY + (Target.unitTarget.positionY - Caster.positionY) / 2
@@ -3518,12 +3486,6 @@ SkipShapeShift:
 
         Return SpellFailedReason.CAST_NO_ERROR
     End Function
-
-
-
-
-
-
 
     Public Function GetEnemyAtPoint(ByRef c As BaseUnit, ByVal PosX As Single, ByVal PosY As Single, ByVal PosZ As Single, ByVal Distance As Single) As List(Of BaseUnit)
         Dim result As New List(Of BaseUnit)
@@ -3647,7 +3609,6 @@ SkipShapeShift:
 
 #End Region
 #Region "WS.Spells.SpellAuraEffects"
-
 
     Public Enum AuraAction As Byte
         AURA_ADD
@@ -4130,7 +4091,6 @@ SkipShapeShift:
 
     End Sub
 
-
     Public Sub SPELL_AURA_GHOST(ByRef Target As BaseUnit, ByRef Caster As BaseUnit, ByRef EffectInfo As SpellEffect, ByVal SpellID As Integer, ByVal StackCount As Integer, ByVal Action As AuraAction)
         If Not TypeOf Target Is CharacterObject Then Exit Sub
 
@@ -4564,7 +4524,6 @@ SkipShapeShift:
                 Exit Sub
         End Select
     End Sub
-
 
     Public Sub SPELL_AURA_MOUNTED(ByRef Target As BaseUnit, ByRef Caster As BaseUnit, ByRef EffectInfo As SpellEffect, ByVal SpellID As Integer, ByVal StackCount As Integer, ByVal Action As AuraAction)
 
@@ -5206,7 +5165,6 @@ SkipShapeShift:
 
     End Sub
 
-
     Public Sub SPELL_AURA_MOD_BASE_RESISTANCE(ByRef Target As BaseUnit, ByRef Caster As BaseUnit, ByRef EffectInfo As SpellEffect, ByVal SpellID As Integer, ByVal StackCount As Integer, ByVal Action As AuraAction)
         If Not TypeOf Target Is CharacterObject Then Exit Sub
 
@@ -5433,7 +5391,6 @@ SkipShapeShift:
 
         End Select
 
-
         If TypeOf Target Is CharacterObject Then
             CType(Target, CharacterObject).SetUpdateFlag(EUnitFields.UNIT_FIELD_ATTACK_POWER, CType(Target, CharacterObject).AttackPower)
             CType(Target, CharacterObject).SetUpdateFlag(EUnitFields.UNIT_FIELD_ATTACK_POWER_MODS, CType(Target, CharacterObject).AttackPowerMods)
@@ -5458,7 +5415,6 @@ SkipShapeShift:
                 Target.AttackPowerModsRanged -= EffectInfo.GetValue(Caster.Level)
 
         End Select
-
 
         If TypeOf Target Is CharacterObject Then
             CType(Target, CharacterObject).SetUpdateFlag(EUnitFields.UNIT_FIELD_ATTACK_POWER, CType(Target, CharacterObject).AttackPower)
@@ -5683,12 +5639,9 @@ SkipShapeShift:
 
                 CType(Target, CreatureObject).aiScript.Reset()
 
-
         End Select
 
     End Sub
-
-
 
     Public Sub SPELL_AURA_MOD_THREAT(ByRef Target As BaseUnit, ByRef Caster As BaseUnit, ByRef EffectInfo As SpellEffect, ByVal SpellID As Integer, ByVal StackCount As Integer, ByVal Action As AuraAction)
 
@@ -5729,7 +5682,6 @@ SkipShapeShift:
                 End If
         End Select
 
-
         If TypeOf Target Is CharacterObject Then
             For Each CreatureGUID As ULong In CType(Target, CharacterObject).creaturesNear
                 If Not CType(WORLD_CREATUREs(CreatureGUID), CreatureObject).aiScript Is Nothing AndAlso _
@@ -5760,9 +5712,6 @@ SkipShapeShift:
         End Select
 
     End Sub
-
-
-
 
 #End Region
 
@@ -5831,7 +5780,6 @@ SkipShapeShift:
         End If
         Loser.SendCharacterUpdate(True)
         Winner.SendCharacterUpdate(True)
-
 
         'DONE: Notify client
         Dim packet As New PacketClass(OPCODES.SMSG_DUEL_WINNER)
@@ -5912,7 +5860,6 @@ SkipShapeShift:
         Client.Character.DuelPartner = Nothing
     End Sub
 
-
 #End Region
 #Region "WS.Spells.Handlers"
     Public Sub On_CMSG_CAST_SPELL(ByRef packet As PacketClass, ByRef Client As ClientClass)
@@ -5930,14 +5877,13 @@ SkipShapeShift:
             Exit Sub
         End If
 
-
         DumpPacket(packet.Data, Client)
         'TODO: In duel disable
 
         Dim Targets As New SpellTargets
-        Targets.ReadTargets(packet, CType(Client.Character, CharacterObject))
         Dim castResult As SpellFailedReason = SpellFailedReason.CAST_FAIL_ERROR
         Try
+            Targets.ReadTargets(packet, CType(Client.Character, CharacterObject))
             castResult = CType(SPELLs(spellID), SpellInfo).CanCast(Client.Character, Targets)
             If Client.Character.spellCastState <> SpellCastState.SPELL_STATE_IDLE Then castResult = SpellFailedReason.CAST_FAIL_SPELL_IN_PROGRESS
             If castResult = SpellFailedReason.CAST_NO_ERROR Then
@@ -6075,7 +6021,6 @@ SkipShapeShift:
         End Try
     End Sub
 
-
 #End Region
 
 #Region "WS.Spells.Loot"
@@ -6100,6 +6045,4 @@ SkipShapeShift:
         CType(WORLD_GAMEOBJECTs(GUID), GameObjectObject).LootObject(CType(Player, CharacterObject), LootingType)
     End Sub
 #End Region
-
-
 End Module

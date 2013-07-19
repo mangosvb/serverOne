@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -6,11 +7,10 @@
     <ProjectGuid>{7A2852DB-ED6C-4024-B6C6-B4747BA1A741}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ApplicationIcon>
-    </ApplicationIcon>
+    <ApplicationIcon>mangostools_Icon_64x64.ico</ApplicationIcon>
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
-    <AssemblyName>Spurious.WorldCluster</AssemblyName>
+    <AssemblyName>WorldCluster</AssemblyName>
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
     <AssemblyOriginatorKeyMode>None</AssemblyOriginatorKeyMode>
@@ -22,15 +22,17 @@
     <OptionCompare>Binary</OptionCompare>
     <OptionExplicit>On</OptionExplicit>
     <OptionStrict>Off</OptionStrict>
-    <RootNamespace>Spurious.WorldCluster</RootNamespace>
+    <RootNamespace>mangosVB.WorldCluster</RootNamespace>
     <StartupObject>Sub Main</StartupObject>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <MyType>Console</MyType>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <OldToolsVersion>2.0</OldToolsVersion>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -43,7 +45,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -64,7 +65,7 @@
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>1</WarningLevel>
-    <NoWarn>41999,42016</NoWarn>
+    <NoWarn>41999,42016,42353,42354,42355</NoWarn>
     <DebugType>full</DebugType>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <WarningsAsErrors>42020,42021,42022,42105,42106,42107</WarningsAsErrors>
@@ -86,7 +87,7 @@
     <RemoveIntegerChecks>true</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>1</WarningLevel>
-    <NoWarn>41999,42016</NoWarn>
+    <NoWarn>41999,42016,42353,42354,42355</NoWarn>
     <DebugType>none</DebugType>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <WarningsAsErrors>42020,42021,42022,42105,42106,42107</WarningsAsErrors>
@@ -95,13 +96,13 @@
     <DebugSymbols>true</DebugSymbols>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
-    <OutputPath>bin\x64\Debug\</OutputPath>
+    <OutputPath>..\..\ServerFiles\</OutputPath>
     <DefineConstants>LINUX=false
     </DefineConstants>
     <BaseAddress>285212672</BaseAddress>
     <Optimize>true</Optimize>
     <WarningLevel>1</WarningLevel>
-    <NoWarn>41999,42016</NoWarn>
+    <NoWarn>41999,42016,42353,42354,42355</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <WarningsAsErrors>42020,42021,42022,42105,42106,42107</WarningsAsErrors>
@@ -109,13 +110,13 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <DefineTrace>true</DefineTrace>
-    <OutputPath>bin\x64\Release\</OutputPath>
+    <OutputPath>..\..\ServerFiles\</OutputPath>
     <DefineConstants>LINUX=false
     </DefineConstants>
     <RemoveIntegerChecks>true</RemoveIntegerChecks>
     <BaseAddress>285212672</BaseAddress>
     <WarningLevel>1</WarningLevel>
-    <NoWarn>41999,42016</NoWarn>
+    <NoWarn>41999,42016,42353,42354,42355</NoWarn>
     <PlatformTarget>x64</PlatformTarget>
     <WarningsAsErrors>42020,42021,42022,42105,42106,42107</WarningsAsErrors>
     <UseVSHostingProcess>false</UseVSHostingProcess>
@@ -124,13 +125,13 @@
     <DebugSymbols>true</DebugSymbols>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
-    <OutputPath>bin\x86\Debug\</OutputPath>
+    <OutputPath>..\..\ServerFiles\</OutputPath>
     <DefineConstants>LINUX=false
     </DefineConstants>
     <BaseAddress>285212672</BaseAddress>
     <Optimize>true</Optimize>
     <WarningLevel>1</WarningLevel>
-    <NoWarn>41999,42016</NoWarn>
+    <NoWarn>41999,42016,42353,42354,42355</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <WarningsAsErrors>42020,42021,42022,42105,42106,42107</WarningsAsErrors>
@@ -138,27 +139,25 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DefineTrace>true</DefineTrace>
-    <OutputPath>bin\x86\Release\</OutputPath>
+    <OutputPath>..\..\ServerFiles\</OutputPath>
     <DefineConstants>LINUX=false
     </DefineConstants>
     <RemoveIntegerChecks>true</RemoveIntegerChecks>
     <BaseAddress>285212672</BaseAddress>
     <WarningLevel>1</WarningLevel>
-    <NoWarn>41999,42016</NoWarn>
+    <NoWarn>41999,42016,42353,42354,42355</NoWarn>
     <PlatformTarget>x86</PlatformTarget>
     <WarningsAsErrors>42020,42021,42022,42105,42106,42107</WarningsAsErrors>
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.84.0.0, Culture=neutral, PublicKeyToken=1b03e6acf1164f73">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Required\ICSharpCode.SharpZipLib.dll</HintPath>
+      <HintPath>..\..\ServerFiles\ICSharpCode.SharpZipLib.dll</HintPath>
       <Private>False</Private>
-    </Reference>
-    <Reference Include="Spurious.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Required\Spurious.Common.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -216,6 +215,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
       <Visible>False</Visible>
       <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
@@ -231,14 +235,33 @@
       <ProductName>.NET Framework 3.5</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
       <Visible>False</Visible>
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="My Project\" />
+    <None Include="app.config" />
+    <None Include="My Project\app.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.vbproj">
+      <Project>{0697622C-938D-4486-A3A4-D438D0B7503F}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ICSharpCode.SharpZipLib.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="mangostools_Icon_64x64.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <PropertyGroup>

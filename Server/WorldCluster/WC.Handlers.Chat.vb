@@ -1,5 +1,5 @@
-﻿' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+﻿'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -16,21 +16,17 @@
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
 
-
 Imports System.Threading
-Imports Spurious.Common
-Imports Spurious.Common.BaseWriter
-
+Imports mangosVB.Common
+Imports mangosVB.Common.BaseWriter
 
 Public Module WC_Handlers_Chat
-
 
     Public Sub On_CMSG_CHAT_IGNORED(ByRef packet As PacketClass, ByRef Client As ClientClass)
         packet.GetInt16()
 
         Dim GUID As ULong = packet.GetUInt64
         Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_CHAT_IGNORED [0x{2}]", Client.IP, Client.Port, GUID)
-
 
         If CHARACTERs.ContainsKey(GUID) Then
             Dim response As PacketClass = BuildChatMessage(Client.Character.GUID, "", ChatMsg.CHAT_MSG_IGNORED, LANGUAGES.LANG_UNIVERSAL, 0, "")
@@ -100,7 +96,6 @@ Public Module WC_Handlers_Chat
                 End If
                 Exit Select
 
-
             Case ChatMsg.CHAT_MSG_PARTY, ChatMsg.CHAT_MSG_RAID, ChatMsg.CHAT_MSG_RAID_LEADER, ChatMsg.CHAT_MSG_RAID_WARNING, ChatMsg.CHAT_MSG_BATTLEGROUND_LEADER, ChatMsg.CHAT_MSG_BATTLEGROUND
                 Dim Message As String = packet.GetString()
 
@@ -113,7 +108,6 @@ Public Module WC_Handlers_Chat
                 'DONE: Broadcast to party
                 Client.Character.Group.SendChatMessage(Client.Character, Message, msgLanguage, msgType)
                 Exit Select
-
 
             Case ChatMsg.CHAT_MSG_AFK, ChatMsg.CHAT_MSG_DND
                 Client.Character.GetWorld.ClientPacket(Client.Index, packet.Data)
@@ -134,9 +128,6 @@ Public Module WC_Handlers_Chat
         End Select
 
     End Sub
-
-
-
 
     Public Sub On_CMSG_JOIN_CHANNEL(ByRef packet As PacketClass, ByRef Client As ClientClass)
         If (packet.Data.Length - 1) < 12 Then Exit Sub
@@ -407,6 +398,5 @@ Public Module WC_Handlers_Chat
 
         Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_CLEAR_CHANNEL_WATCH [{2}]", Client.IP, Client.Port, ChannelName)
     End Sub
-
 
 End Module

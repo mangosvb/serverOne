@@ -1,5 +1,5 @@
-' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -18,12 +18,11 @@
 
 Imports System.Threading
 Imports System.Runtime.CompilerServices
-Imports Spurious.Common.BaseWriter
+Imports mangosVB.Common.BaseWriter
 
 Module WS_CharMovement
 
 #Region "WS.CharacterMovement.MovementHandlers"
-
 
     Public Enum MovementFlags As Integer
         MOVEMENTFLAG_NONE = &H0
@@ -76,7 +75,6 @@ Module WS_CharMovement
             SetZCoord_PP(Client.Character.positionX, Client.Character.positionY, Client.Character.MapID, Client.Character.positionZ)
         End If
 #End If
-
 
         If HaveFlags(Client.Character.movementFlags, MovementFlags.MOVEMENTFLAG_ONTRANSPORT) Then
             Dim transportGUID As ULong = packet.GetUInt64
@@ -320,7 +318,6 @@ Module WS_CharMovement
                 Exit Sub
             End If
 
-
             'DONE: Handling all other scripted triggers
             If AreaTriggers.ContainsMethod("AreaTriggers", String.Format("HandleAreaTrigger_{0}", triggerID)) Then
                 AreaTriggers.Invoke("AreaTriggers", String.Format("HandleAreaTrigger_{0}", triggerID), New Object() {Client.Character.GUID})
@@ -475,10 +472,8 @@ Module WS_CharMovement
         Next
     End Sub
 
-
 #End Region
 #Region "WS.CharacterMovement.CellFramework"
-
 
     Public Sub MAP_Load(ByVal x As Byte, ByVal y As Byte, ByVal Map As Integer)
         For i As Short = -1 To 1
@@ -649,7 +644,6 @@ Module WS_CharMovement
         Character.playersNear.Clear()
         Character.SeenBy.Clear()
 
-
         'DONE: Removing from creatures wich can see it
         list = Character.creaturesNear.ToArray
         For Each GUID As ULong In list
@@ -796,7 +790,6 @@ Module WS_CharMovement
             UpdateCorpseObjectsInCell(Maps(Character.MapID).Tiles(Character.CellX, Character.CellY), Character)
         End If
 
-
         If CellXAdd <> 0 Then
             'DONE: Load cell if needed
             If Maps(Character.MapID).Tiles(Character.CellX + CellXAdd, Character.CellY) Is Nothing Then
@@ -816,7 +809,6 @@ Module WS_CharMovement
             End If
         End If
 
-
         If CellYAdd <> 0 Then
             'DONE: Load cell if needed
             If Maps(Character.MapID).Tiles(Character.CellX, Character.CellY + CellYAdd) Is Nothing Then
@@ -835,7 +827,6 @@ Module WS_CharMovement
                 UpdateCorpseObjectsInCell(Maps(Character.MapID).Tiles(Character.CellX, Character.CellY + CellYAdd), Character)
             End If
         End If
-
 
         If CellYAdd <> 0 AndAlso CellXAdd <> 0 Then
             'DONE: Load cell if needed
@@ -1046,7 +1037,6 @@ Module WS_CharMovement
 
         End With
     End Sub
-
 
 #End Region
 

@@ -1,5 +1,5 @@
-' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -16,8 +16,7 @@
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
 
-Imports Spurious.Common.BaseWriter
-
+Imports mangosVB.Common.BaseWriter
 
 Public Module WS_Quests
     Const QUEST_OBJECTIVES_COUNT As Integer = 3
@@ -41,7 +40,7 @@ Public Module WS_Quests
         DIALOG_STATUS_REWARD2 = 7                ' Quest has been finished. - Yellow Question ? Mark (No yellow dot on the minimap?)
         DIALOG_STATUS_REWARD = 8                ' Quest has been finished. - Yellow Question ? Mark
     End Enum
-    Public Enum QuestObjectiveFlag 'These flags are custom and are only used for Spurious
+    Public Enum QuestObjectiveFlag 'These flags are custom and are only used for MangosVB
         QUEST_OBJECTIVE_KILL = 1 'You have to kill creatures
         QUEST_OBJECTIVE_EXPLORE = 2 'You have to explore an area
         QUEST_OBJECTIVE_ESCORT = 4 'You have to escort someone
@@ -112,8 +111,6 @@ Public Module WS_Quests
         QUEST_PARTY_MSG_HAVE_QUEST = 7
         QUEST_PARTY_MSG_FINISH_QUEST = 8
     End Enum
-
-
 
 #Region "Quests.DataTypes"
 
@@ -292,8 +289,6 @@ Public Module WS_Quests
         End Sub
     End Class
 
-
-
     'WARNING: These are used only for CharManagment
     Public Class BaseQuest
         Public ID As Integer = 0
@@ -396,6 +391,7 @@ Public Module WS_Quests
             'TODO: Fix a timer or something so that the quest really expires when it does
             If Quest.TimeLimit > 0 Then TimeEnd = GetTimestamp(Now) + Quest.TimeLimit 'The time the quest expires
         End Sub
+
         Public Sub UpdateItemCount(ByRef c As CharacterObject)
             'DONE: Update item count at login
             For i As Byte = 0 To 3
@@ -411,6 +407,7 @@ Public Module WS_Quests
             'DONE: Check if the quest is completed
             IsCompleted()
         End Sub
+
         Public Sub Initialize(ByRef c As CharacterObject)
             Dim i As Byte
             If ObjectivesDeliver > 0 Then
@@ -438,10 +435,12 @@ Public Module WS_Quests
 
             IsCompleted()
         End Sub
+
         Public Overridable Function IsCompleted() As Boolean
             Complete = (ObjectivesCount(0) <= Progress(0) AndAlso ObjectivesCount(1) <= Progress(1) AndAlso ObjectivesCount(2) <= Progress(2) AndAlso ObjectivesCount(3) <= Progress(3) AndAlso ObjectivesItemCount(0) <= ProgressItem(0) AndAlso ObjectivesItemCount(1) <= ProgressItem(1) AndAlso ObjectivesItemCount(2) <= ProgressItem(2) AndAlso ObjectivesItemCount(3) <= ProgressItem(3) AndAlso Explored AndAlso Failed = False)
             Return Complete
         End Function
+
         Public Overridable Function GetState(Optional ByVal ForSave As Boolean = False) As Integer
             Dim tmpProgress As Integer = 0
             If ForSave Then
@@ -460,6 +459,7 @@ Public Module WS_Quests
             End If
             Return tmpProgress
         End Function
+
         Public Overridable Sub LoadState(ByVal state As Integer)
             Progress(0) = state And &H3F
             Progress(1) = (state >> 6) And &H3F
@@ -469,6 +469,7 @@ Public Module WS_Quests
             Complete = (((state >> 25) And &H1) = 1)
             Failed = (((state >> 26) And &H1) = 1)
         End Sub
+
         Public Sub AddKill(ByVal c As CharacterObject, ByVal index As Byte, ByVal oGUID As ULong)
             Progress(index) += 1
             IsCompleted()
@@ -476,6 +477,7 @@ Public Module WS_Quests
 
             SendQuestMessageAddKill(c.Client, ID, oGUID, ObjectivesObject(index), Progress(index), ObjectivesCount(index))
         End Sub
+
         Public Sub AddCast(ByVal c As CharacterObject, ByVal index As Byte, ByVal oGUID As ULong)
             Progress(index) += 1
             IsCompleted()
@@ -483,6 +485,7 @@ Public Module WS_Quests
 
             SendQuestMessageAddKill(c.Client, ID, oGUID, ObjectivesObject(index), Progress(index), ObjectivesCount(index))
         End Sub
+
         Public Sub AddExplore(ByVal c As CharacterObject)
             Explored = True
             IsCompleted()
@@ -490,6 +493,7 @@ Public Module WS_Quests
 
             SendQuestMessageComplete(c.Client, ID)
         End Sub
+
         Public Sub AddItem(ByVal c As CharacterObject, ByVal index As Byte, ByVal Count As Byte)
             If ProgressItem(index) + Count > ObjectivesItemCount(index) Then Count = ObjectivesItemCount(index) - ProgressItem(index)
             ProgressItem(index) += Count
@@ -498,6 +502,7 @@ Public Module WS_Quests
 
             SendQuestMessageAddItem(c.Client, ObjectivesItem(index), Count)
         End Sub
+
         Public Sub RemoveItem(ByVal c As CharacterObject, ByVal index As Byte, ByVal Count As Byte)
             If CInt(ProgressItem(index)) - CInt(Count) < 0 Then Count = ProgressItem(index)
             ProgressItem(index) -= Count
@@ -505,6 +510,7 @@ Public Module WS_Quests
             c.TalkUpdateQuest(Slot)
         End Sub
     End Class
+
     Public Class BaseQuestScripted
         Inherits BaseQuest
         Public Overridable Sub OnQuestStart(ByRef c As CharacterObject)
@@ -529,7 +535,6 @@ Public Module WS_Quests
 #End Region
 #Region "Quests.HelpingSubs"
 
-
     Public Function GetQuestMenu(ByRef c As CharacterObject, ByVal GUID As ULong) As QuestMenu
         Dim QuestMenu As New QuestMenu
 
@@ -541,7 +546,7 @@ Public Module WS_Quests
         '"AND (q.Required_Quest = 0 OR EXISTS(SELECT * FROM characters_quests WHERE char_guid = {2} AND quest_status = -1 AND quest_id = q.Required_Quest));", _
         'WORLD_CREATUREs(GUID).ID, c.Level + 1, c.GUID), MySQLQuery)
         Database.Query(String.Format("SELECT s.questid, q.Title, q.Level_Normal FROM queststarters s LEFT JOIN quests q ON (s.questid=q.id) WHERE s.type = {0} AND s.typeid = {1} AND q.Level_Start <= {2} AND (q.Required_Race = 0 OR (Required_Race & {4}) > 0) AND (q.Required_Class = 0 OR (Required_Class & {5}) > 0) " & _
-            "AND NOT EXISTS(SELECT * FROM characters_quests WHERE char_guid = {3} AND quest_id = q.id) AND (q.Required_Quest1 = 0 OR EXISTS(SELECT * FROM characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest1)) " & _
+            "AND NOT EXISTS((SELECT * FROM characters_quests WHERE char_guid = {3} AND quest_id = q.id) AND (q.Required_Quest1 = 0 OR EXISTS(SELECT * FROM characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest1)) " & _
             "AND (q.Required_Quest2 = 0 OR EXISTS(SELECT * FROM characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest2)) AND (q.Required_Quest3 = 0 OR EXISTS(SELECT * FROM characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest3)) " & _
             "AND (q.Required_Quest4 = 0 OR EXISTS(SELECT * FROM characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest4));", _
             CType(QuestGiverType.QUEST_OBJECTTYPE_CREATURE, Byte), CType(WORLD_CREATUREs(GUID), CreatureObject).ID, c.Level, c.GUID, 1 << (c.Race - 1), 1 << (c.Classe - 1)), MySQLQuery)
@@ -563,6 +568,7 @@ Public Module WS_Quests
 
         Return QuestMenu
     End Function
+
     Public Function GetQuestMenuGO(ByRef c As CharacterObject, ByVal GUID As ULong) As QuestMenu
         Dim QuestMenu As New QuestMenu
 
@@ -573,7 +579,7 @@ Public Module WS_Quests
         '"AND (q.Required_Quest = 0 OR EXISTS(SELECT * FROM characters_quests WHERE char_guid = {2} AND quest_status = -1 AND quest_id = q.Required_Quest));", _
         'WORLD_GAMEOBJECTs(GUID).ID, c.Level + 1, c.GUID), MySQLQuery)
         Database.Query(String.Format("SELECT s.questid, q.Title, q.Level_Normal FROM queststarters s LEFT JOIN quests q ON (s.questid=q.id) WHERE s.type = {0} AND s.typeid = {1} AND q.Level_Start <= {2} AND (q.Required_Race = 0 OR (Required_Race & {4}) > 0) AND (q.Required_Class = 0 OR (Required_Class & {5}) > 0) " & _
-            "AND NOT EXISTS(SELECT * FROM characters_quests WHERE char_guid = {3} AND quest_id = q.id) AND (q.Required_Quest1 = 0 OR EXISTS(SELECT * FROM characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest1)) " & _
+            "AND NOT EXISTS((SELECT * FROM characters_quests WHERE char_guid = {3} AND quest_id = q.id) AND (q.Required_Quest1 = 0 OR EXISTS(SELECT * FROM characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest1)) " & _
             "AND (q.Required_Quest2 = 0 OR EXISTS(SELECT * FROM characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest2)) AND (q.Required_Quest3 = 0 OR EXISTS(SELECT * FROM characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest3)) " & _
             "AND (q.Required_Quest4 = 0 OR EXISTS(SELECT * FROM characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest4));", _
             CType(QuestGiverType.QUEST_OBJECTTYPE_GAMEOBJECT, Byte), WORLD_GAMEOBJECTs(GUID).ID, c.Level, c.GUID, 1 << (c.Race - 1), 1 << (c.Classe - 1)), MySQLQuery)
@@ -595,6 +601,7 @@ Public Module WS_Quests
 
         Return QuestMenu
     End Function
+
     Public Sub SendQuestMenu(ByRef c As CharacterObject, ByVal GUID As ULong, Optional ByVal Title As String = "Available quests", Optional ByVal QuestMenu As QuestMenu = Nothing)
         If QuestMenu Is Nothing Then
             QuestMenu = GetQuestMenu(c, GUID)
@@ -685,6 +692,7 @@ Public Module WS_Quests
         client.Send(packet)
         packet.Dispose()
     End Sub
+
     Public Sub SendQuest(ByRef client As ClientClass, ByRef Quest As QuestInfo)
         Dim packet As New PacketClass(OPCODES.SMSG_QUEST_QUERY_RESPONSE)
         packet.AddInt32(Quest.ID)
@@ -783,6 +791,7 @@ Public Module WS_Quests
         client.Send(packet)
         packet.Dispose()
     End Sub
+
     Public Sub SendQuestMessageAddKill(ByRef client As ClientClass, ByVal questID As Integer, ByVal killGUID As ULong, ByVal killID As Integer, ByVal killCurrentCount As Integer, ByVal killCount As Integer)
         'Message: %s slain: %d/%d
         Dim packet As New PacketClass(OPCODES.SMSG_QUESTUPDATE_ADD_KILL)
@@ -795,6 +804,7 @@ Public Module WS_Quests
         client.Send(packet)
         packet.Dispose()
     End Sub
+
     Public Sub SendQuestMessageFailed(ByRef client As ClientClass, ByVal QuestID As Integer)
         'Message: ?
         Dim packet As New PacketClass(OPCODES.SMSG_QUESTGIVER_QUEST_FAILED)
@@ -803,6 +813,7 @@ Public Module WS_Quests
         client.Send(packet)
         packet.Dispose()
     End Sub
+
     Public Sub SendQuestMessageFailedTimer(ByRef client As ClientClass, ByVal QuestID As Integer)
         'Message: ?
         Dim packet As New PacketClass(OPCODES.SMSG_QUESTUPDATE_FAILEDTIMER)
@@ -810,6 +821,7 @@ Public Module WS_Quests
         client.Send(packet)
         packet.Dispose()
     End Sub
+
     Public Sub SendQuestMessageComplete(ByRef client As ClientClass, ByVal QuestID As Integer)
         'Message: Objective Complete.
         Dim packet As New PacketClass(OPCODES.SMSG_QUESTUPDATE_COMPLETE)
@@ -837,6 +849,7 @@ Public Module WS_Quests
         client.Send(packet)
         packet.Dispose()
     End Sub
+
     Public Sub SendQuestReward(ByRef client As ClientClass, ByRef Quest As QuestInfo, ByVal GUID As ULong, ByRef q As BaseQuest)
         Dim packet As New PacketClass(OPCODES.SMSG_QUESTGIVER_OFFER_REWARD)
 
@@ -895,6 +908,7 @@ Public Module WS_Quests
         client.Send(packet)
         packet.Dispose()
     End Sub
+
     Public Sub SendQuestRequireItems(ByRef client As ClientClass, ByRef Quest As QuestInfo, ByVal GUID As ULong, ByRef q As BaseQuest)
         Dim packet As New PacketClass(OPCODES.SMSG_QUESTGIVER_REQUEST_ITEMS)
 
@@ -956,7 +970,6 @@ Public Module WS_Quests
         packet.Dispose()
     End Sub
 
-
     Public Sub LoadQuests(ByRef c As CharacterObject)
         Dim cQuests As New DataTable
         Database.Query(String.Format("SELECT * FROM characters_quests q WHERE q.char_guid = {0} AND q.quest_status > -1 LIMIT 25;", c.GUID), cQuests)
@@ -976,6 +989,7 @@ Public Module WS_Quests
         Next
 
     End Sub
+
     Public Sub CreateQuest(ByRef q As BaseQuest, ByRef tmpQuest As QuestInfo)
         If tmpQuest.QuestScript <> "" Then
             Dim tmpScript As New ScriptedObject("scripts\quests\" & Replace(tmpQuest.QuestScript, """", "'") & ".vb", "", True)
@@ -988,7 +1002,6 @@ Public Module WS_Quests
 
 #End Region
 #Region "Quests.Events"
-
 
     'DONE: Kill quest events
     Public Sub OnQuestKill(ByRef c As CharacterObject, ByRef Creature As CreatureObject)
@@ -1017,7 +1030,6 @@ Public Module WS_Quests
                 End If
             End If
         Next i
-
 
         Exit Sub  'For now next is disabled
 
@@ -1169,10 +1181,12 @@ Public Module WS_Quests
 
         'TODO: Check for quest loots for adding to looted creature
     End Sub
+
     Public Sub OnQuestAddQuestLoot(ByRef c As CharacterObject, ByRef GameObject As GameObjectObject, ByRef Loot As LootObject)
         'HANDLERS: None
         'TODO: Check for quest loots for adding to looted gameObject
     End Sub
+
     Public Sub OnQuestAddQuestLoot(ByRef c As CharacterObject, ByRef Character As CharacterObject, ByRef Loot As LootObject)
         'HANDLERS: None
         'TODO: Check for quest loots for adding to looted player (used only in battleground?)
@@ -1184,7 +1198,6 @@ Public Module WS_Quests
 
         If Count = 0 Then Count = 1
         Dim i As Integer, j As Byte
-
 
         'DONE: Check quests needing that item
         For i = 0 To QUEST_SLOTS
@@ -1206,12 +1219,12 @@ Public Module WS_Quests
             End If
         Next i
     End Sub
+
     Public Sub OnQuestItemRemove(ByRef c As CharacterObject, ByVal ItemID As Integer, ByVal Count As Byte)
         'HANDLERS: Added to delete sub
 
         If Count = 0 Then Count = 1
         Dim i As Integer, j As Byte
-
 
         'DONE: Check quests needing that item
         For i = 0 To QUEST_SLOTS
@@ -1257,10 +1270,9 @@ Public Module WS_Quests
         Next i
     End Sub
 
-
 #End Region
-#Region "Quests.OpcodeHandlers"
 
+#Region "Quests.OpcodeHandlers"
 
     Public Function GetQuestgiverStatus(ByVal c As CharacterObject, ByVal cGUID As ULong) As QuestgiverStatus
         'DONE: Invoke scripted quest status
@@ -1330,6 +1342,7 @@ Public Module WS_Quests
 
         Return Status
     End Function
+
     Public Sub On_CMSG_QUESTGIVER_STATUS_QUERY(ByRef packet As PacketClass, ByRef Client As ClientClass)
         Try
             If (packet.Data.Length - 1) < 13 Then Exit Sub
@@ -1424,6 +1437,7 @@ Public Module WS_Quests
             Log.WriteLine(LogType.CRITICAL, "Error when sending quest menu.{0}", vbNewLine & e.ToString)
         End Try
     End Sub
+
     Public Sub On_CMSG_QUESTGIVER_QUERY_QUEST(ByRef packet As PacketClass, ByRef Client As ClientClass)
         If (packet.Data.Length - 1) < 17 Then Exit Sub
         packet.GetInt16()
@@ -1435,6 +1449,7 @@ Public Module WS_Quests
         Client.Character.TalkCurrentQuest = New QuestInfo(QuestID)
         SendQuestDetails(Client, Client.Character.TalkCurrentQuest, GUID, True)
     End Sub
+
     Public Sub On_CMSG_QUESTGIVER_ACCEPT_QUEST(ByRef packet As PacketClass, ByRef Client As ClientClass)
         If (packet.Data.Length - 1) < 17 Then Exit Sub
         packet.GetInt16()
@@ -1470,6 +1485,7 @@ Public Module WS_Quests
             End If
         End If
     End Sub
+
     Public Sub On_CMSG_QUESTLOG_REMOVE_QUEST(ByRef packet As PacketClass, ByRef Client As ClientClass)
         If (packet.Data.Length - 1) < 6 Then Exit Sub
         packet.GetInt16()
@@ -1511,7 +1527,6 @@ Public Module WS_Quests
                     If c.TalkCurrentQuest Is Nothing Then c.TalkCurrentQuest = New QuestInfo(QuestID)
                     If c.TalkCurrentQuest.ID <> QuestID Then c.TalkCurrentQuest = New QuestInfo(QuestID)
 
-
                     If c.TalkQuests(i).Complete Then
                         'DONE: Show completion dialog
                         If (c.TalkQuests(i).ObjectiveFlags And QuestObjectiveFlag.QUEST_OBJECTIVE_ITEM) Then
@@ -1525,12 +1540,12 @@ Public Module WS_Quests
                         SendQuestRequireItems(c.Client, c.TalkCurrentQuest, QuestGiverGUID, c.TalkQuests(i))
                     End If
 
-
                     Exit For
                 End If
             End If
         Next
     End Sub
+
     Public Sub On_CMSG_QUESTGIVER_COMPLETE_QUEST(ByRef packet As PacketClass, ByRef Client As ClientClass)
         If (packet.Data.Length - 1) < 17 Then Exit Sub
         packet.GetInt16()
@@ -1541,6 +1556,7 @@ Public Module WS_Quests
 
         CompleteQuest(Client.Character, QuestID, GUID)
     End Sub
+
     Public Sub On_CMSG_QUESTGIVER_REQUEST_REWARD(ByRef packet As PacketClass, ByRef Client As ClientClass)
         If (packet.Data.Length - 1) < 17 Then Exit Sub
         packet.GetInt16()
@@ -1562,6 +1578,7 @@ Public Module WS_Quests
         Next
 
     End Sub
+
     Public Sub On_CMSG_QUESTGIVER_CHOOSE_REWARD(ByRef packet As PacketClass, ByRef Client As ClientClass)
         If (packet.Data.Length - 1) < 21 Then Exit Sub
         packet.GetInt16()
@@ -1606,7 +1623,6 @@ Public Module WS_Quests
                     Exit For
                 End If
             Next
-
 
             'DONE: Adding reward choice
             If Client.Character.TalkCurrentQuest.RewardItems(RewardIndex) <> 0 Then
@@ -1688,8 +1704,6 @@ Public Module WS_Quests
         End Try
     End Sub
 
-
-
     Const QUEST_SHARING_DISTANCE As Integer = 10
     Public Sub On_CMSG_PUSHQUESTTOPARTY(ByRef packet As PacketClass, ByRef Client As ClientClass)
         If (packet.Data.Length - 1) < 9 Then Exit Sub
@@ -1729,7 +1743,6 @@ Public Module WS_Quests
                         End If
                     End If
 
-
                     'DONE: Send error if present
                     If message <> QuestPartyPushError.QUEST_PARTY_MSG_SHARRING_QUEST Then
                         Dim errorPacket As New PacketClass(OPCODES.MSG_QUEST_PUSH_RESULT)
@@ -1745,6 +1758,7 @@ Public Module WS_Quests
 
         End If
     End Sub
+
     Public Sub On_MSG_QUEST_PUSH_RESULT(ByRef packet As PacketClass, ByRef Client As ClientClass)
         If (packet.Data.Length - 1) < 14 Then Exit Sub
         packet.GetInt16()
@@ -1761,9 +1775,6 @@ Public Module WS_Quests
         'response.Dispose()
     End Sub
 
-
 #End Region
-
-
 
 End Module

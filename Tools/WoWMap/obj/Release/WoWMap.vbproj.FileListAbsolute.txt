@@ -1,8 +1,0 @@
-C:\Users\ferlin.RACKDOM\Documents\Visual Studio 2008\Projects\Spurious\Tools\WoWMap\bin\WoWMap.exe
-C:\Users\ferlin.RACKDOM\Documents\Visual Studio 2008\Projects\Spurious\Tools\WoWMap\bin\WoWMap.xml
-C:\Users\ferlin.RACKDOM\Documents\Visual Studio 2008\Projects\Spurious\Tools\WoWMap\obj\Release\ResolveAssemblyReference.cache
-C:\Users\ferlin.RACKDOM\Documents\Visual Studio 2008\Projects\Spurious\Tools\WoWMap\obj\Release\WoWMap.frmMain.resources
-C:\Users\ferlin.RACKDOM\Documents\Visual Studio 2008\Projects\Spurious\Tools\WoWMap\obj\Release\WoWMap.frmCoords.resources
-C:\Users\ferlin.RACKDOM\Documents\Visual Studio 2008\Projects\Spurious\Tools\WoWMap\obj\Release\WoWMap.vbproj.GenerateResource.Cache
-C:\Users\ferlin.RACKDOM\Documents\Visual Studio 2008\Projects\Spurious\Tools\WoWMap\obj\Release\WoWMap.exe
-C:\Users\ferlin.RACKDOM\Documents\Visual Studio 2008\Projects\Spurious\Tools\WoWMap\obj\Release\WoWMap.xml

@@ -1,5 +1,5 @@
-' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 Imports System.Threading
 Imports System.Collections.Generic
-Imports Spurious.Common.BaseWriter
+Imports mangosVB.Common.BaseWriter
 
 Public Module WS_TimerBasedEvents
 
@@ -61,7 +61,6 @@ Public Module WS_TimerBasedEvents
                     'DONE: If dead don't regenerate
                     If (Not Character.Value.DEAD) AndAlso (Character.Value.underWaterTimer Is Nothing) AndAlso (Character.Value.LogoutTimer Is Nothing) AndAlso (Character.Value.Client IsNot Nothing) Then
                         With CType(Character.Value, CharacterObject)
-
 
                             BaseMana = .Mana.Current
                             BaseRage = .Rage.Current
@@ -170,7 +169,6 @@ Public Module WS_TimerBasedEvents
                             End If
                             UpdateData.Dispose()
 
-
                             'DONE: Duel counter
                             If .DuelOutOfBounds <> DUEL_COUNTER_DISABLED Then
                                 .DuelOutOfBounds -= REGENERATION_TIMER
@@ -196,7 +194,6 @@ Public Module WS_TimerBasedEvents
         End Sub
     End Class
 
-
     'NOTE: Manages spell durations and DOT spells
     Public Class TSpellManager
         Implements IDisposable
@@ -206,7 +203,7 @@ Public Module WS_TimerBasedEvents
 
         Public Const UPDATE_TIMER As Integer = 1000        'Timer period (ms)
         Public Sub New()
-            SpellManagerTimer = New Threading.Timer(AddressOf Update, Nothing, 10000, UPDATE_TIMER)
+            SpellManagerTimer = New Threading.Timer(AddressOf Update, Now, 10000, UPDATE_TIMER) 'AddressOf Update, Nothing equals to a possible System.ArgumentNullException: Value cannot be null? !!!Documented!!!
         End Sub
         Private Sub Update(ByVal state As Object)
             If SpellManagerWorking Then
@@ -219,7 +216,7 @@ Public Module WS_TimerBasedEvents
             Try
                 WORLD_CREATUREs_Lock.AcquireReaderLock(DEFAULT_LOCK_TIMEOUT)
                 For Each de As KeyValuePair(Of ULong, CreatureObject) In WORLD_CREATUREs
-                    UpdateSpells(de.Value)
+                    If de.Value IsNot Nothing Then UpdateSpells(de.Value)
                 Next
             Catch ex As Exception
                 Log.WriteLine(LogType.FAILED, ex.ToString, Nothing)
@@ -230,7 +227,7 @@ Public Module WS_TimerBasedEvents
             Try
                 CHARACTERs_Lock.AcquireReaderLock(DEFAULT_LOCK_TIMEOUT)
                 For Each Character As KeyValuePair(Of ULong, CharacterObject) In CHARACTERs
-                    UpdateSpells(Character.Value)
+                    If Character.Value IsNot Nothing Then UpdateSpells(Character.Value)
                 Next
             Catch ex As Exception
                 Log.WriteLine(LogType.FAILED, ex.ToString, Nothing)
@@ -253,7 +250,7 @@ Public Module WS_TimerBasedEvents
             End Try
 
             For Each Dynamic As DynamicObjectObject In DynamicObjectsToDelete
-                Dynamic.Delete()
+                If Dynamic IsNot Nothing Then Dynamic.Delete()
             Next
 
             SpellManagerWorking = False
@@ -266,7 +263,6 @@ Public Module WS_TimerBasedEvents
         Private Sub UpdateSpells(ByVal c As BaseUnit)
             For i As Integer = 0 To MAX_AURA_EFFECTs_VISIBLE - 1
                 If Not c.ActiveSpells(i) Is Nothing Then
-
 
                     'DONE: Count aura duration
                     If c.ActiveSpells(i).SpellDuration <> SPELL_DURATION_INFINITE Then
@@ -293,13 +289,11 @@ Public Module WS_TimerBasedEvents
                         If Not c.ActiveSpells(i) Is Nothing AndAlso c.ActiveSpells(i).SpellDuration <= 0 AndAlso c.ActiveSpells(i).SpellDuration <> SPELL_DURATION_INFINITE Then c.RemoveAura(i, c.ActiveSpells(i).SpellCaster)
                     End If
 
-
                 End If
             Next
 
         End Sub
     End Class
-
 
     'NOTE: Manages ai movement
     Public Class TAIManager
@@ -343,7 +337,6 @@ Public Module WS_TimerBasedEvents
             MyBase.Finalize()
         End Sub
     End Class
-
 
     'NOTE: Manages character savings
     Public Class TCharacterSaver

@@ -95,83 +95,83 @@
     'It can be modified using the Windows Form Designer.
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
-        Me.components = New System.ComponentModel.Container
+        Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(dlgSettings))
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-        Me.ShapeContainer2 = New Microsoft.VisualBasic.PowerPacks.ShapeContainer
-        Me.Line2 = New Microsoft.VisualBasic.PowerPacks.LineShape
-        Me.Line1 = New Microsoft.VisualBasic.PowerPacks.LineShape
-        Me.ShapeContainer1 = New Microsoft.VisualBasic.PowerPacks.ShapeContainer
-        Me.Line4 = New Microsoft.VisualBasic.PowerPacks.LineShape
-        Me.Command22 = New System.Windows.Forms.Button
-        Me.Frame3 = New System.Windows.Forms.GroupBox
-        Me.Image1 = New System.Windows.Forms.PictureBox
-        Me.Label17 = New System.Windows.Forms.Label
-        Me.Command20 = New System.Windows.Forms.Button
-        Me.Frame2 = New System.Windows.Forms.GroupBox
-        Me.Check6 = New System.Windows.Forms.CheckBox
-        Me.Command15 = New System.Windows.Forms.Button
-        Me.Text20 = New System.Windows.Forms.TextBox
-        Me.Command24 = New System.Windows.Forms.Button
-        Me.txtRealmPort = New System.Windows.Forms.TextBox
-        Me.Command23 = New System.Windows.Forms.Button
-        Me.Text15 = New System.Windows.Forms.TextBox
-        Me.Command19 = New System.Windows.Forms.Button
-        Me.Command18 = New System.Windows.Forms.Button
-        Me.txtRSQLPort = New System.Windows.Forms.TextBox
-        Me.Text13 = New System.Windows.Forms.TextBox
-        Me.Command17 = New System.Windows.Forms.Button
-        Me.Command16 = New System.Windows.Forms.Button
-        Me.Text12 = New System.Windows.Forms.TextBox
-        Me.Text11 = New System.Windows.Forms.TextBox
-        Me.Command13 = New System.Windows.Forms.Button
-        Me.Check4 = New System.Windows.Forms.CheckBox
-        Me.Check3 = New System.Windows.Forms.CheckBox
-        Me.Label20 = New System.Windows.Forms.Label
-        Me.Label19 = New System.Windows.Forms.Label
-        Me.Label15 = New System.Windows.Forms.Label
-        Me.Label14 = New System.Windows.Forms.Label
-        Me.Label13 = New System.Windows.Forms.Label
-        Me.Label12 = New System.Windows.Forms.Label
-        Me.Label11 = New System.Windows.Forms.Label
-        Me.Frame1 = New System.Windows.Forms.GroupBox
-        Me.Check5 = New System.Windows.Forms.CheckBox
-        Me.Text16 = New System.Windows.Forms.TextBox
-        Me.Command21 = New System.Windows.Forms.Button
-        Me.Check2 = New System.Windows.Forms.CheckBox
-        Me.Check1 = New System.Windows.Forms.CheckBox
-        Me.Command12 = New System.Windows.Forms.Button
-        Me.Text10 = New System.Windows.Forms.TextBox
-        Me.Command10 = New System.Windows.Forms.Button
-        Me.Text9 = New System.Windows.Forms.TextBox
-        Me.Command9 = New System.Windows.Forms.Button
-        Me.Command8 = New System.Windows.Forms.Button
-        Me.Text8 = New System.Windows.Forms.TextBox
-        Me.txtWSQLPort = New System.Windows.Forms.TextBox
-        Me.Command7 = New System.Windows.Forms.Button
-        Me.Command6 = New System.Windows.Forms.Button
-        Me.Text6 = New System.Windows.Forms.TextBox
-        Me.Command5 = New System.Windows.Forms.Button
-        Me.Text5 = New System.Windows.Forms.TextBox
-        Me.Command4 = New System.Windows.Forms.Button
-        Me.Text4 = New System.Windows.Forms.TextBox
-        Me.Command3 = New System.Windows.Forms.Button
-        Me.Text3 = New System.Windows.Forms.TextBox
-        Me.Command2 = New System.Windows.Forms.Button
-        Me.txtWorldPort = New System.Windows.Forms.TextBox
-        Me.Command1 = New System.Windows.Forms.Button
-        Me.Text1 = New System.Windows.Forms.TextBox
-        Me.Label16 = New System.Windows.Forms.Label
-        Me.Label10 = New System.Windows.Forms.Label
-        Me.Label9 = New System.Windows.Forms.Label
-        Me.Label8 = New System.Windows.Forms.Label
-        Me.Label7 = New System.Windows.Forms.Label
-        Me.Label6 = New System.Windows.Forms.Label
-        Me.Label5 = New System.Windows.Forms.Label
-        Me.Label4 = New System.Windows.Forms.Label
-        Me.Label3 = New System.Windows.Forms.Label
-        Me.Label2 = New System.Windows.Forms.Label
-        Me.Label1 = New System.Windows.Forms.Label
+        Me.ShapeContainer2 = New Microsoft.VisualBasic.PowerPacks.ShapeContainer()
+        Me.Line2 = New Microsoft.VisualBasic.PowerPacks.LineShape()
+        Me.Line1 = New Microsoft.VisualBasic.PowerPacks.LineShape()
+        Me.ShapeContainer1 = New Microsoft.VisualBasic.PowerPacks.ShapeContainer()
+        Me.Line4 = New Microsoft.VisualBasic.PowerPacks.LineShape()
+        Me.Command22 = New System.Windows.Forms.Button()
+        Me.Frame3 = New System.Windows.Forms.GroupBox()
+        Me.Image1 = New System.Windows.Forms.PictureBox()
+        Me.Label17 = New System.Windows.Forms.Label()
+        Me.Command20 = New System.Windows.Forms.Button()
+        Me.Frame2 = New System.Windows.Forms.GroupBox()
+        Me.Check6 = New System.Windows.Forms.CheckBox()
+        Me.Command15 = New System.Windows.Forms.Button()
+        Me.Text20 = New System.Windows.Forms.TextBox()
+        Me.Command24 = New System.Windows.Forms.Button()
+        Me.txtRealmPort = New System.Windows.Forms.TextBox()
+        Me.Command23 = New System.Windows.Forms.Button()
+        Me.Text15 = New System.Windows.Forms.TextBox()
+        Me.Command19 = New System.Windows.Forms.Button()
+        Me.Command18 = New System.Windows.Forms.Button()
+        Me.txtRSQLPort = New System.Windows.Forms.TextBox()
+        Me.Text13 = New System.Windows.Forms.TextBox()
+        Me.Command17 = New System.Windows.Forms.Button()
+        Me.Command16 = New System.Windows.Forms.Button()
+        Me.Text12 = New System.Windows.Forms.TextBox()
+        Me.Text11 = New System.Windows.Forms.TextBox()
+        Me.Command13 = New System.Windows.Forms.Button()
+        Me.Check4 = New System.Windows.Forms.CheckBox()
+        Me.Check3 = New System.Windows.Forms.CheckBox()
+        Me.Label20 = New System.Windows.Forms.Label()
+        Me.Label19 = New System.Windows.Forms.Label()
+        Me.Label15 = New System.Windows.Forms.Label()
+        Me.Label14 = New System.Windows.Forms.Label()
+        Me.Label13 = New System.Windows.Forms.Label()
+        Me.Label12 = New System.Windows.Forms.Label()
+        Me.Label11 = New System.Windows.Forms.Label()
+        Me.Frame1 = New System.Windows.Forms.GroupBox()
+        Me.Check5 = New System.Windows.Forms.CheckBox()
+        Me.Text16 = New System.Windows.Forms.TextBox()
+        Me.Command21 = New System.Windows.Forms.Button()
+        Me.Check2 = New System.Windows.Forms.CheckBox()
+        Me.Check1 = New System.Windows.Forms.CheckBox()
+        Me.Command12 = New System.Windows.Forms.Button()
+        Me.Text10 = New System.Windows.Forms.TextBox()
+        Me.Command10 = New System.Windows.Forms.Button()
+        Me.Text9 = New System.Windows.Forms.TextBox()
+        Me.Command9 = New System.Windows.Forms.Button()
+        Me.Command8 = New System.Windows.Forms.Button()
+        Me.Text8 = New System.Windows.Forms.TextBox()
+        Me.txtWSQLPort = New System.Windows.Forms.TextBox()
+        Me.Command7 = New System.Windows.Forms.Button()
+        Me.Command6 = New System.Windows.Forms.Button()
+        Me.Text6 = New System.Windows.Forms.TextBox()
+        Me.Command5 = New System.Windows.Forms.Button()
+        Me.Text5 = New System.Windows.Forms.TextBox()
+        Me.Command4 = New System.Windows.Forms.Button()
+        Me.Text4 = New System.Windows.Forms.TextBox()
+        Me.Command3 = New System.Windows.Forms.Button()
+        Me.Text3 = New System.Windows.Forms.TextBox()
+        Me.Command2 = New System.Windows.Forms.Button()
+        Me.txtWorldPort = New System.Windows.Forms.TextBox()
+        Me.Command1 = New System.Windows.Forms.Button()
+        Me.Text1 = New System.Windows.Forms.TextBox()
+        Me.Label16 = New System.Windows.Forms.Label()
+        Me.Label10 = New System.Windows.Forms.Label()
+        Me.Label9 = New System.Windows.Forms.Label()
+        Me.Label8 = New System.Windows.Forms.Label()
+        Me.Label7 = New System.Windows.Forms.Label()
+        Me.Label6 = New System.Windows.Forms.Label()
+        Me.Label5 = New System.Windows.Forms.Label()
+        Me.Label4 = New System.Windows.Forms.Label()
+        Me.Label3 = New System.Windows.Forms.Label()
+        Me.Label2 = New System.Windows.Forms.Label()
+        Me.Label1 = New System.Windows.Forms.Label()
         Me.Frame3.SuspendLayout()
         CType(Me.Image1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Frame2.SuspendLayout()
@@ -499,7 +499,7 @@
         Me.Text13.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Text13.Size = New System.Drawing.Size(81, 20)
         Me.Text13.TabIndex = 38
-        Me.Text13.Text = "spurious"
+        Me.Text13.Text = "mangos"
         Me.Text13.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'Command17
@@ -561,7 +561,7 @@
         Me.Text11.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Text11.Size = New System.Drawing.Size(81, 20)
         Me.Text11.TabIndex = 41
-        Me.Text11.Text = "spurious"
+        Me.Text11.Text = "mangos"
         Me.Text11.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'Command13
@@ -854,7 +854,7 @@
         Me.Text10.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Text10.Size = New System.Drawing.Size(81, 20)
         Me.Text10.TabIndex = 23
-        Me.Text10.Text = "spurious"
+        Me.Text10.Text = "mangos"
         Me.Text10.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'Command10
@@ -932,7 +932,7 @@
         Me.Text8.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Text8.Size = New System.Drawing.Size(81, 20)
         Me.Text8.TabIndex = 19
-        Me.Text8.Text = "spurious"
+        Me.Text8.Text = "mangos"
         Me.Text8.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'txtWSQLPort
@@ -1317,7 +1317,7 @@
         Me.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.ShowInTaskbar = False
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "Spurious Control Center :: Settings"
+        Me.Text = "MaNGOSVB Control Center :: Settings"
         Me.Frame3.ResumeLayout(False)
         CType(Me.Image1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Frame2.ResumeLayout(False)

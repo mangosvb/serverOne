@@ -4,7 +4,6 @@ Imports System.Collections.Generic
 Public Enum ExpansionLevel As Byte
     NORMAL = 0          'WoW
     EXPANSION_1 = 1     'WoW: Burning Crusade
-    EXPANSION_2 = 2     'WoW: Wrath of the Lich King
 End Enum
 Public Enum AccessLevel As Byte
     Trial = 0
@@ -14,7 +13,6 @@ Public Enum AccessLevel As Byte
     Admin = 4
     Developer = 5
 End Enum
-
 
 Public Interface ICluster
 
@@ -55,7 +53,6 @@ Public Interface ICluster
     <Description("Send update for the requested group.")> _
     Sub GroupRequestUpdate(ByVal ID As UInteger)
 
-
 End Interface
 Public Interface IWorld
 
@@ -77,7 +74,7 @@ Public Interface IWorld
     <Description("Respond to world server if still alive.")> _
     Function Ping(ByVal Timestamp As Integer) As Integer
 
-    <Description("Tell the cluster about your CPU.")> _
+    <Description("Tell the cluster about your CPU & Memory Usage")> _
     Sub ServerInfo(ByRef CPUUsage As Single, ByRef MemoryUsage As ULong)
 
     <Description("Make world create specific map.")> _
@@ -97,7 +94,6 @@ Public Interface IWorld
     <Description("Request party member stats.")> _
     Function GroupMemberStats(ByVal GUID As ULong, ByVal Flag As Integer) As Byte()
 
-
 End Interface
 Public Interface IVoice
 
@@ -114,9 +110,7 @@ Public Interface IVoice
     <Description("Respond to world server if still alive.")> _
     Function Ping(ByVal Timestamp As Integer) As Integer
 
-
 End Interface
-
 
 <Serializable()> _
 Public Class ClientInfo

@@ -1,5 +1,5 @@
-' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -16,18 +16,15 @@
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
 
-
 Imports System.Xml
 Imports System.Reflection
 Imports System.Threading
 Imports System.Diagnostics.PerformanceCounter
-Imports Spurious.Common
-
+Imports mangosVB.Common
 
 Public Module WC_Stats
 
     'http://www.15seconds.com/issue/050615.htm
-
 
     Private ConnectionsHandled As Integer = 0
     Private ConnectionsPeak As Integer = 0
@@ -43,13 +40,12 @@ Public Module WC_Stats
         Interlocked.Decrement(ConnectionsCurrent)
     End Sub
 
-
     Public DataTransferOut As Long = 0
     Public DataTransferIn As Long = 0
 
     Private ThreadsWorker As Integer = 0
     Private ThreadsComletion As Integer = 0
-    Private LastCheck As Date = now
+    Private LastCheck As Date = Now
     Private LastCPUTime As Double = 0
     Private Uptime As TimeSpan
     Private Latency As Long = 0
@@ -69,7 +65,7 @@ Public Module WC_Stats
 
     Public Sub CheckCPU(ByVal State As Object)
         Dim TimeSinceLastCheck As TimeSpan = Now.Subtract(LastCheck)
-        UsageCPU = (Process.GetCurrentProcess().TotalProcessorTime.TotalMilliseconds - LastCPUTime) / TimeSinceLastCheck.TotalMilliseconds
+        UsageCPU = ((Process.GetCurrentProcess().TotalProcessorTime.TotalMilliseconds - LastCPUTime) / TimeSinceLastCheck.TotalMilliseconds) * 100
         LastCheck = Now
         LastCPUTime = Process.GetCurrentProcess().TotalProcessorTime.TotalMilliseconds
     End Sub
@@ -85,7 +81,7 @@ Public Module WC_Stats
         CountPlayersHorde = 0
         CountPlayersAlliance = 0
         CountGMs = 0
-		Latency = 0
+        Latency = 0
 
         CHARACTERs_Lock.AcquireReaderLock(DEFAULT_LOCK_TIMEOUT)
         For Each c As KeyValuePair(Of ULong, CharacterObject) In CHARACTERs
@@ -107,7 +103,6 @@ Public Module WC_Stats
         If CountPlayers > 1 Then
             Latency = Latency \ CountPlayers
         End If
-
 
         For Each c As KeyValuePair(Of UInteger, WorldInfo) In WS.WorldsInfo
             If Not w.ContainsKey(c.Value) Then
@@ -132,7 +127,7 @@ Public Module WC_Stats
         f.WriteStartElement("cluster")
 
         f.WriteStartElement("platform")
-        f.WriteValue(String.Format("Spurious rev{0} v{1}", 0, [Assembly].GetExecutingAssembly().GetName().Version))
+        f.WriteValue(String.Format("MaNGOSvb rev{0} v{1}", 0, [Assembly].GetExecutingAssembly().GetName().Version))
         f.WriteEndElement()
 
         f.WriteStartElement("uptime")
@@ -202,8 +197,6 @@ Public Module WC_Stats
         '</cluster>
         f.WriteEndElement()
 
-
-
         '<world>
         f.WriteStartElement("world")
         Try
@@ -236,9 +229,7 @@ Public Module WC_Stats
         '</world>
         f.WriteEndElement()
 
-
         CHARACTERs_Lock.AcquireReaderLock(DEFAULT_LOCK_TIMEOUT)
-
 
         f.WriteStartElement("users")
         For Each c As KeyValuePair(Of ULong, CharacterObject) In CHARACTERs
@@ -298,7 +289,5 @@ Public Module WC_Stats
 
         w.Clear()
     End Sub
-
-
 
 End Module

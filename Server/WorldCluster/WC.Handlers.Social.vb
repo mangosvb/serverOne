@@ -1,5 +1,5 @@
-﻿' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+﻿'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
 
-
 Imports System.Threading
 Imports System.Net.Sockets
 Imports System.Xml.Serialization
@@ -24,15 +23,12 @@ Imports System.IO
 Imports System.Net
 Imports System.Reflection
 Imports System.Runtime.CompilerServices
-Imports Spurious.Common.BaseWriter
-Imports Spurious.Common
-
+Imports mangosVB.Common.BaseWriter
+Imports mangosVB.Common
 
 Public Module WC_Handlers_Social
 
-
 #Region "Framework"
-
 
     Public Sub LoadIgnoreList(ByRef c As CharacterObject)
         'DONE: Query DB
@@ -80,7 +76,6 @@ Public Module WC_Handlers_Social
         'DONE: Query DB
         Dim q As New DataTable
         Database.Query(String.Format("SELECT * FROM characters_social WHERE char_guid = {0};", Character.GUID), q)
-
 
         'DONE: Make the packet
         Dim SMSG_FRIEND_LIST As New PacketClass(OPCODES.SMSG_CONTACT_LIST)
@@ -136,10 +131,8 @@ Public Module WC_Handlers_Social
         friendpacket.Dispose()
     End Sub
 
-
 #End Region
 #Region "Handlers"
-
 
     Public Sub On_CMSG_WHO(ByRef packet As PacketClass, ByRef Client As ClientClass)
         Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_WHO", Client.IP, Client.Port)
@@ -164,14 +157,12 @@ Public Module WC_Handlers_Social
             Strings = UCase(EscapeString(packet.GetString()))
         End If
 
-
-
         Dim results As New List(Of ULong)
         CHARACTERs_Lock.AcquireReaderLock(DEFAULT_LOCK_TIMEOUT)
         For Each c As KeyValuePair(Of ULong, CharacterObject) In CHARACTERs
             If Not c.Value.IsInWorld Then Continue For
             If (GetCharacterSide(c.Value.Race) <> GetCharacterSide(Client.Character.Race)) AndAlso Client.Character.Access < AccessLevel.GameMaster Then Continue For
-            If c.Value.Name.IndexOf(NamePlayer) = -1 Then Continue For
+            If UCase(c.Value.Name).IndexOf(UCase(NamePlayer)) = -1 Then Continue For
             If c.Value.Level < LevelMinimum Then Continue For
             If c.Value.Level > LevelMaximum Then Continue For
 
@@ -183,7 +174,6 @@ Public Module WC_Handlers_Social
             results.Add(c.Value.GUID)
         Next
         CHARACTERs_Lock.ReleaseReaderLock()
-
 
         Dim response As New PacketClass(OPCODES.SMSG_WHO)
         response.AddInt32(results.Count)
@@ -202,7 +192,6 @@ Public Module WC_Handlers_Social
 
         Log.WriteLine(LogType.DEBUG, "[{0}:{1}] SMSG_WHO [P:'{2}' G:'{3}' L:{4}-{5} C:{6:X} R:{7:X}]", Client.IP, Client.Port, NamePlayer, NameGuild, LevelMinimum, LevelMaximum, MaskClass, MaskRace)
     End Sub
-
 
     Public Sub On_CMSG_ADD_FRIEND(ByRef packet As PacketClass, ByRef Client As ClientClass)
         If (packet.Data.Length - 1) < 6 Then Exit Sub
@@ -373,13 +362,6 @@ Public Module WC_Handlers_Social
         SendContactList(Client, Client.Character)
     End Sub
 
-
 #End Region
-
-    
-
-
-
-
 
 End Module

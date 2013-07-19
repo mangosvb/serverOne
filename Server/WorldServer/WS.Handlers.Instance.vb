@@ -1,5 +1,5 @@
-﻿' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+﻿'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -18,11 +18,9 @@
 
 Imports System.Threading
 Imports System.Collections.Generic
-Imports Spurious.Common.BaseWriter
+Imports mangosVB.Common.BaseWriter
 
 Public Module WS_Handlers_Instance
-
-
 
     Public Sub InstanceMapUpdate()
         'TODO: Here we should also respawn bosses
@@ -80,8 +78,6 @@ Public Module WS_Handlers_Instance
                 Exit Sub
             End If
 
-
-
             'DONE: Check if group is already in instance
             If c.IsInGroup Then
                 Database.Query(String.Format("SELECT * FROM characters_instances_group WHERE group_id = {0} AND map = {1};", c.Group.ID, c.MapID), q)
@@ -96,8 +92,6 @@ Public Module WS_Handlers_Instance
                     Exit Sub
                 End If
             End If
-
-
 
             'DONE Create new instance
             Dim instanceNewID As Integer = InstanceMapCreate(c.MapID)
@@ -124,9 +118,7 @@ Public Module WS_Handlers_Instance
         'TODO: Start teleport timer
     End Sub
 
-
     'SMSG_INSTANCE_DIFFICULTY
-
 
     Public Enum ResetFailedReason As UInteger
         INSTANCE_RESET_FAILED_ZONING = 0
@@ -209,7 +201,6 @@ Public Module WS_Handlers_Instance
         p.Dispose()
     End Sub
 
-
     Public Sub On_CMSG_RESET_INSTANCES(ByRef packet As PacketClass, ByRef Client As ClientClass)
         Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_RESET_INSTANCES", Client.IP, Client.Port)
 
@@ -222,8 +213,5 @@ Public Module WS_Handlers_Instance
         End If
 
     End Sub
-
-
-
 
 End Module

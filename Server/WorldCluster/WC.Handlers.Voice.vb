@@ -1,5 +1,5 @@
-﻿' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+﻿'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
 
-
 Imports System.Threading
 Imports System.Net.Sockets
 Imports System.Xml.Serialization
@@ -24,15 +23,12 @@ Imports System.IO
 Imports System.Net
 Imports System.Reflection
 Imports System.Runtime.CompilerServices
-Imports Spurious.Common.BaseWriter
-Imports Spurious.Common
-
+Imports mangosVB.Common.BaseWriter
+Imports mangosVB.Common
 
 Public Module WC_Handlers_Voice
 
-
     Private VOICE_CHANNEL_ID As ULong = &H4BC500000000D1E1UL
-
 
     Public Sub SendVoiceSystemStatus(ByRef Client As ClientClass, ByRef Character As CharacterObject)
         Dim p As New PacketClass(OPCODES.SMSG_FEATURE_SYSTEM_STATUS)
@@ -81,7 +77,6 @@ Public Module WC_Handlers_Voice
         p.AddUInt64(&HFFFF)         'Debug GUID
         p.AddInt8(&H80)             'Debug Flags1
         p.AddInt8(&H46)             'Debug Flags2
-
 
         Client.Send(p)
         p.Dispose()
@@ -151,6 +146,5 @@ Public Module WC_Handlers_Voice
             CType(CHAT_CHANNELs(ChannelName), VoiceChatChannelClass).VoiceDisable(Client.Character)
         End If
     End Sub
-
 
 End Module

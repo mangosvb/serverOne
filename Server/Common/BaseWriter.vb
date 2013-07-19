@@ -1,5 +1,5 @@
-' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -44,8 +44,6 @@ Public Class BaseWriter
         Return Console.ReadLine()
     End Function
 
-
-
     Public Sub PrintDiagnosticTest()
         WriteLine(LogType.NETWORK, "{0}:************************* TEST *************************", 1)
         WriteLine(LogType.DEBUG, "{0}:************************* TEST *************************", 1)
@@ -80,8 +78,5 @@ Public Class BaseWriter
             Console.WriteLine("[{0}] Error creating log output!" & vbNewLine & e.ToString, Format(TimeOfDay, "hh:mm:ss"))
         End Try
     End Sub
-
-
-
 
 End Class

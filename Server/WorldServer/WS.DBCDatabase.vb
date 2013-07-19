@@ -1,5 +1,5 @@
-' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 Imports System.Threading
 Imports System.IO
 Imports System.Runtime.InteropServices
-Imports Spurious.Common.BaseWriter
+Imports mangosVB.Common.BaseWriter
 
 Public Module WS_DBCDatabase
 
@@ -474,7 +474,7 @@ Public Module WS_DBCDatabase
     End Class
 
     Public Function GetNearestTaxi(ByVal x As Single, ByVal y As Single, ByVal map As Integer) As Integer
-        Dim minDistance As Single = 99999999.0F
+        Dim minDistance As Single = 1.0E+8F
         Dim selectedTaxiNode As Integer = 0
         Dim tmp As Single
 
@@ -1518,6 +1518,7 @@ Public Module WS_DBCDatabase
     End Class
 #End Region
 #Region "XPTable"
+    'This might need some work, xp table might not be correct for tbc.
     Public Sub InitializeXPTable()
         WS_CharManagment.XPTable(0) = 0
         WS_CharManagment.XPTable(1) = 400
@@ -1589,17 +1590,6 @@ Public Module WS_DBCDatabase
         WS_CharManagment.XPTable(67) = 753700
         WS_CharManagment.XPTable(68) = 768900
         WS_CharManagment.XPTable(69) = 779700
-        WS_CharManagment.XPTable(70) = 790500
-        WS_CharManagment.XPTable(71) = 801300
-        WS_CharManagment.XPTable(72) = 812100
-        WS_CharManagment.XPTable(73) = 822900
-        WS_CharManagment.XPTable(74) = 833700
-        WS_CharManagment.XPTable(75) = 844500
-        WS_CharManagment.XPTable(76) = 855300
-        WS_CharManagment.XPTable(77) = 866100
-        WS_CharManagment.XPTable(78) = 876900
-        WS_CharManagment.XPTable(79) = 887700
-        WS_CharManagment.XPTable(80) = 898500
         Log.WriteLine(LogType.INFORMATION, "Initalizing: XPTable initialized.")
     End Sub
 #End Region
@@ -1828,20 +1818,20 @@ Public Module WS_DBCDatabase
         InitializeXPTable()
         InitializeEmotesText()
         InitializeAreaTable()
+
         InitializeFactions()
         InitializeFactionTemplates()
         InitializeCharRaces()
         InitializeSkillLines()
         InitializeLocks()
         InitializeGraveyards()
-        InitializeTaxiNodes()
-        InitializeTaxiPaths()
-        InitializeTaxiPathNodes()
         InitializeDurabilityCosts()
         LoadItemExtendedCost()
         InitializeBankBagSlotPrices()
+
         InitializeWorldMapContinent()
         InitializeWorldMapTransforms()
+
         LoadTalentDBC()
         LoadTalentTabDBC()
         LoadAuctionHouseDBC()
@@ -1849,6 +1839,10 @@ Public Module WS_DBCDatabase
         LoadOCTManaRegenDBC()
         LoadRegenLifePerSpiritDBC()
         LoadRegenManaPerSpiritDBC()
+
+        InitializeTaxiNodes()
+        InitializeTaxiPaths()
+        InitializeTaxiPathNodes()
 
         InitializeBattlemasters()
         InitializeBattlegrounds()
@@ -1862,21 +1856,17 @@ Public Module WS_DBCDatabase
         InitializeSpellFocusObject()
         InitializeSpells()
 
-        ' Load Scripts for Area Triggers and AI
         InitializeAreaTriggers()
         InitializeAI()
-
     End Sub
 
-
-
     Public Sub InitializeAreaTriggers()
-        AreaTriggers = New ScriptedObject("scripts\AreaTriggers.vb", "Spurious.AreaTriggers.dll", False)
+        AreaTriggers = New ScriptedObject("scripts\AreaTriggers.vb", "modules\AreaTriggers.dll", False)
         Log.WriteLine(LogType.INFORMATION, "Scripting: AreaTriggers initialized.")
     End Sub
 
     Public Sub InitializeAI()
-        AI = New ScriptedObject("scripts\AI.vb", "Spurious.AI.dll", False)
+        AI = New ScriptedObject("scripts\AI.vb", "modules\AI.dll", False)
         Log.WriteLine(LogType.INFORMATION, "Scripting: AI initialized.")
     End Sub
 

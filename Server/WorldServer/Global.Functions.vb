@@ -1,5 +1,5 @@
-' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -19,14 +19,11 @@
 Imports System.Threading
 Imports System.Reflection
 Imports System.Text.RegularExpressions
-Imports Spurious.Common.BaseWriter
-
+Imports mangosVB.Common.BaseWriter
 
 Public Module Functions
 
-
 #Region "System"
-
 
     Public Function ToInteger(ByVal Value As Boolean) As Integer
         If Value Then
@@ -86,7 +83,6 @@ Public Module Functions
     Public Declare Function timeBeginPeriod Lib "winmm.dll" (ByVal uPeriod As Integer) As Integer
 #End If
 
-
     Public Function EscapeString(ByVal s As String) As String
         Return s.Replace("""", "").Replace("'", "")
     End Function
@@ -111,10 +107,8 @@ Public Module Functions
         Return Regex_Guild.IsMatch(strName)
     End Function
 
-
 #End Region
 #Region "Database"
-
 
     Public Sub Ban_Account(ByVal Name As String, ByVal Reason As String)
         Database.Update("UPDATE accounts SET banned = 1 WHERE account = """ & Name & """;")
@@ -122,10 +116,8 @@ Public Module Functions
         Log.WriteLine(LogType.INFORMATION, "Account [{0}] banned by server. Reason: [{1}].", Name, Reason)
     End Sub
 
-
 #End Region
 #Region "Game"
-
 
     Public Function GetClassName(ByRef Classe As Integer) As String
         Select Case Classe
@@ -225,10 +217,8 @@ Public Module Functions
         Return False
     End Function
 
-
 #End Region
 #Region "Packets"
-
 
     Public Sub SendMessageMOTD(ByRef Client As ClientClass, ByVal Message As String)
         Dim packet As New PacketClass(OPCODES.SMSG_MOTD)
@@ -373,7 +363,6 @@ Public Module Functions
 
         packet.AddInt8(Flag)
 
-
         Return packet
     End Function
 
@@ -430,7 +419,4 @@ Public Module Functions
 
 #End Region
 
-
 End Module
-
-

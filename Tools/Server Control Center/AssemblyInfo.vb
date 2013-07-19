@@ -6,9 +6,9 @@ Imports System.Runtime.InteropServices
 ' set of attributes. Change these attribute values to modify the information
 ' associated with an assembly.
 
-<Assembly: AssemblyTitle("Spurious Control Center")> 
-<Assembly: AssemblyDescription("Monitors Spurious Emulator")> 
-<Assembly: AssemblyCompany("http://SpuriousEmu.com")> 
+<Assembly: AssemblyTitle("MaNGOSVB Control Center")> 
+<Assembly: AssemblyDescription("Monitors MaNGOSVB Servers")> 
+<Assembly: AssemblyCompany("http://Getmangos.co.uk")> 
 <Assembly: AssemblyProduct("")>
 <Assembly: AssemblyCopyright("")>
 <Assembly: AssemblyTrademark("")>

@@ -1,5 +1,5 @@
-﻿' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+﻿'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -16,12 +16,10 @@
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
 
-
 Imports System.Threading
 Imports System.Reflection
-Imports Spurious.Common
-Imports Spurious.Common.BaseWriter
-
+Imports mangosVB.Common
+Imports mangosVB.Common.BaseWriter
 
 Public Module WC_Character
 
@@ -52,17 +50,20 @@ Public Module WC_Character
         Public Group As Group = Nothing
         Public GroupFlags As Byte = 0
         Public GroupInvitedFlag As Boolean = False
+
         Public ReadOnly Property IsInGroup() As Boolean
             Get
                 Return (Group IsNot Nothing) AndAlso (GroupInvitedFlag = False)
             End Get
         End Property
+
         Public ReadOnly Property IsGroupLeader() As Boolean
             Get
                 If Group Is Nothing Then Return False
                 Return (Group.Members(Group.Leader) Is Me)
             End Get
         End Property
+
         Public ReadOnly Property IsInRaid() As Boolean
             Get
                 Return ((Not (Group Is Nothing)) AndAlso (Group.Type = GroupType.RAID))
@@ -94,6 +95,7 @@ Public Module WC_Character
             PositionX = CType(MySQLQuery.Rows(0).Item("char_positionX"), Single)
             PositionY = CType(MySQLQuery.Rows(0).Item("char_positionY"), Single)
         End Sub
+
         Public Sub New(ByVal g As ULong, ByRef c As ClientClass)
             GUID = g
             Client = c
@@ -106,6 +108,7 @@ Public Module WC_Character
             CHARACTERs.Add(GUID, Me)
             CHARACTERs_Lock.ReleaseWriterLock()
         End Sub
+
         Public Sub Dispose() Implements IDisposable.Dispose
             Client = Nothing
 
@@ -138,10 +141,6 @@ Public Module WC_Character
             CHARACTERs_Lock.ReleaseWriterLock()
         End Sub
 
-
-
-
-
         'Login
         Public Sub OnLogin()
             'DONE: Update character status in database
@@ -166,7 +165,7 @@ Public Module WC_Character
 
             'DONE: Server Message Of The Day
             SendMessageMOTD(Client, "Welcome to World of Warcraft.")
-            SendMessageMOTD(Client, String.Format("This server is using {0} v.{1}", SetColor("[SpuriousEmu]", 255, 0, 0), [Assembly].GetExecutingAssembly().GetName().Version))
+            SendMessageMOTD(Client, String.Format("This server is using {0} v.{1}", SetColor("[MaNGOSvb]", 200, 255, 200), [Assembly].GetExecutingAssembly().GetName().Version))
 
             'DONE: SMSG_CONTACT_LIST
             SendContactList(Client, Me)
@@ -190,6 +189,7 @@ Public Module WC_Character
                 Next
             Next
         End Sub
+
         Public Sub OnLogout()
             'DONE: Update character status in database
             Database.Update("UPDATE characters SET char_online = 0 WHERE char_guid = " & GUID & ";")
@@ -210,7 +210,6 @@ Public Module WC_Character
 
         End Sub
 
-
         'Chat
         Public ChatFlag As ChatFlag = ChatFlag.FLAG_NONE
         Public Sub SendChatMessage(ByRef GUID As ULong, ByVal Message As String, ByVal msgType As ChatMsg, ByVal msgLanguage As Integer, Optional ByVal ChannelName As String = "Global")
@@ -219,7 +218,6 @@ Public Module WC_Character
             packet.Dispose()
         End Sub
     End Class
-
 
     Public Function GetCharacterGUIDByName(ByVal Name As String) As ULong
         Dim GUID As ULong = 0
@@ -246,6 +244,7 @@ Public Module WC_Character
             Return GUID
         End If
     End Function
+
     Public Function GetCharacterNameByGUID(ByVal GUID As String) As String
         If CHARACTERs.ContainsKey(GUID) Then
             Return CHARACTERs(GUID).Name
@@ -260,6 +259,5 @@ Public Module WC_Character
             End If
         End If
     End Function
-
 
 End Module

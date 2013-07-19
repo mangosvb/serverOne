@@ -1,5 +1,5 @@
-' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
 
-Imports Spurious.Common.BaseWriter
+Imports mangosVB.Common.BaseWriter
 
 Public Module WS_NPCs
 
@@ -48,11 +48,9 @@ Public Module WS_NPCs
     End Enum
 #End Region
 
-
     'TODO: MSG_LIST_STABLED_PETS
 
 #Region "Trainers"
-
 
     Public Sub On_CMSG_TRAINER_LIST(ByRef packet As PacketClass, ByRef Client As ClientClass)
         If (packet.Data.Length - 1) < 13 Then Exit Sub
@@ -82,7 +80,6 @@ Public Module WS_NPCs
         If CInt(MySQLQuery.Rows(0).Item("reqskill")) <> 0 AndAlso Client.Character.HaveSkill(CInt(MySQLQuery.Rows(0).Item("reqskill")), CInt(MySQLQuery.Rows(0).Item("reqskillvalue"))) = False Then Exit Sub
 
         'TODO: Check proffessions - only alowed to learn 2!
-
 
         Try
             'DONE: Get the money
@@ -154,7 +151,6 @@ Public Module WS_NPCs
         noTrainID = CType(TrainerSQLQuery.Rows(0).Item("cannot_train_gossip_textid"), Integer)
         Database.Query(String.Format("SELECT * FROM npctext WHERE entry = {0};", noTrainID), npcTextSQLQuery)
 
-
         Dim SpellsList As New ArrayList
         For Each SellRow As DataRow In SpellSQLQuery.Rows
             'TODO: Add code for the Required Race.
@@ -164,8 +160,6 @@ Public Module WS_NPCs
                 SpellsList.Add(SellRow)
             End If
         Next
-
-
 
         'DONE: No spells available -> wrong trainer type.
         'TODO: Need to fix this so it works right.
@@ -197,8 +191,6 @@ Public Module WS_NPCs
             c.SendGossip(cGUID, noTrainID)
             Exit Sub
         End If
-
-
 
         'DONE: Build the packet
         Dim packet As New PacketClass(OPCODES.SMSG_TRAINER_LIST)
@@ -260,7 +252,6 @@ Public Module WS_NPCs
         c.Client.Send(packet)
         packet.Dispose()
     End Sub
-
 
 #End Region
 #Region "Merchants"
@@ -836,14 +827,11 @@ Public Module WS_NPCs
         End Try
     End Sub
 
-
 #End Region
 #Region "Banker"
 
-
     Public Const dbcBankBagSlotsMax As Integer = 12
     Public dbcBankBagSlotPrices(dbcBankBagSlotsMax) As Integer
-
 
     Public Sub On_CMSG_AUTOBANK_ITEM(ByRef packet As PacketClass, ByRef Client As ClientClass)
         If (packet.Data.Length - 1) < 7 Then Exit Sub
@@ -904,7 +892,6 @@ Public Module WS_NPCs
         c.Client.Send(packet)
         packet.Dispose()
     End Sub
-
 
 #End Region
 #Region "Other"

@@ -1,5 +1,5 @@
-' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -79,7 +79,6 @@ Public Module WS_Creatures_AI
         End Sub
     End Class
 
-
 #End Region
 #Region "WS.Creatures.AI.TestAIs"
 
@@ -147,7 +146,7 @@ Public Module WS_Creatures_AI
             Else
                 Try
                     If ((TypeOf aiTarget Is CharacterObject) AndAlso (CType(aiTarget, CharacterObject).DEAD = True)) OrElse _
-                       ((TypeOf aiTarget Is CreatureObject) AndAlso (CType(aiTarget, CreatureObject).AIScript.State = AIState.AI_DEAD)) Then
+                       ((TypeOf aiTarget Is CreatureObject) AndAlso (CType(aiTarget, CreatureObject).aiScript.State = AIState.AI_DEAD)) Then
                         aiHateTable.Remove(aiTarget)
                         SelectTarget()
                     End If
@@ -239,7 +238,6 @@ Public Module WS_Creatures_AI
         Protected aiCreature As CreatureObject = Nothing
         Protected aiTimer As Timer = Nothing
 
-
         Public Sub New(ByRef Creature As CreatureObject)
             State = AIState.AI_WANDERING
 
@@ -259,7 +257,6 @@ Public Module WS_Creatures_AI
             aiHateTable(Attacker) += HateValue
             Me.State = TBaseAI.AIState.AI_ATTACKING
         End Sub
-
 
         Protected Shadows Sub DoThink(ByVal state As Object)
             Select Case Me.State
@@ -297,9 +294,6 @@ Public Module WS_Creatures_AI
                 aiTimer.Change(aiCreature.MoveTo(aiCreature.SpawnX, aiCreature.SpawnY, aiCreature.SpawnZ, True), Timeout.Infinite)
                 Exit Sub
             End If
-
-
-
 
             If aiTarget Is Nothing Then
 
@@ -376,7 +370,7 @@ Public Module WS_Creatures_AI
                 'DONE: Do real melee attack
                 Try
                     If ((TypeOf aiTarget Is CharacterObject) AndAlso (CType(aiTarget, CharacterObject).DEAD = True)) OrElse _
-                       ((TypeOf aiTarget Is CreatureObject) AndAlso (CType(aiTarget, CreatureObject).AIScript.State = AIState.AI_DEAD)) Then
+                       ((TypeOf aiTarget Is CreatureObject) AndAlso (CType(aiTarget, CreatureObject).aiScript.State = AIState.AI_DEAD)) Then
                         aiTarget = Nothing
                         aiHateTable.Remove(aiTarget)
                         SelectTarget()
@@ -433,7 +427,6 @@ Public Module WS_Creatures_AI
         Protected Sub DoNothing(ByVal state As Object)
             aiTimer.Change(AI_INTERVAL_SLEEP, Timeout.Infinite)
         End Sub
-
 
         Public Overrides Sub Reset()
             aiHateTable.Clear()
@@ -497,6 +490,7 @@ Public Module WS_Creatures_AI
 
         Protected aiCreature As CreatureObject = Nothing
         Protected aiTimer As Integer = 0
+
 
         Protected Const AI_INTERVAL_MOVE As Integer = 3000
         Protected Const AI_INTERVAL_SLEEP As Integer = 6000
@@ -934,7 +928,6 @@ TryMoveAgain:
 
         End Sub
 
-
     End Class
 
     Public Class GuardAI
@@ -1181,9 +1174,6 @@ TryMoveAgain:
                 Exit Sub
             End If
 
-
-
-
             If aiTarget Is Nothing Then
 
                 'DONE: Do simple random movement
@@ -1259,7 +1249,6 @@ TryMoveAgain:
             End If
 
         End Sub
-
 
     End Class
 

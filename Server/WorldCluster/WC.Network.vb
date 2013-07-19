@@ -1,5 +1,5 @@
-' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
 
-
 Imports System
 Imports System.IO
 Imports System.Threading
@@ -25,14 +24,12 @@ Imports System.Net.Sockets
 Imports System.Runtime.Remoting
 Imports System.Runtime.CompilerServices
 Imports System.Security.Permissions
-Imports Spurious.Common.BaseWriter
-Imports Spurious.Common
-
+Imports mangosVB.Common.BaseWriter
+Imports mangosVB.Common
 
 Public Module WC_Network
 
 #Region "WS.Sockets"
-
 
     Public WS As WorldServerClass
 
@@ -59,7 +56,6 @@ Public Module WC_Network
                 m_Socket.BeginAccept(AddressOf AcceptConnection, Nothing)
 
                 Log.WriteLine(LogType.SUCCESS, "Listening on {0} on port {1}", Net.IPAddress.Parse(Config.WSHost), Config.WSPort)
-
 
                 'Create Remoting Channel
                 Select Case Config.ClusterMethod
@@ -216,7 +212,7 @@ Public Module WC_Network
             End SyncLock
 
             'Notification message
-            If Worlds.Count = 0 Then Log.WriteLine(LogType.WARNING, "No world servers available!")
+            If Worlds.Count = 0 Then Log.WriteLine(LogType.WARNING, "All world servers are offline!")
 
             'Drop WorldServers
             Disconnect("NULL", DeadServers)
@@ -229,7 +225,7 @@ Public Module WC_Network
                     Latency = Math.Abs(MyTime - ServerTime)
                     Log.WriteLine(LogType.NETWORK, "Voice Server ping: {0}ms", Latency)
                 Catch ex As Exception
-                    Log.WriteLine(LogType.WARNING, "Voice Server down.")
+                    Log.WriteLine(LogType.WARNING, "Voice Server Offline.")
                     VoiceDisconnect()
                 End Try
             End If
@@ -273,7 +269,6 @@ Public Module WC_Network
 
             CLIENTs(ID).Character.ChatFlag = Flag
         End Sub
-
 
         Public Sub Broadcast(ByVal p As PacketClass)
             CHARACTERs_Lock.AcquireReaderLock(DEFAULT_LOCK_TIMEOUT)
@@ -323,7 +318,6 @@ Public Module WC_Network
         Public Sub BroadcastGuildOfficers(ByVal GuildID As Long, ByVal Data() As Byte) Implements Common.ICluster.BroadcastRaid
             'TODO: Not implement yet
         End Sub
-
 
         Public Function InstanceCheck(ByVal Client As ClientClass, ByVal MapID As UInteger) As Boolean
             If (Not WS.Worlds.ContainsKey(MapID)) Then
@@ -433,12 +427,6 @@ Public Module WC_Network
             End SyncLock
         End Sub
 
-
-
-
-
-
-
         Public Sub VoiceConnect(ByVal URI As String, ByVal Host As UInteger, ByVal Port As UShort, ByVal Key As Byte()) Implements Common.ICluster.VoiceConnect
             Try
                 VoiceDisconnect()
@@ -473,8 +461,6 @@ Public Module WC_Network
             p.Dispose()
         End Sub
 
-
-
     End Class
 
     Class WorldInfo
@@ -493,7 +479,6 @@ Public Module WC_Network
 #End Region
 #Region "WS.Analyzer"
 
-
     Public Enum AccessLevel As Byte
         Trial = 0
         Player = 1
@@ -506,7 +491,6 @@ Public Module WC_Network
     Class ClientClass
         Inherits ClientInfo
         Implements IDisposable
-
 
         Public Socket As Socket = Nothing
         Public Queue As New Queue
@@ -533,7 +517,6 @@ Public Module WC_Network
 
             Return ci
         End Function
-
 
         Public Sub OnConnect(ByVal state As Object)
             IP = CType(Socket.RemoteEndPoint, IPEndPoint).Address
@@ -747,12 +730,12 @@ Public Module WC_Network
         End Sub
 
         Public Sub EnQueue(ByVal state As Object)
-            While CHARACTERS.Count > Config.ServerLimit
+            While CHARACTERs.Count > Config.ServerLimit
                 If Not Me.Socket.Connected Then Exit Sub
 
                 Dim response_full As New PacketClass(OPCODES.SMSG_AUTH_RESPONSE)
                 response_full.AddInt8(AuthResponseCodes.AUTH_WAIT_QUEUE)
-                response_full.AddInt32(CLIENTs.Count - CHARACTERS.Count)            'amount of players in queue
+                response_full.AddInt32(CLIENTs.Count - CHARACTERs.Count)            'amount of players in queue
                 Me.Send(response_full)
 
                 Log.WriteLine(LogType.INFORMATION, "[{1}:{2}] AUTH_WAIT_QUEUE: Server limit reached!", Me.IP, Me.Port)
@@ -761,8 +744,6 @@ Public Module WC_Network
             SendLoginOK(Me)
         End Sub
     End Class
-    
-
 
 #End Region
 

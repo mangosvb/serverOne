@@ -1,5 +1,5 @@
-' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
 
 Imports System
 Imports System.IO
-Imports Spurious.Common
-Imports Spurious.Common.BaseWriter
-Imports Spurious.WorldServer
+Imports mangosVB.Common
+Imports mangosVB.Common.BaseWriter
+Imports mangosVB.WorldServer
 
 Public Module WS_DBCLoad
 
@@ -80,7 +80,6 @@ Public Module WS_DBCLoad
             Console.ForegroundColor = System.ConsoleColor.Gray
         End Try
     End Sub
-
 
 #End Region
 #Region "Spells"
@@ -250,7 +249,7 @@ Public Module WS_DBCLoad
                     ID = SpellDBC.Item(i, 0)
                     SPELLs(ID) = New SpellInfo
                     SPELLs(ID).ID = ID
-                    SPELLs(ID).category = SpellDBC.Item(i, 1)
+                    SPELLs(ID).Category = SpellDBC.Item(i, 1)
                     'castUI = 2
                     SPELLs(ID).DispellType = SpellDBC.Item(i, 3)
                     SPELLs(ID).Mechanic = SpellDBC.Item(i, 4)
@@ -434,7 +433,6 @@ Public Module WS_DBCLoad
                     SPELLs(ID).RequiredAreaID = SpellDBC.Item(i, 214)
                     ''''SPELLs(id).RuneCostID = SpellDBC.Item(i, 216)    ' THIS IS USED IN WOTLK
                     ''''SPELLs(id).SpellMissleID = SpellDBC.Item(i, 217) ' THIS IS USED IN WOTLK
-
 
                 Catch e As Exception
                     Log.WriteLine(LogType.FAILED, "Line {0} caused error: {1}", i, e.ToString)

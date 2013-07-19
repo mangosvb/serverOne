@@ -1,5 +1,5 @@
-' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -23,7 +23,9 @@ Imports System.IO
 Imports System.Net
 Imports System.Security.Cryptography
 Imports System.Reflection
-Imports Spurious.Common
+Imports System.Collections.Generic
+Imports mangosVB.Common
+Imports mangosVB.Common.BaseWriter
 
 Public Module RS_Main
 #Region "Global.Constants"
@@ -73,8 +75,7 @@ Public Module RS_Main
     Const CMD_GRUNT_PROVESESSION As Integer = &H21     'server
     Const CMD_GRUNT_KICK As Integer = &H24             'server
 
-
-
+    Public Log As New BaseWriter
 
     Public Enum AccountState As Byte
         'RealmServ Error Codes
@@ -121,7 +122,6 @@ Public Module RS_Main
             oStmR = New StreamReader("RealmServer.ini")
             Config = oXS.Deserialize(oStmR)
             oStmR.Close()
-
 
             Console.WriteLine(".[done]")
 
@@ -356,7 +356,6 @@ Public Module RS_Main
                 acc_state = AccountState.LOGIN_DBBUSY
             End Try
 
-
             'DONE: Send results to client
             Select Case acc_state
                 Case AccountState.LOGIN_OK
@@ -469,7 +468,6 @@ Public Module RS_Main
             If M1(i) <> Client.AuthEngine.M1(i) Then pass_check = False
         Next
 
-
         If pass_check Then
             Client.AuthEngine.CalculateM2(M1)
             Client.AuthEngine.CalculateNewHash()
@@ -558,7 +556,7 @@ Public Module RS_Main
             '(uint8) IsLocked
             '	0 -> none; 1 -> locked
             Converter.ToBytes(CType(0, Byte), data_response, tmp)
-            '(uint8) Realm Color 
+            '(uint8) Realm Color
             '   0 -> Green; 1 -> Red; 2 -> Offline;
             Converter.ToBytes(CType(Host.Item("ws_status"), Byte), data_response, tmp)
             '(string) Realm Name (zero terminated)
@@ -567,7 +565,7 @@ Public Module RS_Main
             '(string) Realm Address ("ip:port", zero terminated)
             Converter.ToBytes(CType(Host.Item("ws_host") & ":" & Host.Item("ws_port"), String), data_response, tmp)
             Converter.ToBytes(CType(0, Byte), data_response, tmp) '\0
-            '(float) Population 
+            '(float) Population
             '   400F -> Full; 5F -> Medium; 1.6F -> Low; 200F -> New; 2F -> High
             '   00 00 48 43 -> Recommended
             '   00 00 C8 43 -> Full
@@ -576,7 +574,7 @@ Public Module RS_Main
             Converter.ToBytes(CType(Host.Item("ws_population"), Single), data_response, tmp)
             '(byte) Number of character at this realm for this account
             Converter.ToBytes(CType(1, Byte), data_response, tmp)
-            '(byte) Timezone 
+            '(byte) Timezone
             '	UnitedKingdom = 0x0, USA = 0x1, Germany = 0x2, France = 0x3, Other = 0x4, Oceania = 0x5, Spain = 0x5
             Converter.ToBytes(CType(1, Byte), data_response, tmp)
             '(byte) Unknown (may be 2 -> TestRealm)
@@ -696,9 +694,6 @@ Public Module RS_Main
             buffer = buffer + [String].Format("[{0}] [{1}:{2}] DEBUG: Packet Dump{3}", Format(TimeOfDay, "hh:mm:ss"), Client.IP, Client.Port, vbNewLine)
         End If
 
-
-
-
         If data.Length Mod 16 = 0 Then
             For j = 0 To data.Length - 1 Step 16
                 buffer += "|  " & BitConverter.ToString(data, j, 16).Replace("-", " ")
@@ -724,7 +719,6 @@ Public Module RS_Main
     End Sub
 #End Region
 
-
     Sub WS_Status_Report()
         Dim result1 As DataTable = New DataTable
         Database.Query([String].Format("SELECT * FROM realms;"), result1)
@@ -740,25 +734,43 @@ Public Module RS_Main
         Console.ForegroundColor = System.ConsoleColor.Gray
     End Sub
     Sub Main()
+
         Console.Title = String.Format("{0} v{1}", [Assembly].GetExecutingAssembly().GetCustomAttributes(GetType(System.Reflection.AssemblyTitleAttribute), False)(0).Title, [Assembly].GetExecutingAssembly().GetName().Version)
 
         Console.ForegroundColor = System.ConsoleColor.Yellow
-        Console.WriteLine([Assembly].GetExecutingAssembly().GetCustomAttributes(GetType(System.Reflection.AssemblyProductAttribute), False)(0).Product)
-        Console.WriteLine([Assembly].GetExecutingAssembly().GetCustomAttributes(GetType(System.Reflection.AssemblyCopyrightAttribute), False)(0).Copyright)
-        Console.WriteLine()
+
+        Console.WriteLine(" ####       ####            ###     ###   ########    #######     ######## ")
+        Console.WriteLine(" #####     #####            ####    ###  ##########  #########   ##########")
+        Console.WriteLine(" #####     #####            #####   ###  ##########  #########   ##########")
+        Console.WriteLine(" ######   ######            #####   ###  ###        ####   ####  ###       ")
+        Console.WriteLine(" ######   ######    ####    ######  ###  ###        ###     ###  ###       ")
+        Console.WriteLine(" ####### #######   ######   ######  ###  ###  ##### ###     ###  ########  ")
+        Console.WriteLine(" ### ### ### ###   ######   ####### ###  ###  ##### ###     ###  ######### ")
+        Console.WriteLine(" ### ### ### ###  ###  ###  ### ### ###  ###  ##### ###     ###   #########")
+        Console.WriteLine(" ### ####### ###  ###  ###  ###  ######  ###    ### ###     ###        ####")
+        Console.WriteLine(" ### ####### ###  ###  ###  ###  ######  ###    ### ###     ###         ###")
+        Console.WriteLine(" ###  #####  ### ########## ###   #####  ###   #### ####   ####        ####")
+        Console.WriteLine(" ###  #####  ### ########## ###   #####  #########   #########   ##########")
+        Console.WriteLine(" ###  #####  ### ###    ### ###    ####  #########   #########   ######### ")
+        Console.WriteLine(" ###   ###   ### ###    ### ###     ###   #######     #######     #######  ")
+        Console.WriteLine("")
+        Console.WriteLine(" Website: http://www.getmangos.co.uk                         ##  ##  ##### ")
+        Console.WriteLine("                                                             ##  ##  ##  ##")
+        Console.WriteLine("    Wiki: http://github.com/mangoswiki/wiki                  ##  ##  ##### ")
+        Console.WriteLine("                                                              ####   ##  ##")
+        Console.WriteLine("   Forum: http://community.getmangos.co.uk                     ##    ##### ")
+        Console.WriteLine("")
+
 
         Console.ForegroundColor = System.ConsoleColor.Magenta
-        Console.WriteLine("http://www.SpuriousEmu.com")
-        Console.WriteLine()
 
         Console.ForegroundColor = System.ConsoleColor.White
-        Console.WriteLine([Assembly].GetExecutingAssembly().GetCustomAttributes(GetType(System.Reflection.AssemblyTitleAttribute), False)(0).Title)
-        Console.WriteLine("version {0}", [Assembly].GetExecutingAssembly().GetName().Version)
+        Console.Write([Assembly].GetExecutingAssembly().GetCustomAttributes(GetType(System.Reflection.AssemblyTitleAttribute), False)(0).Title)
+        Console.WriteLine(" version {0}", [Assembly].GetExecutingAssembly().GetName().Version)
         Console.WriteLine()
         Console.ForegroundColor = System.ConsoleColor.Gray
 
         Console.WriteLine("[{0}] Realm Server Starting...", Format(TimeOfDay, "hh:mm:ss"))
-
         LoadConfig()
         AddHandler Database.SQLMessage, AddressOf SLQEventHandler
         Database.Connect()
@@ -785,17 +797,17 @@ Public Module RS_Main
                             End
                         Case "help", "/help"
                             Console.ForegroundColor = System.ConsoleColor.Blue
-                            Console.WriteLine("'Spurious.RealmServer' Command list:")
+                            Console.WriteLine("'RealmServer' Command list:")
                             Console.ForegroundColor = System.ConsoleColor.White
                             Console.WriteLine("---------------------------------")
                             Console.WriteLine("")
                             Console.WriteLine("")
-                            Console.WriteLine("'help' or '/help' - Brings up the 'Spurious.RealmServer' Command list (this).")
+                            Console.WriteLine("'help' or '/help' - Brings up the RealmServer' Command list (this).")
                             Console.WriteLine("")
-                            Console.WriteLine("'/quit' or '/shutdown' or 'off' or 'kill' or 'exit' - Shutsdown 'Spurious.RealmServer'.")
+                            Console.WriteLine("'/quit' or '/shutdown' or 'off' or 'kill' or 'exit' - Shutsdown 'RealmServer'.")
                         Case Else
                             Console.ForegroundColor = System.ConsoleColor.DarkRed
-                            Console.WriteLine("Error!. Cannot find specified command. Please type 'help' for information on 'Spurious.RealmServer' console commands.")
+                            Console.WriteLine("Error!. Cannot find specified command. Please type 'help' for information on 'RealmServer' console commands.")
                             Console.ForegroundColor = System.ConsoleColor.White
                     End Select
                 End If

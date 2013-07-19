@@ -1,5 +1,5 @@
-' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -19,16 +19,13 @@
 Imports System.Threading
 Imports System.Reflection
 Imports System.Text.RegularExpressions
-Imports Spurious.Common.BaseWriter
-
-
+Imports mangosVB.Common.BaseWriter
+Imports mangosVB.Common
 
 Public Module WS_CharManagment
 
-
-
 #Region "WS.CharMangment.CharacterInitializators"
-    Enum ManaTypes
+    Enum ManaTypes As Integer
         TYPE_MANA = 0
         TYPE_RAGE = 1
         TYPE_FOCUS = 2
@@ -448,7 +445,7 @@ Public Module WS_CharManagment
             DrowningTimer = New Threading.Timer(AddressOf Character.HandleDrowning, Nothing, 2000, 1000)
         End Sub
         Public Sub Dispose() Implements System.IDisposable.Dispose
-            DrowningTimer.dispose()
+            DrowningTimer.Dispose()
             DrowningTimer = Nothing
             If CHARACTERs.ContainsKey(CharacterGUID) Then CHARACTERs(CharacterGUID).StopMirrorTimer(1)
         End Sub
@@ -469,7 +466,7 @@ Public Module WS_CharManagment
             Me.Dispose()
         End Sub
         Public Sub Dispose() Implements System.IDisposable.Dispose
-            RepopTimer.dispose()
+            RepopTimer.Dispose()
             RepopTimer = Nothing
         End Sub
     End Class
@@ -555,7 +552,6 @@ Public Module WS_CharManagment
         Log.WriteLine(LogType.DEBUG, "[{0}:{1}] SMSG_INITIAL_SPELLS", Client.IP, Client.Port)
     End Sub
 
-
     Public Sub InitializeTalentSpells(ByVal c As CharacterObject)
         Dim t As New SpellTargets
         t.SetTarget_SELF(CType(c, CharacterObject))
@@ -576,7 +572,6 @@ Public Module WS_CharManagment
 #End Region
 
 #Region "WS.CharMangment.CharacterDataType"
-
 
     Public Const ITEM_SLOT_NULL As Byte = 255
     Public Const ITEM_BAG_NULL As Long = -1
@@ -614,7 +609,7 @@ Public Module WS_CharManagment
 
         Public ReadOnly Property GetCriticalWithSpells() As Byte
             ' From http://www.wowwiki.com/Spell_critical_strike
-            ' TODO: Need to add SpellCritical Value in this format -- (Intellect/80 '82 for Warlocks) + (Spell Critical Strike Rating/22.08) + Class Specific Constant 
+            ' TODO: Need to add SpellCritical Value in this format -- (Intellect/80 '82 for Warlocks) + (Spell Critical Strike Rating/22.08) + Class Specific Constant
             ' How do you generate the base spell crit rating... and then we can fix the formula
             Get
                 Select Case Classe
@@ -881,7 +876,6 @@ Public Module WS_CharManagment
             Client.Send(packet)
             packet.Dispose()
         End Sub
-
 
         Public Copper As UInteger = 0
         Public Name As String = ""
@@ -1176,7 +1170,6 @@ Public Module WS_CharManagment
             packet.AddInt32(2)      'Operations.Count
             packet.AddInt8(0)
 
-
             Dim tmpUpdate As New UpdateClass(FIELD_MASK_SIZE_ITEM)
             Item.FillAllUpdateFlags(tmpUpdate)
             tmpUpdate.AddToPacket(packet, UPDATETYPE, CType(Item, ItemObject), 0)
@@ -1356,7 +1349,6 @@ Public Module WS_CharManagment
             ''Gender(for sound),Alchohol,Unk3,HonorRank?
             SetUpdateFlag(EPlayerFields.PLAYER_BYTES_3, (Gender + (0 << 8) + (0 << 16) + (0 << 24)))
 
-
             SetUpdateFlag(EPlayerFields.PLAYER_FIELD_WATCHED_FACTION_INDEX, WatchedFactionIndex)
 
             SetUpdateFlag(EPlayerFields.PLAYER_XP, XP)
@@ -1510,8 +1502,6 @@ Public Module WS_CharManagment
             ''SetUpdateFlag(EPlayerFields.PLAYER_FIELD_YESTERDAY_CONTRIBUTION, HonorPointsYesterday)
             ''SetUpdateFlag(EPlayerFields.PLAYER_FIELD_LIFETIME_HONORBALE_KILLS, HonorKillsLifeTime)
 
-
-
             For i = EQUIPMENT_SLOT_START To KEYRING_SLOT_END - 1
                 If Items.ContainsKey(i) Then
                     If i < EQUIPMENT_SLOT_END Then
@@ -1532,8 +1522,6 @@ Public Module WS_CharManagment
                     SetUpdateFlag(EPlayerFields.PLAYER_FIELD_INV_SLOT_HEAD + i * 2, 0)
                 End If
             Next
-
-
 
         End Sub                                       'Used for this player's update packets
         Public Sub FillAllUpdateFlags(ByRef Update As UpdateClass, ByRef Character As CharacterObject)
@@ -1558,7 +1546,6 @@ Public Module WS_CharManagment
             Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_LEVEL, CType(Level, Integer))
             Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_FACTIONTEMPLATE, CType(Faction, Integer))
 
-
             Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_BYTES_0, CType(CType(Race, Integer) + (CType(Classe, Integer) << 8) + (CType(Gender, Integer) << 16) + (CType(ManaType, Integer) << 24), Integer))
             'StandState, PetLoyalty << 8, ShapeShift << 16, UnkFlag << 24, InvisibilityFlag << 25
             Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_BYTES_1, CType(StandState, Integer) + CType(Invisibility > InvisibilityLevel.VISIBLE, Integer) * 2 << 24)
@@ -1568,7 +1555,6 @@ Public Module WS_CharManagment
             Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_DISPLAYID, Model)
             Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_NATIVEDISPLAYID, Model_Native)
             Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_MOUNTDISPLAYID, Mount)
-
 
             Update.SetUpdateFlag(EUnitFields.UNIT_DYNAMIC_FLAGS, cDynamicFlags)
 
@@ -1619,8 +1605,6 @@ Public Module WS_CharManagment
             ''SetUpdateFlag(EPlayerFields.PLAYER_FIELD_TODAY_CONTRIBUTION, HonorPointsToday)
             ''SetUpdateFlag(EPlayerFields.PLAYER_FIELD_YESTERDAY_CONTRIBUTION, HonorPointsYesterday)
             ''SetUpdateFlag(EPlayerFields.PLAYER_FIELD_LIFETIME_HONORBALE_KILLS, HonorKillsLifeTime)
-
-
 
             For i = EQUIPMENT_SLOT_START To EQUIPMENT_SLOT_END - 1
                 If Items.ContainsKey(i) Then
@@ -1764,7 +1748,6 @@ Public Module WS_CharManagment
             SendMessageSystem(Client, Message)
         End Sub
 
-
         'Spell/Skill/Talents System
         Public TalentPoints As Byte = 0
         Public AmmoID As Integer = 0
@@ -1867,7 +1850,6 @@ Public Module WS_CharManagment
             End If
         End Sub
 
-
         'XP and Level Managment
         Public RestState As Byte = XPSTATE.Normal
         Public RestXP As Byte = 0
@@ -1904,7 +1886,7 @@ CheckXPAgain:
                     SMSG_LEVELUP_INFO.AddInt32(Stamina.Base - oldStamina)
                     SMSG_LEVELUP_INFO.AddInt32(Intellect.Base - oldIntellect)
                     SMSG_LEVELUP_INFO.AddInt32(Spirit.Base - oldSpirit)
-                    Client.Send(SMSG_LEVELUP_INFO)
+                    If Client IsNot Nothing Then Client.Send(SMSG_LEVELUP_INFO)
                     SMSG_LEVELUP_INFO.Dispose()
 
                     Life.Current = Life.Maximum
@@ -1942,11 +1924,11 @@ CheckXPAgain:
                         SetUpdateFlag(EPlayerFields.PLAYER_SKILL_INFO_1_1 + SkillsPositions(Skill.Key) * 3 + 1, Skill.Value.GetSkill)       'CType((skill1.CurrentVal(Me) + (skill1.Cap(Me) << 16)), Integer)
                     Next
 
-                    SendCharacterUpdate()
-                    UpdateManaRegen()
+                    If Client IsNot Nothing Then SendCharacterUpdate()
+                    If Client IsNot Nothing Then UpdateManaRegen()
                 Else
-                    SetUpdateFlag(EPlayerFields.PLAYER_XP, XP)
-                    SendCharacterUpdate(False)
+                    If Client IsNot Nothing Then SetUpdateFlag(EPlayerFields.PLAYER_XP, XP)
+                    If Client IsNot Nothing Then SendCharacterUpdate(False)
                 End If
 
                 'We just dinged more than one level
@@ -2126,7 +2108,6 @@ CheckXPAgain:
                 Next
             End If
 
-
             If Item.ItemInfo.BagFamily = ITEM_BAG.KEYRING Then
                 'DONE: Insert as keyring
                 For i As Byte = KEYRING_SLOT_START To KEYRING_SLOT_END - 1
@@ -2154,11 +2135,10 @@ CheckXPAgain:
                 Next
             End If
 
-
             'DONE: Insert as new item in inventory
-            For i As Byte = INVENTORY_SLOT_ITEM_START To INVENTORY_SLOT_ITEM_END - 1
-                If Not Items.ContainsKey(i) Then
-                    Return ItemSETSLOT(Item, 0, i)
+            For slot As Byte = INVENTORY_SLOT_ITEM_START To INVENTORY_SLOT_ITEM_END - 1
+                If Not Items.ContainsKey(slot) Then
+                    Return ItemSETSLOT(Item, 0, slot)
                 End If
             Next
             'DONE: Insert as new item in bag
@@ -2244,7 +2224,6 @@ CheckXPAgain:
                             End If
                         Next
                     End If
-
 
                 End If
             End If
@@ -2346,7 +2325,6 @@ CheckXPAgain:
                 End If
             Next slot
 
-
             'DONE: Search in keyring slot
             For slot As Byte = KEYRING_SLOT_START To KEYRING_SLOT_END - 1
                 If Items.ContainsKey(slot) Then
@@ -2366,7 +2344,6 @@ CheckXPAgain:
                     End If
                 End If
             Next slot
-
 
             'DONE: Search in bags
             For bag As Byte = INVENTORY_SLOT_BAG_1 To INVENTORY_SLOT_BAG_END - 1
@@ -2573,7 +2550,6 @@ CheckXPAgain:
                 dstItem = Items(dstSlot)
             End If
 
-
             'DONE: If already full, just swap
             If srcItem.StackCount = dstItem.ItemInfo.Stackable Or dstItem.StackCount = dstItem.ItemInfo.Stackable Then Return False
 
@@ -2719,7 +2695,6 @@ CheckXPAgain:
                 End If
             End If
 
-
             Dim response As New PacketClass(OPCODES.SMSG_INVENTORY_CHANGE_FAILURE)
             response.AddInt8(InventoryChangeFailure.EQUIP_ERR_COULDNT_SPLIT_ITEMS)
             response.AddUInt64(srcItem.GUID)
@@ -2742,7 +2717,6 @@ CheckXPAgain:
                 SendInventoryChangeFailure(Me, errCode, Items(srcSlot).GUID, 0)
                 Exit Sub
             End If
-
 
             Try
                 If srcBag > 0 AndAlso dstBag > 0 Then
@@ -2779,7 +2753,6 @@ CheckXPAgain:
                                 End If
                             End If
 
-
                             SendItemUpdate(Items(srcBag))
                             If dstBag <> srcBag Then
                                 SendItemUpdate(Items(dstBag))
@@ -2788,8 +2761,6 @@ CheckXPAgain:
                             If Items(srcBag).Items.ContainsKey(srcSlot) Then Database.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", srcSlot, Items(srcBag).GUID, Items(srcBag).Items(srcSlot).GUID - GUID_ITEM))
                         End If
                     End If
-
-
 
                 ElseIf srcBag > 0 Then
                     'DONE: from Bag to Inventory
@@ -2837,8 +2808,6 @@ CheckXPAgain:
                         End If
                     End If
 
-
-
                 ElseIf dstBag > 0 Then
                     'DONE: from Inventory to Bag
                     If Not Items.ContainsKey(srcSlot) Then
@@ -2884,11 +2853,6 @@ CheckXPAgain:
                             If Items.ContainsKey(srcSlot) Then Database.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", srcSlot, Me.GUID, Items(srcSlot).GUID - GUID_ITEM))
                         End If
                     End If
-
-
-
-
-
 
                 Else
                     'DONE: Inventory Moving
@@ -2942,7 +2906,6 @@ CheckXPAgain:
                         End If
                     End If
                 End If
-
 
             Catch err As Exception
                 Log.WriteLine(LogType.DEBUG, "[{0}:{1}] Unable to swap items. {2}{3}", Client.IP, Client.Port, vbNewLine, err.ToString)
@@ -3208,6 +3171,7 @@ CheckXPAgain:
             Client.Send(SMSG_GOSSIP_POI)
             SMSG_GOSSIP_POI.Dispose()
         End Sub
+
         Public Sub BindPlayer(ByVal cGUID As ULong)
             'TODO: Send spell for bind 3286 bind magic
 
@@ -3263,7 +3227,6 @@ CheckXPAgain:
             Client.Send(packet)
             packet.Dispose()
 
-
             Client.Character.positionX = posX
             Client.Character.positionY = posY
             Client.Character.positionZ = posZ
@@ -3276,7 +3239,6 @@ CheckXPAgain:
         End Sub
         Public Sub Transfer(ByVal posX As Single, ByVal posY As Single, ByVal posZ As Single, ByVal ori As Single, ByVal map As Integer)
             Log.WriteLine(LogType.INFORMATION, "World: Player Transfer: X[{0}], Y[{1}], Z[{2}], O[{3}], MAP[{4}]", posX, posY, posZ, ori, map)
-
 
             Dim p As New PacketClass(OPCODES.SMSG_TRANSFER_PENDING)
             p.AddInt32(map)
@@ -4144,7 +4106,6 @@ CheckXPAgain:
                 Reputation(i).Value = Trim(tmp2(1))
             Next
 
-
             'DONE: Get Items
             MySQLQuery.Clear()
             Database.Query(String.Format("SELECT * FROM characters_inventory WHERE item_bag = {0};", GUID), MySQLQuery)
@@ -4171,7 +4132,7 @@ CheckXPAgain:
             If MySQLQuery.Rows.Count > 0 Then
                 For i = 0 To MySQLQuery.Rows.Count - 1
                     Dim Slot As Byte = 0
-                    Select CByte(MySQLQuery.Rows(i).Item("member_type"))
+                    Select Case CByte(MySQLQuery.Rows(i).Item("member_type"))
                         Case 2
                             Slot = 0
                         Case 3
@@ -4489,16 +4450,19 @@ CheckXPAgain:
                 Return Not (Group Is Nothing)
             End Get
         End Property
+
         Public ReadOnly Property IsInRaid() As Boolean
             Get
                 Return ((Not (Group Is Nothing)) AndAlso (Group.Type = GroupType.RAID))
             End Get
         End Property
+
         Public ReadOnly Property IsGroupLeader() As Boolean
             Get
                 Return (Group.Leader = GUID)
             End Get
         End Property
+
         Public Sub GroupUpdate(ByVal Flag As Integer)
             If Group Is Nothing Then Exit Sub
             Dim Packet As PacketClass = BuildPartyMemberStats(Me, Flag)
@@ -4518,6 +4482,7 @@ CheckXPAgain:
                 Return GuildID <> 0
             End Get
         End Property
+
         Public ReadOnly Property IsGuildLeader() As Boolean
             Get
                 Dim MySQLQuery As New DataTable
@@ -4525,6 +4490,7 @@ CheckXPAgain:
                 Return MySQLQuery.Rows.Count <> 0
             End Get
         End Property
+
         Public ReadOnly Property IsGuildRightSet(ByVal rights As GuildRankRights) As Boolean
             Get
                 Dim MySQLQuery As New DataTable
@@ -4563,7 +4529,6 @@ CheckXPAgain:
 
                     TalkQuests(i).Slot = i
 
-
                     Dim updateDataCount As Integer = UpdateData.Count
                     Dim questState As Integer = TalkQuests(i).GetState
 
@@ -4581,6 +4546,7 @@ CheckXPAgain:
 
             Return False
         End Function
+
         Public Function TalkDeleteQuest(ByVal QuestSlot As Byte) As Boolean
             If TalkQuests(QuestSlot) Is Nothing Then
                 Return False
@@ -4601,6 +4567,7 @@ CheckXPAgain:
                 Return True
             End If
         End Function
+
         Public Function TalkCompleteQuest(ByVal QuestSlot As Byte) As Boolean
             If TalkQuests(QuestSlot) Is Nothing Then
                 Return False
@@ -4620,6 +4587,7 @@ CheckXPAgain:
                 Return True
             End If
         End Function
+
         Public Function TalkUpdateQuest(ByVal QuestSlot As Byte) As Boolean
             If TalkQuests(QuestSlot) Is Nothing Then
                 Return False
@@ -4641,6 +4609,7 @@ CheckXPAgain:
                 Return True
             End If
         End Function
+
         Public Function TalkCanAccept(ByRef Quest As QuestInfo) As Boolean
 
             If Quest.RequiredRace <> 0 AndAlso (Quest.RequiredRace And (1 << (Race - 1))) = 0 Then
@@ -4675,16 +4644,17 @@ CheckXPAgain:
             Return True
         End Function
         Public Function IsQuestCompleted(ByVal QuestID As Integer) As Boolean
-            Dim q As New DataTable
-            Database.Query(String.Format("SELECT quest_id FROM characters_quests WHERE char_guid = {0} AND quest_status = -1 AND quest_id = {1};", GUID, QuestID), q)
+            Dim Quest As New DataTable
+            Database.Query(String.Format("SELECT quest_id FROM characters_quests WHERE char_guid = {0} AND quest_status = -1 AND quest_id = {1};", GUID, QuestID), Quest)
 
-            Return q.Rows.Count <> 0
+            Return Quest.Rows.Count <> 0
         End Function
+
         Public Function IsQuestInProgress(ByVal QuestID As Integer) As Boolean
-            Dim i As Integer
-            For i = 0 To QUEST_SLOTS
-                If Not TalkQuests(i) Is Nothing Then
-                    If TalkQuests(i).ID = QuestID Then Return True
+            Dim Quest As Integer
+            For Quest = 0 To QUEST_SLOTS
+                If Not TalkQuests(Quest) Is Nothing Then
+                    If TalkQuests(Quest).ID = QuestID Then Return True
                 End If
             Next
 
@@ -4715,6 +4685,7 @@ CheckXPAgain:
             Client.Send(SMSG_LOG_XPGAIN)
             SMSG_LOG_XPGAIN.Dispose()
         End Sub
+
         Public Sub LogHonorGain(ByVal Ammount As Integer, Optional ByVal VictimGUID As ULong = 0, Optional ByVal VictimRANK As Byte = 0)
             Dim SMSG_PVP_CREDIT As New PacketClass(OPCODES.SMSG_PVP_CREDIT)
             SMSG_PVP_CREDIT.AddInt32(Ammount)
@@ -4723,6 +4694,7 @@ CheckXPAgain:
             Client.Send(SMSG_PVP_CREDIT)
             SMSG_PVP_CREDIT.Dispose()
         End Sub
+
         Public Sub LogLootItem(ByVal Item As ItemObject, ByVal ItemCount As Byte, ByVal Recieved As Boolean, ByVal Created As Boolean)
             Dim response As New PacketClass(OPCODES.SMSG_ITEM_PUSH_RESULT)
             response.AddUInt64(GUID)
@@ -4744,6 +4716,7 @@ CheckXPAgain:
             If IsInGroup Then Group.Broadcast(response)
             response.Dispose()
         End Sub
+
         Public Sub LogEnvironmentalDamage(ByVal dmgType As DamageTypes, ByVal Damage As Integer)
             Dim SMSG_ENVIRONMENTALDAMAGELOG As New PacketClass(OPCODES.SMSG_ENVIRONMENTALDAMAGELOG)
             SMSG_ENVIRONMENTALDAMAGELOG.AddUInt64(GUID)
@@ -4756,6 +4729,7 @@ CheckXPAgain:
             SendToNearPlayers(SMSG_ENVIRONMENTALDAMAGELOG)
             SMSG_ENVIRONMENTALDAMAGELOG.Dispose()
         End Sub
+
         Public ReadOnly Property Side() As Boolean
             Get
                 Select Case Race
@@ -4780,7 +4754,6 @@ CheckXPAgain:
 #End Region
 
 #Region "WS.CharMangment.Handlers"
-
 
     Public Sub On_CMSG_LFM_SET_AUTOFILL(ByRef packet As PacketClass, ByRef Client As ClientClass)
         'Unsure how this works
@@ -4814,6 +4787,7 @@ CheckXPAgain:
         LOGOUT_RESPONSE_ACCEPTED = &H0
         LOGOUT_RESPONSE_DENIED = &HC
     End Enum
+
     Public Sub On_CMSG_LOGOUT_REQUEST(ByRef packet As PacketClass, ByRef Client As ClientClass)
         Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_LOGOUT_REQUEST", Client.IP, Client.Port)
         Client.Character.Save()
@@ -4835,7 +4809,6 @@ CheckXPAgain:
             Client.Character.StandState = StandStates.STANDSTATE_SIT
             UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_BYTES_1, Client.Character.cBytes1)
 
-
             'DONE: Send packet
             UpdateData.AddToPacket(SMSG_UPDATE_OBJECT, ObjectUpdateType.UPDATETYPE_VALUES, CType(Client.Character, CharacterObject), 1)
             Client.SendMultiplyPackets(SMSG_UPDATE_OBJECT)
@@ -4848,9 +4821,6 @@ CheckXPAgain:
             packetACK.Dispose()
         End If
 
-
-
-
         'DONE: Let the client to exit
         Dim SMSG_LOGOUT_RESPONSE As New PacketClass(OPCODES.SMSG_LOGOUT_RESPONSE)
         SMSG_LOGOUT_RESPONSE.AddInt32(0)
@@ -4861,9 +4831,9 @@ CheckXPAgain:
 
         'DONE: While logout, the player can't move
         Client.Character.SetMoveRoot()
-
         Client.Character.LogoutTimer = New Threading.Timer(AddressOf Client.Character.Logout, Nothing, 20000, Timeout.Infinite)
     End Sub
+
     Public Sub On_CMSG_LOGOUT_CANCEL(ByRef packet As PacketClass, ByRef Client As ClientClass)
         Try
             Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_LOGOUT_CANCEL", Client.IP, Client.Port)
@@ -4875,8 +4845,6 @@ CheckXPAgain:
                 Client.Character.LogoutTimer = Nothing
             Catch
             End Try
-
-
 
             'DONE: Initialize packet
             Dim UpdateData As New UpdateClass
@@ -4900,8 +4868,6 @@ CheckXPAgain:
             packetACK.AddInt8(StandStates.STANDSTATE_STAND)
             Client.Send(packetACK)
             packetACK.Dispose()
-
-
 
             'DONE: Stop client logout
             Dim SMSG_LOGOUT_CANCEL_ACK As New PacketClass(OPCODES.SMSG_LOGOUT_CANCEL_ACK)
@@ -5043,7 +5009,6 @@ CheckXPAgain:
         Client.Character.SendCharacterUpdate(False)
     End Sub
 
-
 #End Region
 
 #Region "WS.CharMangment.CreateCharacter"
@@ -5051,7 +5016,6 @@ CheckXPAgain:
     Public Function CreateCharacter(ByVal Account As String, ByVal Name As String, ByVal Race As Byte, ByVal Classe As Byte, ByVal Gender As Byte, ByVal Skin As Byte, ByVal Face As Byte, ByVal HairStyle As Byte, ByVal HairColor As Byte, ByVal FacialHair As Byte, ByVal OutfitID As Byte) As Integer
         Dim Character As New CharacterObject
         Dim MySQLQuery As New DataTable
-
 
         'DONE: Make name capitalized as on official
         Character.Name = CapitalizeName(Name)
@@ -5064,7 +5028,6 @@ CheckXPAgain:
         Character.HairColor = HairColor
         Character.FacialHair = FacialHair
         Character.OutfitId = OutfitID
-
 
         'DONE: Query Access Level and Account ID
         Database.Query(String.Format("SELECT account_id, plevel, expansion FROM accounts WHERE account = ""{0}"";", Account), MySQLQuery)
@@ -5306,7 +5269,6 @@ CheckXPAgain:
     End Sub
 
 #End Region
-
 
 End Module
 

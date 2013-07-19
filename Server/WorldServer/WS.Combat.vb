@@ -1,5 +1,5 @@
-' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -18,13 +18,11 @@
 
 Imports System.Threading
 Imports System.Runtime.CompilerServices
-Imports Spurious.Common.BaseWriter
+Imports mangosVB.Common.BaseWriter
 
 Public Module WS_Combat
 
-
 #Region "WS.Combat.Constants"
-
 
     Public Enum ProcFlags
         PROC_FLAG_NONE = &H0                            ' None
@@ -70,7 +68,6 @@ Public Module WS_Combat
 
 #End Region
 #Region "WS.Combat.Calculations"
-
 
     Public Sub DoEmote(ByVal AnimationID As Integer, ByRef Unit As BaseObject)
         'EMOTE_ONESHOT_WOUNDCRITICAL
@@ -242,6 +239,8 @@ Public Module WS_Combat
             chanceToBlock = 0.0F
         End If
 
+        'TODO: Reduce critical chance with rescilience
+
         'DONE: Calculating the damage
         GetDamage(Attacker, DualWield, result)
 
@@ -256,7 +255,6 @@ Public Module WS_Combat
         Armor = (Armor / (Armor + 400 + 85 * CInt(Victim.Level)))
         If Armor > 0.75F Then Armor = 0.75F
         result.Damage -= result.Damage * Armor
-
 
         'TODO: Set aurastate!
         'DONE: Rolling the dice
@@ -283,7 +281,7 @@ Public Module WS_Combat
             Case Is < chanceToMiss + chanceToDodge + chanceToParry + chanceToGlancingBlow + chanceToBlock
                 'DONE: Block (http://www.wowwiki.com/Formulas:Block)
                 If TypeOf Victim Is CharacterObject Then
-                    result.Blocked = CType(Victim, CharacterObject).combatBlockValue + (CType(Victim, CharacterObject).Strength.Base / 20)     '... hits you for 60. (40 blocked) 
+                    result.Blocked = CType(Victim, CharacterObject).combatBlockValue + (CType(Victim, CharacterObject).Strength.Base / 20)     '... hits you for 60. (40 blocked)
                     result.Damage -= result.Blocked
                     If result.Damage < 0 Then result.Damage = 0 '... attacks. You block
                     If CType(Victim, CharacterObject).combatBlockValue <> 0 Then
@@ -403,7 +401,6 @@ Public Module WS_Combat
                     Else
                         Return 5 - skillDiference * 0.2F
                     End If
-
 
                 End If
             End With
@@ -534,8 +531,6 @@ Public Module WS_Combat
                     Return CType(.Skills(tmpSkill), TSkill).Current
                 End If
 
-
-
             End With
         End If
 
@@ -592,10 +587,8 @@ Public Module WS_Combat
         End If
     End Sub
 
-
 #End Region
 #Region "WS.Combat.Framework"
-
 
     Public Enum AttackVictimState As Integer
         'ATTACK_HIT = 1
@@ -628,7 +621,6 @@ Public Module WS_Combat
         HIT_RESIST = HITINFO_RESIST
         HIT_CRUSHING_BLOW = HITINFO_CRUSHING
         HIT_GLANCING_BLOW = HITINFO_GLANCING
-
 
         HITINFO_NORMALSWING = &H0
         HITINFO_NORMALSWING2 = &H2
@@ -1002,16 +994,16 @@ Public Module WS_Combat
         packet.AddPackGUID(Victim.GUID)
         packet.AddInt32(damageInfo.Damage - damageInfo.Absorbed)          'RealDamage
 
-        packet.AddInt8(1)                               'Damage type counter
+        packet.AddInt8(1)                                                   'Damage type counter
         packet.AddInt32(damageInfo.DamageType)          'Damage type, 0 - white font, 1 - yellow
-        packet.AddSingle(damageInfo.Damage)             'Damage float
-        packet.AddInt32(damageInfo.Damage)              'Damage amount
+        packet.AddSingle(damageInfo.Damage)                                 'Damage float
+        packet.AddInt32(damageInfo.Damage)                                  'Damage amount
         packet.AddInt32(damageInfo.Absorbed)            'Damage absorbed
         packet.AddInt32(damageInfo.Resist)              'Resist
         packet.AddInt32(damageInfo.victimState)
         If damageInfo.Absorbed = 0 Then packet.AddInt32(0) Else packet.AddInt32(-1) 'additional spell damage amount
         packet.AddInt32(0)                                                                  'additional spell damage id
-        packet.AddInt32(damageInfo.Blocked)             'Damage amount blocked
+        packet.AddInt32(damageInfo.Blocked)                                 'Damage amount blocked
 
         If Not Client Is Nothing Then
             Client.SendMultiplyPackets(packet)
@@ -1020,14 +1012,12 @@ Public Module WS_Combat
             CType(Attacker, CreatureObject).SendToNearPlayers(packet)
         ElseIf TypeOf Attacker Is CharacterObject Then
             CType(Attacker, CharacterObject).SendToNearPlayers(packet)
-            CType(Attacker, CharacterObject).Client.SendMultiplyPackets(packet)
+            If CType(Attacker, CharacterObject).Client IsNot Nothing Then CType(Attacker, CharacterObject).Client.SendMultiplyPackets(packet)
         End If
 
         packet.Dispose()
     End Sub
 
-
 #End Region
-
 
 End Module

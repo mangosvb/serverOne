@@ -1,5 +1,5 @@
-' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
 
-Imports Spurious.Common.BaseWriter
+Imports mangosVB.Common.BaseWriter
 Imports System.Threading
 Imports System.Collections.Generic
 
@@ -71,7 +71,6 @@ Public Module WS_Base
             Next
         End Sub
     End Class
-
 
     Public Class BaseUnit
         Inherits BaseObject
@@ -179,6 +178,7 @@ Public Module WS_Base
                 tmpPacket.Dispose()
                 tmpUpdate.Dispose()
             End If
+
         End Sub
         Public Sub SetAuraStackCount(ByVal Slot As Integer, ByVal Count As Byte)
             'NOTE: Stack count is Zero based -> 2 means "Stacked 3 times"
@@ -241,6 +241,9 @@ Public Module WS_Base
 
             If Slot < MAX_AURA_EFFECTs_VISIBLE Then SetAura(0, Slot, 0)
         End Sub
+
+
+
         Public Sub RemoveAuraBySpell(ByVal SpellID As Integer)
             'DONE: Real aura removing
             For i As Integer = 0 To MAX_AURA_EFFECTs - 1
@@ -340,6 +343,7 @@ NextAura:
                 cBytes1 = ((cBytes2 And &HFFFFFF) Or (CInt(form) << 24))
             End Set
         End Property
+
     End Class
 
     Public Class BaseActiveSpell
@@ -347,7 +351,7 @@ NextAura:
         Public SpellDuration As Integer = 0
         Public SpellCaster As BaseUnit = Nothing
 
-        Public StackCount As integer = 0
+        Public StackCount As Integer = 0
 
         Public Aura1 As ApplyAuraHandler = Nothing
         Public Aura2 As ApplyAuraHandler = Nothing

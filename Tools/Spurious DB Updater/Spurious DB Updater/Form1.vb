@@ -1,4 +1,4 @@
-﻿Imports Spurious.Common
+﻿Imports mangosVB.Common
 Imports System.IO
 
 Public Class Form1

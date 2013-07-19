@@ -1,5 +1,5 @@
 '
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -64,33 +64,33 @@ Friend Class Main
     End Sub
 
     Private Sub Button1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button1.Click
-        If Me.Button1.Text = "Start Spurious.RealmServer" Then
+        If Me.Button1.Text = "Start mangosVB.RealmServer" Then
             Me.RealmProcess.Start()
             Me.CheckBox1.Enabled = True
-            Me.Button1.Text = "Stop Spurious.RealmServer"
-        ElseIf Me.Button1.Text = "Stop Spurious.RealmServer" Then
+            Me.Button1.Text = "Stop mangosVB.RealmServer"
+        ElseIf Me.Button1.Text = "Stop mangosVB.RealmServer" Then
             Me.RealmProcess.Kill()
             If Me.CheckBox1.Checked = True Then
-                Me.Button1.Text = "Stop Spurious.RealmServer"
+                Me.Button1.Text = "Stop mangosVB.RealmServer"
             ElseIf Me.CheckBox1.Checked = False Then
                 Me.CheckBox1.Enabled = False
-                Me.Button1.Text = "Start Spurious.RealmServer"
+                Me.Button1.Text = "Start mangosVB.RealmServer"
             End If
         End If
     End Sub
 
     Private Sub Button2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button2.Click
-        If Me.Button2.Text = "Start Spurious.WorldServer" Then
+        If Me.Button2.Text = "Start mangosVB.WorldServer" Then
             Me.WorldProcess.Start()
             Me.CheckBox2.Enabled = True
-            Me.Button2.Text = "Stop Spurious.WorldServer"
-        ElseIf Me.Button2.Text = "Stop Spurious.WorldServer" Then
+            Me.Button2.Text = "Stop mangosVB.WorldServer"
+        ElseIf Me.Button2.Text = "Stop mangosVB.WorldServer" Then
             Me.WorldProcess.Kill()
             If Me.CheckBox2.Checked = True Then
-                Me.Button2.Text = "Stop Spurious.WorldServer"
+                Me.Button2.Text = "Stop mangosVB.WorldServer"
             ElseIf Me.CheckBox2.Checked = False Then
                 Me.CheckBox2.Enabled = False
-                Me.Button2.Text = "Start Spurious.WorldServer"
+                Me.Button2.Text = "Start mangosVB.WorldServer"
             End If
         End If
     End Sub

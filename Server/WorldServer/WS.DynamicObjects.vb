@@ -1,5 +1,5 @@
-﻿' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ Public Module WS_DynamicObjects
             Update.SetUpdateFlag(EDynamicObjectFields.DYNAMICOBJECT_POS_Y, positionY)
             Update.SetUpdateFlag(EDynamicObjectFields.DYNAMICOBJECT_POS_Z, positionZ)
             Update.SetUpdateFlag(EDynamicObjectFields.DYNAMICOBJECT_FACING, orientation)
-            Update.SetUpdateFlag(EDynamicObjectFields.DYNAMICOBJECT_CASTTIME, casttime)
+            Update.SetUpdateFlag(EDynamicObjectFields.DYNAMICOBJECT_CASTTIME, CastTime)
         End Sub
 
         Public Sub AddToWorld()
@@ -82,6 +82,7 @@ Public Module WS_DynamicObjects
 
             Dim list() As ULong
             'DONE: Sending to players in nearby cells
+
             For i As Short = -1 To 1
                 For j As Short = -1 To 1
                     If (CellX + i) >= 0 AndAlso (CellX + i) <= 63 AndAlso (CellY + j) >= 0 AndAlso (CellY + j) <= 63 AndAlso Maps(MapID).Tiles(CellX + i, CellY + j) IsNot Nothing AndAlso Maps(MapID).Tiles(CellX + i, CellY + j).PlayersHere.Count > 0 Then

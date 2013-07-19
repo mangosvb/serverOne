@@ -75,7 +75,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\MySql.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Spurious.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="mangosVB.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System">
       <Name>System</Name>
     </Reference>

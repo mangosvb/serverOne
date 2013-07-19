@@ -1,5 +1,5 @@
-' 
-' Copyright (C) 2008 Spurious <http://SpuriousEmu.com>
+'
+' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
 
-
 Imports System.Threading
 Imports System.Net.Sockets
 Imports System.Xml.Serialization
@@ -24,12 +23,10 @@ Imports System.IO
 Imports System.Net
 Imports System.Reflection
 Imports System.Runtime.CompilerServices
-Imports Spurious.Common.BaseWriter
-Imports Spurious.Common
-
+Imports mangosVB.Common.BaseWriter
+Imports mangosVB.Common
 
 Public Module WC_Handlers
-
 
     Public Sub IntializePacketHandlers()
         'NOTE: These opcodes are not used in any way
@@ -46,6 +43,5 @@ Public Module WC_Handlers
     'Public Sub OnUnhandledPacket(ByRef packet As PacketClass, ByRef Client As ClientClass)
     '    Log.WriteLine(LogType.WARNING, "[{0}:{1}] {2} [Unhandled Packet]", Client.IP, Client.Port, CType(packet.OpCode, OPCODES))
     'End Sub
-
 
 End Module
