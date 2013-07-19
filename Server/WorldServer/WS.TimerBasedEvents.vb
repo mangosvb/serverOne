@@ -312,6 +312,9 @@ Public Module WS_TimerBasedEvents
                 Exit Sub
             End If
 
+            Dim aiCreature As CreatureObject = Nothing
+            Dim iKey As Long = 0
+
             Dim StartTime As Integer = timeGetTime
             AIManagerWorking = True
             Try
@@ -320,13 +323,13 @@ Public Module WS_TimerBasedEvents
                 For Each de As KeyValuePair(Of ULong, CreatureObject) In WORLD_CREATUREs
                     If Not de.Value.aiScript Is Nothing Then de.Value.aiScript.DoThink()
                 Next
+                aiCreature = Nothing
             Catch ex As Exception
                 Log.WriteLine(LogType.CRITICAL, ex.ToString, Nothing)
             Finally
                 WORLD_CREATUREs_Lock.ReleaseReaderLock()
             End Try
             AIManagerWorking = False
-            ''Log.WriteLine(LogType.DEBUG, "AI took {0} ms.", timeGetTime - StartTime)
         End Sub
         Public Sub Dispose() Implements System.IDisposable.Dispose
             AIManagerTimer.Dispose()
@@ -379,5 +382,3 @@ Public Module WS_TimerBasedEvents
     'TODO: Timer for weather change
 
 End Module
-
-

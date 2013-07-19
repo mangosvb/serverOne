@@ -546,7 +546,7 @@ Public Module WS_Quests
         '"AND (q.Required_Quest = 0 OR EXISTS(SELECT * FROM characters_quests WHERE char_guid = {2} AND quest_status = -1 AND quest_id = q.Required_Quest));", _
         'WORLD_CREATUREs(GUID).ID, c.Level + 1, c.GUID), MySQLQuery)
         Database.Query(String.Format("SELECT s.questid, q.Title, q.Level_Normal FROM queststarters s LEFT JOIN quests q ON (s.questid=q.id) WHERE s.type = {0} AND s.typeid = {1} AND q.Level_Start <= {2} AND (q.Required_Race = 0 OR (Required_Race & {4}) > 0) AND (q.Required_Class = 0 OR (Required_Class & {5}) > 0) " & _
-            "AND NOT EXISTS((SELECT * FROM characters_quests WHERE char_guid = {3} AND quest_id = q.id) AND (q.Required_Quest1 = 0 OR EXISTS(SELECT * FROM characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest1)) " & _
+            "AND NOT EXISTS(SELECT * FROM characters_quests WHERE char_guid = {3} AND quest_id = q.id) AND (q.Required_Quest1 = 0 OR EXISTS(SELECT * FROM characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest1)) " & _
             "AND (q.Required_Quest2 = 0 OR EXISTS(SELECT * FROM characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest2)) AND (q.Required_Quest3 = 0 OR EXISTS(SELECT * FROM characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest3)) " & _
             "AND (q.Required_Quest4 = 0 OR EXISTS(SELECT * FROM characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest4));", _
             CType(QuestGiverType.QUEST_OBJECTTYPE_CREATURE, Byte), CType(WORLD_CREATUREs(GUID), CreatureObject).ID, c.Level, c.GUID, 1 << (c.Race - 1), 1 << (c.Classe - 1)), MySQLQuery)
