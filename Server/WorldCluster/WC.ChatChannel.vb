@@ -894,5 +894,3 @@ Public Module WS_Channels
     End Class
 
 End Module
-
-

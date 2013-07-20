@@ -111,6 +111,16 @@ Public Module RS_Main
 
     Public Sub LoadConfig()
         Try
+            'Make sure RealmServer.ini exists
+            If System.IO.File.Exists("RealmServer.ini") = False Then
+                Console.ForegroundColor = ConsoleColor.Red
+                Console.WriteLine("[{0}] Cannot Continue. {1} does not exist.", Format(TimeOfDay, "hh:mm:ss"), "RealmServer.ini")
+                Console.WriteLine("Please copy the ini files into the same directory as the MangosVB exe files.")
+                Console.WriteLine("Press any key to exit server: ")
+                Console.ReadKey()
+                End
+            End If
+
             Console.Write("[{0}] Loading Configuration...", Format(TimeOfDay, "hh:mm:ss"))
 
             Config = New XMLConfigFile
@@ -369,7 +379,13 @@ Public Module RS_Main
                     password = System.Text.Encoding.ASCII.GetBytes(PassString.ToUpper)
 
                     Client.Expansion = result.Rows(0).Item("expansion")
-                    Client.AuthEngine = New AuthEngineClass
+                    Try
+                        Client.AuthEngine = New AuthEngineClass
+                    Catch ex As Exception
+                        Console.ForegroundColor = System.ConsoleColor.Red
+                        Console.WriteLine("[{0}] [{1}:{2}] Error loading AuthEngine: {3}{4}", Format(TimeOfDay, "hh:mm:ss"), Client.IP, Client.Port, vbNewLine, ex)
+                        Console.ForegroundColor = System.ConsoleColor.White
+                    End Try
                     Client.AuthEngine.CalculateX(account, password)
 
                     Dim data_response(118) As Byte
@@ -772,6 +788,13 @@ Public Module RS_Main
 
         Console.WriteLine("[{0}] Realm Server Starting...", Format(TimeOfDay, "hh:mm:ss"))
         LoadConfig()
+
+#If DEBUG Then
+        Console.ForegroundColor = System.ConsoleColor.Yellow
+        Log.WriteLine(LogType.INFORMATION, "Running from: {0}", System.AppDomain.CurrentDomain.BaseDirectory)
+        Console.ForegroundColor = System.ConsoleColor.Gray
+#End If
+
         AddHandler Database.SQLMessage, AddressOf SLQEventHandler
         Database.Connect()
 

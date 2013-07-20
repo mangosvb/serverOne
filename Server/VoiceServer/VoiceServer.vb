@@ -65,6 +65,15 @@ Public Module WorldCluster
 
     Public Sub LoadConfig()
         Try
+            'Make sure VoiceServer.ini exists
+            If System.IO.File.Exists("VoiceServer.ini") = False Then
+                Console.ForegroundColor = ConsoleColor.Red
+                Console.WriteLine("[{0}] Cannot Continue. {1} does not exist.", Format(TimeOfDay, "hh:mm:ss"), "VoiceServer.ini")
+                Console.WriteLine("Please copy the ini files into the same directory as the MaNGOSvb exe files.")
+                Console.WriteLine("Press any key to exit server: ")
+                Console.ReadKey()
+                End
+            End If
             Console.Write("[{0}] Loading Configuration...", Format(TimeOfDay, "hh:mm:ss"))
 
             Config = New XMLConfigFile

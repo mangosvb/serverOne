@@ -101,6 +101,15 @@ Public Module WorldCluster
             Common.BaseWriter.CreateLog(Config.LogType, Config.LogConfig, Log)
             Log.LogLevel = Config.LogLevel
 
+            'DONE: Cleaning up the packet log
+            If Config.PacketLogging Then
+	    	Try
+                	File.Delete("packets.log")
+		Catch
+			Console.WriteLine("Error removing packets.log")
+		End Try
+            End If
+
         Catch e As Exception
             Console.WriteLine(e.ToString)
         End Try
@@ -164,8 +173,11 @@ Public Module WorldCluster
         WS = New WorldServerClass
         GC.Collect()
 
-        Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High
-        Log.WriteLine(LogType.WARNING, "Setting Process Priority to HIGH..[done]")
+        If Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High Then
+            Log.WriteLine(LogType.WARNING, "Setting Process Priority to HIGH..[done]")
+        Else
+            Log.WriteLine(LogType.WARNING, "Setting Process Priority to NORMAL..[done]")
+        End If
 
         Log.WriteLine(LogType.INFORMATION, "Load Time: {0}", Format(DateDiff(DateInterval.Second, dateTimeStarted, Now), "0 seconds"))
         Log.WriteLine(LogType.INFORMATION, "Used memory: {0}", Format(GC.GetTotalMemory(False), "### ### ##0 bytes"))

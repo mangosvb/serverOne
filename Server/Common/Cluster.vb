@@ -121,6 +121,3 @@ Public Class ClientInfo
     Public Access As AccessLevel = AccessLevel.Player
     Public Expansion As ExpansionLevel = ExpansionLevel.NORMAL
 End Class
-
-
-
