@@ -44,6 +44,8 @@ Public Class ColoredConsoleWriter
                 Console.ForegroundColor = ConsoleColor.Red
             Case LogType.CRITICAL
                 Console.ForegroundColor = ConsoleColor.DarkRed
+            Case LogType.DATABASE
+                Console.ForegroundColor = ConsoleColor.DarkMagenta
         End Select
 
         If arg Is Nothing Then
@@ -74,6 +76,8 @@ Public Class ColoredConsoleWriter
                 Console.ForegroundColor = ConsoleColor.Red
             Case LogType.CRITICAL
                 Console.ForegroundColor = ConsoleColor.DarkRed
+            Case LogType.DATABASE
+                Console.ForegroundColor = ConsoleColor.DarkMagenta
         End Select
 
         If arg Is Nothing Then
