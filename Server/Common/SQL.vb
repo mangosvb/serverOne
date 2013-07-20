@@ -84,13 +84,6 @@ Public Class SQL
         Oracle = 2
         SQLite = 3
     End Enum
-
-    Public Enum ReturnState
-        Success = 0
-        MinorError = 1
-        FatalError = 2
-    End Enum
-
     Private v_SQLType As DB_Type
 
 #Region "Main propertys"
@@ -164,27 +157,27 @@ Public Class SQL
 #Region "Main Functions"
 #Region "Connect()                  MySQL|MSSQL|Oracle Supported"
     <Description("Start up the SQL connection.")> _
-    Public Function Connect() As Integer
+    Public Sub Connect()
         Try
             If SQLHost.Length < 1 Then
                 RaiseEvent SQLMessage(EMessages.ID_Error, "You have to set the SQLHost cannot be empty")
-                Return ReturnState.FatalError
+                Exit Sub
             End If
             If SQLPort.Length < 1 Then
                 RaiseEvent SQLMessage(EMessages.ID_Error, "You have to set the SQLPort cannot be empty")
-                Return ReturnState.FatalError
+                Exit Sub
             End If
             If SQLUser.Length < 1 Then
                 RaiseEvent SQLMessage(EMessages.ID_Error, "You have to set the SQLUser cannot be empty")
-                Return ReturnState.FatalError
+                Exit Sub
             End If
             If SQLPass.Length < 1 Then
                 RaiseEvent SQLMessage(EMessages.ID_Error, "You have to set the SQLPassword cannot be empty")
-                Return ReturnState.FatalError
+                Exit Sub
             End If
             If SQLDBName.Length < 1 Then
                 RaiseEvent SQLMessage(EMessages.ID_Error, "You have to set the SQLDatabaseName cannot be empty")
-                Return ReturnState.FatalError
+                Exit Sub
             End If
 
             Select Case v_SQLType
@@ -209,15 +202,12 @@ Public Class SQL
 
         Catch e As MySqlException
             RaiseEvent SQLMessage(EMessages.ID_Error, "MySQL Connection Error [" & e.Message & "]")
-            Return ReturnState.FatalError
         Catch e As SqlException
             RaiseEvent SQLMessage(EMessages.ID_Error, "MSSQL Connection Error [" & e.Message & "]")
-            Return ReturnState.FatalError
             'Catch e As OracleException
             '    RaiseEvent SQLMessage(EMessages.ID_Error, "Oracle Connection Error [" & e.Message & "]")
         End Try
-        Return ReturnState.Success
-    End Function
+    End Sub
 #End Region
 #Region "Restart()                  MySQL|MSSQL|Oracle Supported"
     <Description("Restart the SQL connection.")> _
@@ -329,14 +319,14 @@ Public Class SQL
 
 #Region "Main SQL Functions Used."
 #Region "Query      MySQL|MSSQL|Oracle Supported       [SELECT * FROM db_accounts WHERE account = 'name';']"
-    Public Function Query(ByVal sqlquery As String, ByRef Result As DataTable) As Integer
+    Public Sub Query(ByVal sqlquery As String, ByRef Result As DataTable)
         Select Case v_SQLType
             Case DB_Type.MySQL
                 If MySQLConn.State <> ConnectionState.Open Then
                     Restart()
                     If MySQLConn.State <> ConnectionState.Open Then
                         RaiseEvent SQLMessage(EMessages.ID_Error, "MySQL Database Request Failed!")
-                        Return ReturnState.MinorError
+                        Exit Sub
                     End If
                 End If
             Case DB_Type.MSSQL
@@ -344,7 +334,7 @@ Public Class SQL
                     Restart()
                     If MSSQLConn.State <> ConnectionState.Open Then
                         RaiseEvent SQLMessage(EMessages.ID_Error, "MSSQL Database Request Failed!")
-                        Return ReturnState.MinorError
+                        Exit Sub
                     End If
                 End If
                 'Case DB_Type.Oracle
@@ -357,7 +347,6 @@ Public Class SQL
                 '    End If
         End Select
 
-        Dim ExitCode As Integer = ReturnState.Success
         Try
             Select Case v_SQLType
                 Case DB_Type.MySQL
@@ -400,11 +389,9 @@ Public Class SQL
         Catch e As MySqlException
             RaiseEvent SQLMessage(EMessages.ID_Error, "Error Reading From MySQL Database " & e.Message)
             RaiseEvent SQLMessage(EMessages.ID_Error, "Query string was: " & sqlquery)
-            ExitCode = ReturnState.FatalError
         Catch e As SqlException
             RaiseEvent SQLMessage(EMessages.ID_Error, "Error Reading From MSSQL Database " & e.Message)
             RaiseEvent SQLMessage(EMessages.ID_Error, "Query string was: " & sqlquery)
-            ExitCode = ReturnState.FatalError
             'Catch e As OracleException
             '    RaiseEvent SQLMessage(EMessages.ID_Error, "Error Reading From Oracle Database " & e.Message)
             '    RaiseEvent SQLMessage(EMessages.ID_Error, "Query string was: " & sqlquery)
@@ -418,8 +405,7 @@ Public Class SQL
                     '    Monitor.Exit(OracleConn)
             End Select
         End Try
-        Return ExitCode
-    End Function
+    End Sub
 #End Region
 #Region "Insert     MySQL|MSSQL|Oracle Supported       [INSERT INTO db_textpage (pageid, text, nextpageid, wdbversion, checksum) VALUES ('pageid DWORD', 'pagetext STRING', 'nextpage DWORD', 'version DWORD', 'checksum DWORD']"
     Public Sub Insert(ByVal sqlquery As String)
