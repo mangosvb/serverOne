@@ -115,6 +115,11 @@ Public Module WC_Stats
         Log.WriteLine(BaseWriter.LogType.DEBUG, "Generating stats")
         PrepareStats()
 
+        If IO.File.Exists(Config.StatsLocation) = False Then
+            Log.WriteLine(BaseWriter.LogType.WARNING, "Can't find stat.xsl")
+            Exit Sub
+        End If
+
         Dim f As XmlWriter = XmlWriter.Create(Config.StatsLocation)
         f.WriteStartDocument(True)
         f.WriteComment("generated at " & DateTime.Now.ToString("hh:mm:ss"))

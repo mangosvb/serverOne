@@ -630,7 +630,7 @@ Public Module WC_Network
                 Socket.BeginSend(data, 0, data.Length, SocketFlags.None, AddressOf OnSendComplete, Nothing)
             Catch Err As Exception
                 'NOTE: If it's a error here it means the connection is closed?
-                'Log.WriteLine(LogType.CRITICAL, "Connection from [{0}:{1}] cause error {2}{3}", IP, Port, Err.ToString, vbNewLine)
+                Log.WriteLine(LogType.CRITICAL, "Connection from [{0}:{1}] cause error {2}{3}", IP, Port, Err.ToString, vbNewLine)
                 Delete()
             End Try
         End Sub
@@ -645,7 +645,7 @@ Public Module WC_Network
                 Socket.BeginSend(data, 0, data.Length, SocketFlags.None, AddressOf OnSendComplete, Nothing)
             Catch Err As Exception
                 'NOTE: If it's a error here it means the connection is closed?
-                'Log.WriteLine(LogType.CRITICAL, "Connection from [{0}:{1}] cause error {2}{3}", IP, Port, Err.ToString, vbNewLine)
+                Log.WriteLine(LogType.CRITICAL, "Connection from [{0}:{1}] cause error {2}{3}", IP, Port, Err.ToString, vbNewLine)
                 Delete()
             End Try
 
@@ -672,9 +672,11 @@ Public Module WC_Network
 
         Public Sub OnSendComplete(ByVal ar As IAsyncResult)
             If Not Socket Is Nothing Then
-                Dim bytesSent As Integer = Socket.EndSend(ar)
+                If Socket.Blocking Then
+                    Dim bytesSent As Integer = Socket.EndSend(ar)
 
-                Interlocked.Add(DataTransferOut, bytesSent)
+                    Interlocked.Add(DataTransferOut, bytesSent)
+                End If
             End If
         End Sub
 

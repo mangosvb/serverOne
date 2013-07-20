@@ -121,7 +121,15 @@ Public Module WS_Main
                     FileName = Trim(arg.Substring(arg.IndexOf("=") + 1))
                 End If
             Next
-
+            'Make sure a config file exists
+            If System.IO.File.Exists(FileName) = False Then
+                Console.ForegroundColor = ConsoleColor.Red
+                Console.WriteLine("[{0}] Cannot Continue. {1} does not exist.", Format(TimeOfDay, "hh:mm:ss"), FileName)
+                Console.WriteLine("Please copy the ini files into the same directory as the Server exe files.")
+                Console.WriteLine("Press any key to exit server: ")
+                Console.ReadKey()
+                End
+            End If
             'Load config
             Console.Write("[{0}] Loading Configuration from {1}...", Format(TimeOfDay, "hh:mm:ss"), FileName)
 
@@ -225,6 +233,9 @@ Public Module WS_Main
         Database.Update("SET NAMES 'utf8';")
 
 #If DEBUG Then
+        Console.ForegroundColor = System.ConsoleColor.White
+        Log.WriteLine(LogType.INFORMATION, "Running from: {0}", System.AppDomain.CurrentDomain.BaseDirectory)
+        Console.ForegroundColor = System.ConsoleColor.Gray
         Log.WriteLine(LogType.DEBUG, "Setting MySQL into debug mode..[done]")
         Database.Update("SET SESSION sql_mode='STRICT_ALL_TABLES';")
 #End If
@@ -233,8 +244,11 @@ Public Module WS_Main
         WS = New WorldServerClass
         GC.Collect()
 
-        Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High
-        Log.WriteLine(LogType.WARNING, "Setting Process Priority to HIGH..[done]")
+        If Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High Then
+            Log.WriteLine(LogType.WARNING, "Setting Process Priority to HIGH..[done]")
+        Else
+            Log.WriteLine(LogType.WARNING, "Setting Process Priority to NORMAL..[done]")
+        End If
 
         Log.WriteLine(LogType.INFORMATION, " Load Time:   {0}", Format(DateDiff(DateInterval.Second, dateTimeStarted, Now), "0 seconds"))
         Log.WriteLine(LogType.INFORMATION, " Used Memory: {0}", Format(GC.GetTotalMemory(False), "### ### ##0 bytes"))

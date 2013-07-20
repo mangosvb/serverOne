@@ -1779,6 +1779,10 @@ Public Module WS_CharManagment
             If Spells.Contains(SpellID) Then Exit Sub
             Spells.Add(SpellID)
 
+            'TODO: See if this is needed now.
+            'DONE: Save it to the database
+            'CharacterDatabase.Update(String.Format("INSERT INTO characters_spells (guid,spellid,active,cooldown,cooldownitem) VALUES ({0},{1},{2},0,0);", GUID, SpellID, 1))
+
             If Client Is Nothing Then Exit Sub
             Dim SMSG_LEARNED_SPELL As New PacketClass(OPCODES.SMSG_LEARNED_SPELL)
             SMSG_LEARNED_SPELL.AddInt32(SpellID)
@@ -3695,6 +3699,8 @@ CheckXPAgain:
             'DONE: Check for dead
             If DEAD Then Exit Sub
 
+            'TODO: Enter combat for PvP combat, and then remove it after a 10 seconds non combat period (remember incombatwith array)
+
             Select Case DamageType
                 Case DamageTypes.DMG_PHYSICAL
                     Me.DealDamage(Damage, Attacker)
@@ -3705,6 +3711,7 @@ CheckXPAgain:
 
             If Life.Current = 0 Then
                 Me.Die(Attacker)
+                Exit Sub
             Else
                 SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, CType(Life.Current, Integer))
                 SendCharacterUpdate(True)
@@ -3802,7 +3809,11 @@ CheckXPAgain:
         Public Sub Login()
             'Loading map cell if not loaded
             GetMapTile(positionX, positionY, CellX, CellY)
-            If Maps(MapID).Tiles(CellX, CellY) Is Nothing Then MAP_Load(CellX, CellY, MapID)
+            Try
+                If Maps(MapID).Tiles(CellX, CellY) Is Nothing Then MAP_Load(CellX, CellY, MapID)
+            Catch ex As Exception
+                Log.WriteLine(LogType.CRITICAL, "Failed loading maps at character logging in.{0}{1}", vbNewLine, ex.ToString())
+            End Try
 
             'DONE: SMSG_BINDPOINTUPDATE
             SendBindPointUpdate(Client, Me)
@@ -4643,6 +4654,8 @@ CheckXPAgain:
 
             Return True
         End Function
+
+        'This needs some work to fully complete quests
         Public Function IsQuestCompleted(ByVal QuestID As Integer) As Boolean
             Dim Quest As New DataTable
             Database.Query(String.Format("SELECT quest_id FROM characters_quests WHERE char_guid = {0} AND quest_status = -1 AND quest_id = {1};", GUID, QuestID), Quest)
@@ -5271,5 +5284,3 @@ CheckXPAgain:
 #End Region
 
 End Module
-
-

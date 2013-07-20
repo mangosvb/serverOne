@@ -131,7 +131,7 @@ Namespace DBC
                         Dim strResult As String = ""
                         Do
                             strByte = bs.ReadByte()
-                            strResult &= Chr(strByte)
+                            If strByte <> 0 Then strResult &= Chr(strByte)
                         Loop While strByte <> 0
 
                         Return strResult
@@ -245,4 +245,3 @@ Namespace DBC
         DBC_FLOAT
     End Enum
 End Namespace
-
