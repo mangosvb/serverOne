@@ -39,7 +39,7 @@ Public Module WS_Creatures
 
             'DONE: Load Item Data from MySQL
             Dim MySQLQuery As New DataTable
-            Database.Query(String.Format("SELECT * FROM creatures WHERE creature_id = {0};", CreatureID), MySQLQuery)
+            WorldDatabase.Query(String.Format("SELECT * FROM creatures WHERE creature_id = {0};", CreatureID), MySQLQuery)
 
             If MySQLQuery.Rows.Count = 0 Then
                 Log.WriteLine(LogType.FAILED, "CreatureID {0} not found in SQL database.", CreatureID)
@@ -121,7 +121,7 @@ Public Module WS_Creatures
 
         Public Sub Save()
             If found_ = False Then
-                Database.Update("INSERT INTO creatures (creature_id)  VALUES (" & Id & ");")
+                WorldDatabase.Update("INSERT INTO creatures (creature_id)  VALUES (" & Id & ");")
             End If
 
             Dim tmp As String = "UPDATE creatures SET"
@@ -756,7 +756,7 @@ Public Module WS_Creatures
         Public Function GenerateLoot(ByRef Character As CharacterObject, ByVal LootType As LootType) As Boolean
             'DONE: Loot generation
             Dim MySQLQuery As New DataTable
-            Database.Query(String.Format("SELECT * FROM loots WHERE loot_creature = {0};", ID), MySQLQuery)
+            WorldDatabase.Query(String.Format("SELECT * FROM loots WHERE loot_creature = {0};", ID), MySQLQuery)
             If MySQLQuery.Rows.Count = 0 Then Return False
 
             'TODO: Check if we're in a heroic instance!
@@ -945,7 +945,7 @@ Public Module WS_Creatures
             'WARNING: Use only for loading creature from DB
             If Info Is Nothing Then
                 Dim MySQLQuery As New DataTable
-                Database.Query(String.Format("SELECT * FROM spawns_creatures WHERE spawned_id = {0};", GUID_), MySQLQuery)
+                WorldDatabase.Query(String.Format("SELECT * FROM spawns_creatures WHERE spawn_id = {0};", GUID_), MySQLQuery)
                 If MySQLQuery.Rows.Count > 0 Then
                     Info = MySQLQuery.Rows(0)
                 Else
@@ -1240,7 +1240,7 @@ Public Module WS_Creatures
         Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_NPC_TEXT_QUERY [TextID={2}]", Client.IP, Client.Port, TextID)
 
         Dim MySQLQuery As New DataTable
-        Database.Query(String.Format("SELECT * FROM npcText WHERE entry = {0};", TextID), MySQLQuery)
+        WorldDatabase.Query(String.Format("SELECT * FROM npcText WHERE entry = {0};", TextID), MySQLQuery)
 
         'DONE: Load TextID
         Dim response As New PacketClass(OPCODES.SMSG_NPC_TEXT_UPDATE)
