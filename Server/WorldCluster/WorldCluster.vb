@@ -102,13 +102,13 @@ Public Module WorldCluster
             Log.LogLevel = Config.LogLevel
 
             'DONE: Cleaning up the packet log
-            If Config.PacketLogging Then
-	    	Try
-                	File.Delete("packets.log")
-		Catch
-			Console.WriteLine("Error removing packets.log")
-		End Try
-            End If
+            'If Config.PacketLogging Then
+            '    Try
+            '        File.Delete("packets.log")
+            '    Catch
+            '        Console.WriteLine("Error removing packets.log")
+            '    End Try
+            'End If
 
         Catch e As Exception
             Console.WriteLine(e.ToString)
