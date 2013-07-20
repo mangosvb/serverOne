@@ -98,15 +98,16 @@ Public Module RS_Main
 #Region "Global.Config"
     Public Config As XMLConfigFile
     <XmlRoot(ElementName:="RealmServer")> _
-        Public Class XMLConfigFile
-        <XmlElement(ElementName:="RSPort")> Public RSPort As Int32 = 0
-        <XmlElement(ElementName:="RSHost")> Public RSHost As String = "localhost"
-        <XmlElement(ElementName:="SQLUser")> Public SQLUser As String = "root"
-        <XmlElement(ElementName:="SQLPass")> Public SQLPass As String = "spurious"
-        <XmlElement(ElementName:="SQLHost")> Public SQLHost As String = "localhost"
-        <XmlElement(ElementName:="SQLPort")> Public SQLPort As String = "3306"
-        <XmlElement(ElementName:="SQLDBName")> Public SQLDBName As String = "spurious"
-        <XmlElement(ElementName:="SQLDBType")> Public SQLDBType As SQL.DB_Type = SQL.DB_Type.MySQL
+    Public Class XMLConfigFile
+        'Server Configurations
+        <XmlElement(ElementName:="RSPort")> Public RSPort As Int32 = 3724
+        <XmlElement(ElementName:="RSHost")> Public RSHost As String = "127.0.0.1"
+        <XmlElement(ElementName:="AccountDatabase")> Public AccountDatabase As String = "root;password;localhost;3306;mvb_dev;MySQL"
+
+        'Logging Configurations
+        <XmlElement(ElementName:="LogType")> Public LogType As String = "COLORCONSOLE"
+        <XmlElement(ElementName:="LogLevel")> Public LogLevel As LogType = mangosVB.Common.BaseWriter.LogType.NETWORK
+        <XmlElement(ElementName:="LogConfig")> Public LogConfig As String = ""
     End Class
 
     Public Sub LoadConfig()
@@ -137,12 +138,17 @@ Public Module RS_Main
 
 
             'DONE: Setting SQL Connection
-            Database.SQLDBName = Config.SQLDBName
-            Database.SQLHost = Config.SQLHost
-            Database.SQLPort = Config.SQLPort
-            Database.SQLUser = Config.SQLUser
-            Database.SQLPass = Config.SQLPass
-            Database.SQLTypeServer = Config.SQLDBType
+            Dim AccountDBSettings() As String = Split(Config.AccountDatabase, ";")
+            If AccountDBSettings.Length = 6 Then
+                Database.SQLDBName = AccountDBSettings(4)
+                Database.SQLHost = AccountDBSettings(2)
+                Database.SQLPort = AccountDBSettings(3)
+                Database.SQLUser = AccountDBSettings(0)
+                Database.SQLPass = AccountDBSettings(1)
+                Database.SQLTypeServer = CType([Enum].Parse(GetType(SQL.DB_Type), AccountDBSettings(5)), SQL.DB_Type)
+            Else
+                Console.WriteLine("Invalid connect string for the account database!")
+            End If
 
         Catch e As Exception
             Console.WriteLine(e.ToString)
@@ -737,9 +743,28 @@ Public Module RS_Main
 
     Sub WS_Status_Report()
         Dim result1 As DataTable = New DataTable
-        Database.Query([String].Format("SELECT * FROM realms;"), result1)
+        Dim ReturnValues As Integer
+        ReturnValues = Database.Query([String].Format("SELECT * FROM realms;"), result1)
+        If ReturnValues > Common.SQL.ReturnState.Success Then   'Ok, An error occurred
+            Console.WriteLine("[{0}] An SQL Error has occurred", Format(TimeOfDay, "hh:mm:ss"))
+            Console.WriteLine("*************************")
+            Console.WriteLine("* Press any key to exit *")
+            Console.WriteLine("*************************")
+            Console.ReadKey()
+            End
+        End If
+
         Dim result2 As DataTable = New DataTable
-        Database.Query([String].Format("SELECT * FROM realms WHERE ws_status < 2;"), result2)
+        ReturnValues = Database.Query([String].Format("SELECT * FROM realms WHERE ws_status < 2;"), result2)
+        If ReturnValues > Common.SQL.ReturnState.Success Then   'Ok, An error occurred
+            Console.WriteLine("[{0}] An SQL Error has occurred", Format(TimeOfDay, "hh:mm:ss"))
+            Console.WriteLine("*************************")
+            Console.WriteLine("* Press any key to exit *")
+            Console.WriteLine("*************************")
+            Console.ReadKey()
+            End
+        End If
+
         Console.WriteLine()
         Console.WriteLine("[{0}] Known World Servers are {1}, Online World Servers are {2}", Format(TimeOfDay, "hh:mm:ss"), result1.Rows.Count, result2.Rows.Count)
 

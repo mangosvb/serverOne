@@ -111,7 +111,7 @@ Public Module Functions
 #Region "Database"
 
     Public Sub Ban_Account(ByVal Name As String, ByVal Reason As String)
-        Database.Update("UPDATE accounts SET banned = 1 WHERE account = """ & Name & """;")
+        AccountDatabase.Update("UPDATE accounts SET banned = 1 WHERE account = """ & Name & """;")
 
         Log.WriteLine(LogType.INFORMATION, "Account [{0}] banned by server. Reason: [{1}].", Name, Reason)
     End Sub

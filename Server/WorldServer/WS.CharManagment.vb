@@ -406,7 +406,7 @@ Public Module WS_CharManagment
             tmp = tmp & ", kills_honorableLifetime=" & KillsHonorableLifetime
 
             tmp = tmp + String.Format(" WHERE char_guid = ""{0}"";", GUID)
-            Database.Update(tmp)
+            CharacterDatabase.Update(tmp)
         End Sub
         Public Sub Load(ByVal GUID As ULong)
 
@@ -827,7 +827,7 @@ Public Module WS_CharManagment
             Me.SendCharacterUpdate(True)
         End Sub
         Public Sub HonorSaveAsNew()
-            Database.Update("INSERT INTO characters_honor (char_guid)  VALUES (" & GUID & ");")
+            CharacterDatabase.Update("INSERT INTO characters_honor (char_guid)  VALUES (" & GUID & ");")
         End Sub
         Public Sub HonorSave()
             Dim tmp As String = "UPDATE characters_honor SET"
@@ -843,11 +843,11 @@ Public Module WS_CharManagment
             tmp = tmp & ", honor_kills=" & HonorKillsLifeTime
 
             tmp = tmp + String.Format(" WHERE char_guid = ""{0}"";", GUID)
-            Database.Update(tmp)
+            CharacterDatabase.Update(tmp)
         End Sub
         Public Sub HonorLoad()
             Dim MySQLQuery As New DataTable
-            Database.Query(String.Format("SELECT * FROM characters_honor WHERE char_guid = {0};", GUID), MySQLQuery)
+            CharacterDatabase.Query(String.Format("SELECT * FROM characters_honor WHERE char_guid = {0};", GUID), MySQLQuery)
             If MySQLQuery.Rows.Count = 0 Then
                 Log.WriteLine(LogType.FAILED, "Unable to get SQLDataBase honor info for character [GUID={0:X}]", GUID)
                 Exit Sub
@@ -1964,12 +1964,12 @@ CheckXPAgain:
                 End If
                 SetUpdateFlag(EPlayerFields.PLAYER_FIELD_INV_SLOT_HEAD + srcSlot * 2, 0)
 
-                Database.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", ITEM_SLOT_NULL, ITEM_BAG_NULL, Items(srcSlot).GUID - GUID_ITEM))
+                CharacterDatabase.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", ITEM_SLOT_NULL, ITEM_BAG_NULL, Items(srcSlot).GUID - GUID_ITEM))
                 If Destroy Then CType(Items(srcSlot), ItemObject).Delete()
                 Items.Remove(srcSlot)
                 If Update Then SendCharacterUpdate()
             Else
-                Database.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", ITEM_SLOT_NULL, ITEM_BAG_NULL, Items(srcBag).Items(srcSlot).GUID - GUID_ITEM))
+                CharacterDatabase.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", ITEM_SLOT_NULL, ITEM_BAG_NULL, Items(srcBag).Items(srcSlot).GUID - GUID_ITEM))
                 If Destroy Then CType(Items(srcBag).Items(srcSlot), ItemObject).Delete()
                 CType(Items(srcBag), ItemObject).Items.Remove(srcSlot)
                 If Update Then SendItemUpdate(Items(srcBag))
@@ -1981,7 +1981,7 @@ CheckXPAgain:
                 If Items.ContainsKey(slot) Then
                     If Items(slot).GUID = ItemGUID Then
 
-                        Database.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", ITEM_SLOT_NULL, ITEM_BAG_NULL, Items(slot).GUID - GUID_ITEM))
+                        CharacterDatabase.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", ITEM_SLOT_NULL, ITEM_BAG_NULL, Items(slot).GUID - GUID_ITEM))
                         If slot < EQUIPMENT_SLOT_END Then
                             SetUpdateFlag(EPlayerFields.PLAYER_VISIBLE_ITEM_1_0 + slot * PLAYER_VISIBLE_ITEM_SIZE, 0)
                             UpdateRemoveItemStats(Items(slot), slot)
@@ -2007,7 +2007,7 @@ CheckXPAgain:
                         If Items(bag).Items.ContainsKey(slot) = False Then
 
                             If Items(bag).Items(slot).GUID = ItemGUID Then
-                                Database.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", ITEM_SLOT_NULL, ITEM_BAG_NULL, Items(bag).Items(slot).GUID - GUID_ITEM))
+                                CharacterDatabase.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", ITEM_SLOT_NULL, ITEM_BAG_NULL, Items(bag).Items(slot).GUID - GUID_ITEM))
 
                                 If Destroy Then Items(bag).Items(slot).Delete()
                                 Items(bag).Items.Remove(slot)
@@ -2249,7 +2249,7 @@ CheckXPAgain:
                 If (Item.ItemInfo.Bonding = ITEM_BONDING_TYPE.BIND_UNK_QUESTITEM1 OrElse Item.ItemInfo.Bonding = ITEM_BONDING_TYPE.BIND_UNK_QUESTITEM2) AndAlso Item.IsSoulBound = False Then Item.SoulbindItem()
                 'DONE: Put in inventory
                 Items(dstSlot) = Item
-                Database.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1}, item_stackCount = {2} WHERE item_guid = {3};", dstSlot, Me.GUID, Item.StackCount, Item.GUID - GUID_ITEM))
+                CharacterDatabase.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1}, item_stackCount = {2} WHERE item_guid = {3};", dstSlot, Me.GUID, Item.StackCount, Item.GUID - GUID_ITEM))
 
                 SetUpdateFlag(EPlayerFields.PLAYER_FIELD_INV_SLOT_HEAD + dstSlot * 2, Item.GUID)
                 If dstSlot < EQUIPMENT_SLOT_END Then
@@ -2264,7 +2264,7 @@ CheckXPAgain:
             Else
                 'DONE: Put in bag
                 CType(Items(dstBag), ItemObject).Items(dstSlot) = Item
-                Database.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", dstSlot, Items(dstBag).GUID, Item.GUID - GUID_ITEM))
+                CharacterDatabase.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", dstSlot, Items(dstBag).GUID, Item.GUID - GUID_ITEM))
 
                 If Not Client Is Nothing Then SendItemUpdate(Items(dstBag))
             End If
@@ -2761,8 +2761,8 @@ CheckXPAgain:
                             If dstBag <> srcBag Then
                                 SendItemUpdate(Items(dstBag))
                             End If
-                            Database.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", dstSlot, Items(dstBag).GUID, Items(dstBag).Items(dstSlot).GUID - GUID_ITEM))
-                            If Items(srcBag).Items.ContainsKey(srcSlot) Then Database.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", srcSlot, Items(srcBag).GUID, Items(srcBag).Items(srcSlot).GUID - GUID_ITEM))
+                            CharacterDatabase.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", dstSlot, Items(dstBag).GUID, Items(dstBag).Items(dstSlot).GUID - GUID_ITEM))
+                            If Items(srcBag).Items.ContainsKey(srcSlot) Then CharacterDatabase.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", srcSlot, Items(srcBag).GUID, Items(srcBag).Items(srcSlot).GUID - GUID_ITEM))
                         End If
                     End If
 
@@ -2807,8 +2807,8 @@ CheckXPAgain:
                             End If
 
                             SendItemAndCharacterUpdate(Items(srcBag))
-                            Database.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", dstSlot, Me.GUID, Items(dstSlot).GUID - GUID_ITEM))
-                            If Items(srcBag).Items.ContainsKey(srcSlot) Then Database.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", srcSlot, Items(srcBag).GUID, Items(srcBag).Items(srcSlot).GUID - GUID_ITEM))
+                            CharacterDatabase.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", dstSlot, Me.GUID, Items(dstSlot).GUID - GUID_ITEM))
+                            If Items(srcBag).Items.ContainsKey(srcSlot) Then CharacterDatabase.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", srcSlot, Items(srcBag).GUID, Items(srcBag).Items(srcSlot).GUID - GUID_ITEM))
                         End If
                     End If
 
@@ -2853,8 +2853,8 @@ CheckXPAgain:
                             End If
 
                             SendItemAndCharacterUpdate(Items(dstBag))
-                            Database.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", dstSlot, Items(dstBag).GUID, Items(dstBag).Items(dstSlot).GUID - GUID_ITEM))
-                            If Items.ContainsKey(srcSlot) Then Database.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", srcSlot, Me.GUID, Items(srcSlot).GUID - GUID_ITEM))
+                            CharacterDatabase.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", dstSlot, Items(dstBag).GUID, Items(dstBag).Items(dstSlot).GUID - GUID_ITEM))
+                            If Items.ContainsKey(srcSlot) Then CharacterDatabase.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", srcSlot, Me.GUID, Items(srcSlot).GUID - GUID_ITEM))
                         End If
                     End If
 
@@ -2905,8 +2905,8 @@ CheckXPAgain:
                             End If
 
                             SendItemAndCharacterUpdate(Items(dstSlot))
-                            Database.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", dstSlot, Me.GUID, Items(dstSlot).GUID - GUID_ITEM))
-                            If Items.ContainsKey(srcSlot) Then Database.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", srcSlot, Me.GUID, Items(srcSlot).GUID - GUID_ITEM))
+                            CharacterDatabase.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", dstSlot, Me.GUID, Items(dstSlot).GUID - GUID_ITEM))
+                            If Items.ContainsKey(srcSlot) Then CharacterDatabase.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", srcSlot, Me.GUID, Items(srcSlot).GUID - GUID_ITEM))
                         End If
                     End If
                 End If
@@ -3895,7 +3895,7 @@ CheckXPAgain:
             'WARNING: Do not save character here!!!
 
             'DONE: Remove buyback items when logged out
-            Database.Update(String.Format("DELETE FROM characters_inventory WHERE item_bag = {0} AND item_slot >= {1} AND item_slot <= {2}", GUID, BUYBACK_SLOT_START, BUYBACK_SLOT_END - 1))
+            CharacterDatabase.Update(String.Format("DELETE FROM characters_inventory WHERE item_bag = {0} AND item_slot >= {1} AND item_slot <= {2}", GUID, BUYBACK_SLOT_START, BUYBACK_SLOT_END - 1))
 
             If Not underWaterTimer Is Nothing Then underWaterTimer.Dispose()
 
@@ -3976,7 +3976,7 @@ CheckXPAgain:
 
             'DONE: Get character info from DB
             Dim MySQLQuery As New DataTable
-            Database.Query(String.Format("SELECT * FROM characters WHERE char_guid = {0}; UPDATE characters SET char_online = 1 WHERE char_guid = {0};", GUID), MySQLQuery)
+            CharacterDatabase.Query(String.Format("SELECT * FROM characters WHERE char_guid = {0}; UPDATE characters SET char_online = 1 WHERE char_guid = {0};", GUID), MySQLQuery)
             If MySQLQuery.Rows.Count = 0 Then
                 Log.WriteLine(LogType.DEBUG, "[{0}:{1}] Unable to get SQLDataBase info for character [GUID={2:X}]", Client.IP, Client.Port, GUID)
                 Me.Dispose()
@@ -4119,7 +4119,7 @@ CheckXPAgain:
 
             'DONE: Get Items
             MySQLQuery.Clear()
-            Database.Query(String.Format("SELECT * FROM characters_inventory WHERE item_bag = {0};", GUID), MySQLQuery)
+            CharacterDatabase.Query(String.Format("SELECT * FROM characters_inventory WHERE item_bag = {0};", GUID), MySQLQuery)
             For Each row As DataRow In MySQLQuery.Rows
                 If row.Item("item_slot") <> ITEM_SLOT_NULL Then
                     Dim tmpItem As ItemObject = LoadItemByGUID(CType(row.Item("item_guid"), Long))
@@ -4139,7 +4139,7 @@ CheckXPAgain:
 
             'DONE: Load arena teams
             MySQLQuery.Clear()
-            Database.Query(String.Format("SELECT member_team, member_type FROM arena_members WHERE member_id = {0}", GUID), MySQLQuery)
+            CharacterDatabase.Query(String.Format("SELECT member_team, member_type FROM arena_members WHERE member_id = {0}", GUID), MySQLQuery)
             If MySQLQuery.Rows.Count > 0 Then
                 For i = 0 To MySQLQuery.Rows.Count - 1
                     Dim Slot As Byte = 0
@@ -4159,7 +4159,7 @@ CheckXPAgain:
 
             'DONE: Load corpse if present
             MySQLQuery.Clear()
-            Database.Query(String.Format("SELECT * FROM tmpspawnedcorpses WHERE corpse_owner = {0};", GUID), MySQLQuery)
+            CharacterDatabase.Query(String.Format("SELECT * FROM tmpspawnedcorpses WHERE corpse_owner = {0};", GUID), MySQLQuery)
             If MySQLQuery.Rows.Count > 0 Then
                 corpseGUID = MySQLQuery.Rows(0).Item("corpse_guid") + GUID_CORPSE
                 corpseMapID = MySQLQuery.Rows(0).Item("corpse_MapID")
@@ -4331,10 +4331,10 @@ CheckXPAgain:
             tmpValues = tmpValues & ", " & Spirit.RealBase
 
             tmpCMD = tmpCMD & ") " & tmpValues & ");"
-            Database.Update(tmpCMD)
+            CharacterDatabase.Update(tmpCMD)
 
             Dim MySQLQuery As New DataTable
-            Database.Query(String.Format("SELECT char_guid FROM characters WHERE char_name = '{0}';", Name), MySQLQuery)
+            CharacterDatabase.Query(String.Format("SELECT char_guid FROM characters WHERE char_name = '{0}';", Name), MySQLQuery)
             GUID = CType(MySQLQuery.Rows(0).Item("char_guid"), Long)
 
             HonorSaveAsNew()
@@ -4451,7 +4451,7 @@ CheckXPAgain:
             tmp = tmp & ", char_talentpoints=" & TalentPoints
 
             tmp = tmp + String.Format(" WHERE char_guid = ""{0}"";", GUID)
-            Database.Update(tmp)
+            CharacterDatabase.Update(tmp)
         End Sub
 
         'Party/Raid
@@ -4497,7 +4497,7 @@ CheckXPAgain:
         Public ReadOnly Property IsGuildLeader() As Boolean
             Get
                 Dim MySQLQuery As New DataTable
-                Database.Query("SELECT guild_id FROM guilds WHERE guild_id = " & GuildID & " AND guild_leader = " & GUID & " LIMIT 1;", MySQLQuery)
+                CharacterDatabase.Query("SELECT guild_id FROM guilds WHERE guild_id = " & GuildID & " AND guild_leader = " & GUID & " LIMIT 1;", MySQLQuery)
                 Return MySQLQuery.Rows.Count <> 0
             End Get
         End Property
@@ -4505,7 +4505,7 @@ CheckXPAgain:
         Public ReadOnly Property IsGuildRightSet(ByVal rights As GuildRankRights) As Boolean
             Get
                 Dim MySQLQuery As New DataTable
-                Database.Query(String.Format("SELECT guild_rank{0}_Rights FROM guilds WHERE guild_id = {1} LIMIT 1;", GuildRank, GuildID), MySQLQuery)
+                CharacterDatabase.Query(String.Format("SELECT guild_rank{0}_Rights FROM guilds WHERE guild_id = {1} LIMIT 1;", GuildRank, GuildID), MySQLQuery)
                 Return ((CType(MySQLQuery.Rows(0).Item(0), Integer) And CType(rights, Integer)) = CType(rights, Integer))
             End Get
         End Property
@@ -4548,7 +4548,7 @@ CheckXPAgain:
                     SetUpdateFlag(EPlayerFields.PLAYER_QUEST_LOG_1_3 + i * 4, questState)
                     SetUpdateFlag(EPlayerFields.PLAYER_QUEST_LOG_1_4 + i * 4, 0) 'Timer
 
-                    Database.Update(String.Format("INSERT INTO characters_quests (char_guid, quest_id, quest_status) VALUES ({0}, {1}, {2});", GUID, TalkQuests(i).ID, questState))
+                    CharacterDatabase.Update(String.Format("INSERT INTO characters_quests (char_guid, quest_id, quest_status) VALUES ({0}, {1}, {2});", GUID, TalkQuests(i).ID, questState))
 
                     SendCharacterUpdate(updateDataCount <> 0)
                     Return True
@@ -4571,7 +4571,7 @@ CheckXPAgain:
                 SetUpdateFlag(EPlayerFields.PLAYER_QUEST_LOG_1_3 + QuestSlot * 4, 0)
                 SetUpdateFlag(EPlayerFields.PLAYER_QUEST_LOG_1_4 + QuestSlot * 4, 0)
 
-                Database.Update(String.Format("DELETE  FROM characters_quests WHERE char_guid = {0} AND quest_id = {1};", GUID, TalkQuests(QuestSlot).ID))
+                CharacterDatabase.Update(String.Format("DELETE  FROM characters_quests WHERE char_guid = {0} AND quest_id = {1};", GUID, TalkQuests(QuestSlot).ID))
                 TalkQuests(QuestSlot) = Nothing
 
                 SendCharacterUpdate(updateDataCount <> 0)
@@ -4591,7 +4591,7 @@ CheckXPAgain:
                 SetUpdateFlag(EPlayerFields.PLAYER_QUEST_LOG_1_3 + QuestSlot * 4, 0)
                 SetUpdateFlag(EPlayerFields.PLAYER_QUEST_LOG_1_4 + QuestSlot * 4, 0)
 
-                Database.Update(String.Format("UPDATE characters_quests SET quest_status = -1 WHERE char_guid = {0} AND quest_id = {1};", GUID, TalkQuests(QuestSlot).ID))
+                CharacterDatabase.Update(String.Format("UPDATE characters_quests SET quest_status = -1 WHERE char_guid = {0} AND quest_id = {1};", GUID, TalkQuests(QuestSlot).ID))
                 TalkQuests(QuestSlot) = Nothing
 
                 'SendCharacterUpdate(updateDataCount <> 0)
@@ -4610,7 +4610,7 @@ CheckXPAgain:
                 Dim tmpProgress As Integer = TalkQuests(QuestSlot).GetState
                 Dim tmpTimer As Integer = 0
                 If TalkQuests(QuestSlot).TimeEnd > 0 Then tmpTimer = TalkQuests(QuestSlot).TimeEnd - GetTimestamp(Now)
-                Database.Update(String.Format("UPDATE characters_quests SET quest_status = {2} WHERE char_guid = {0} AND quest_id = {1};", GUID, TalkQuests(QuestSlot).ID, tmpProgress))
+                CharacterDatabase.Update(String.Format("UPDATE characters_quests SET quest_status = {2} WHERE char_guid = {0} AND quest_id = {1};", GUID, TalkQuests(QuestSlot).ID, tmpProgress))
 
                 SetUpdateFlag(EPlayerFields.PLAYER_QUEST_LOG_1_2 + QuestSlot * 4, tmpState)
                 SetUpdateFlag(EPlayerFields.PLAYER_QUEST_LOG_1_3 + QuestSlot * 4, tmpProgress)
@@ -4658,7 +4658,7 @@ CheckXPAgain:
         'This needs some work to fully complete quests
         Public Function IsQuestCompleted(ByVal QuestID As Integer) As Boolean
             Dim Quest As New DataTable
-            Database.Query(String.Format("SELECT quest_id FROM characters_quests WHERE char_guid = {0} AND quest_status = -1 AND quest_id = {1};", GUID, QuestID), Quest)
+            CharacterDatabase.Query(String.Format("SELECT quest_id FROM characters_quests WHERE char_guid = {0} AND quest_status = -1 AND quest_id = {1};", GUID, QuestID), Quest)
 
             Return Quest.Rows.Count <> 0
         End Function
@@ -5007,7 +5007,7 @@ CheckXPAgain:
 
         Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_SET_WATCHED_FACTION [{2}]", Client.IP, Client.Port, Client.Character.WatchedFactionIndex)
 
-        Database.Update(String.Format("UPDATE characters SET char_watchedFactionIndex = {0} WHERE char_guid = {1};", Client.Character.WatchedFactionIndex, Client.Character.GUID - GUID_PLAYER))
+        CharacterDatabase.Update(String.Format("UPDATE characters SET char_watchedFactionIndex = {0} WHERE char_guid = {1};", Client.Character.WatchedFactionIndex, Client.Character.GUID - GUID_PLAYER))
         Client.Character.SetUpdateFlag(EPlayerFields.PLAYER_FIELD_WATCHED_FACTION_INDEX, CType(Client.Character.WatchedFactionIndex, Integer))
         Client.Character.SendCharacterUpdate(False)
     End Sub
@@ -5043,7 +5043,7 @@ CheckXPAgain:
         Character.OutfitId = OutfitID
 
         'DONE: Query Access Level and Account ID
-        Database.Query(String.Format("SELECT account_id, plevel, expansion FROM accounts WHERE account = ""{0}"";", Account), MySQLQuery)
+        AccountDatabase.Query(String.Format("SELECT account_id, plevel, expansion FROM accounts WHERE account = ""{0}"";", Account), MySQLQuery)
         Dim Account_ID As Integer = CType(MySQLQuery.Rows(0).Item("account_id"), Integer)
         Dim Account_Access As AccessLevel = CType(MySQLQuery.Rows(0).Item("plevel"), AccessLevel)
         Dim Account_Expansion As ExpansionLevel = CType(MySQLQuery.Rows(0).Item("expansion"), AccessLevel)
@@ -5056,7 +5056,7 @@ CheckXPAgain:
         'DONE: Name In Use
         Try
             MySQLQuery.Clear()
-            Database.Query(String.Format("SELECT char_name FROM characters WHERE char_name = ""{0}"";", Character.Name), MySQLQuery)
+            CharacterDatabase.Query(String.Format("SELECT char_name FROM characters WHERE char_name = ""{0}"";", Character.Name), MySQLQuery)
             If MySQLQuery.Rows.Count > 0 Then
                 Return AuthResponseCodes.CHAR_CREATE_NAME_IN_USE
             End If
@@ -5087,7 +5087,7 @@ CheckXPAgain:
         'DONE: Check for both horde and alliance
         If Account_Access <= AccessLevel.PlayerVip Then
             MySQLQuery.Clear()
-            Database.Query(String.Format("SELECT char_race FROM characters WHERE account_id = ""{0}"" LIMIT 1;", Account_ID), MySQLQuery)
+            CharacterDatabase.Query(String.Format("SELECT char_race FROM characters WHERE account_id = ""{0}"" LIMIT 1;", Account_ID), MySQLQuery)
             If MySQLQuery.Rows.Count > 0 Then
                 If Character.Side <> GetCharacterSide(CByte(MySQLQuery.Rows(0).Item("char_race"))) Then
                     Return AuthResponseCodes.CHAR_CREATE_PVP_TEAMS_VIOLATION
@@ -5097,7 +5097,7 @@ CheckXPAgain:
 
         'DONE: Check for MAX characters limit, only for non GM/Admin
         MySQLQuery.Clear()
-        Database.Query(String.Format("SELECT char_name FROM characters WHERE account_id = ""{0}"";", Account_ID), MySQLQuery)
+        CharacterDatabase.Query(String.Format("SELECT char_name FROM characters WHERE account_id = ""{0}"";", Account_ID), MySQLQuery)
         If MySQLQuery.Rows.Count >= 10 AndAlso Account_Access <= AccessLevel.PlayerVip Then
             Return AuthResponseCodes.CHAR_CREATE_SERVER_LIMIT
         End If
@@ -5133,21 +5133,21 @@ CheckXPAgain:
 
         Dim ButtonPos As Integer = 0
 
-        Database.Query(String.Format("SELECT * FROM playercreateinfo WHERE race = {0} AND class = {1};", CType(c.Race, Integer), CType(c.Classe, Integer)), CreateInfo)
+        WorldDatabase.Query(String.Format("SELECT * FROM playercreateinfo WHERE race = {0} AND class = {1};", CType(c.Race, Integer), CType(c.Classe, Integer)), CreateInfo)
         If CreateInfo.Rows.Count <= 0 Then
             Log.WriteLine(LogType.FAILED, "No information found in playercreateinfo table for race={0}, class={1}", c.Race, c.Classe)
         End If
         Dim CreateIndex As Integer = CreateInfo.Rows(0).Item("Index")
 
-        Database.Query(String.Format("SELECT * FROM playercreateinfo_bars WHERE race = {0} AND class = {1} ORDER BY button;", CType(c.Race, Integer), CType(c.Classe, Integer)), CreateInfoBars)
+        WorldDatabase.Query(String.Format("SELECT * FROM playercreateinfo_bars WHERE race = {0} AND class = {1} ORDER BY button;", CType(c.Race, Integer), CType(c.Classe, Integer)), CreateInfoBars)
         If CreateInfoBars.Rows.Count <= 0 Then
             Log.WriteLine(LogType.FAILED, "No information found in playercreateinfo_bars table for race={0}, class={1}", c.Race, c.Classe)
         End If
-        Database.Query(String.Format("SELECT * FROM playercreateinfo_skills WHERE indexid = {0};", CreateIndex), CreateInfoSkills)
+        WorldDatabase.Query(String.Format("SELECT * FROM playercreateinfo_skills WHERE indexid = {0};", CreateIndex), CreateInfoSkills)
         If CreateInfoSkills.Rows.Count <= 0 Then
             Log.WriteLine(LogType.FAILED, "No information found in playercreateinfo_skills table for Index={0}", CreateIndex)
         End If
-        Database.Query(String.Format("SELECT * FROM playercreateinfo_spells WHERE indexid = {0};", CreateIndex), CreateInfoSpells)
+        WorldDatabase.Query(String.Format("SELECT * FROM playercreateinfo_spells WHERE indexid = {0};", CreateIndex), CreateInfoSpells)
         If CreateInfoSpells.Rows.Count <= 0 Then
             Log.WriteLine(LogType.FAILED, "No information found in playercreateinfo_spells table for Index={0}", CreateIndex)
         End If
@@ -5262,14 +5262,14 @@ CheckXPAgain:
     End Sub
     Public Sub CreateCharacterItems(ByRef c As CharacterObject)
         Dim CreateInfo As New DataTable
-        Database.Query(String.Format("SELECT * FROM playercreateinfo WHERE race = {0} AND class = {1};", CType(c.Race, Integer), CType(c.Classe, Integer)), CreateInfo)
+        WorldDatabase.Query(String.Format("SELECT * FROM playercreateinfo WHERE race = {0} AND class = {1};", CType(c.Race, Integer), CType(c.Classe, Integer)), CreateInfo)
         If CreateInfo.Rows.Count <= 0 Then
             Log.WriteLine(LogType.FAILED, "No information found in playercreateinfo table for race={0}, class={1}", c.Race, c.Classe)
         End If
         Dim CreateIndex As Integer = CreateInfo.Rows(0).Item("Index")
 
         Dim CreateInfoItems As New DataTable
-        Database.Query(String.Format("SELECT * FROM playercreateinfo_items WHERE indexid = {0};", CreateIndex), CreateInfoItems)
+        WorldDatabase.Query(String.Format("SELECT * FROM playercreateinfo_items WHERE indexid = {0};", CreateIndex), CreateInfoItems)
         If CreateInfoItems.Rows.Count <= 0 Then
             Log.WriteLine(LogType.FAILED, "No information found in playercreateinfo_bars table for Index={0}", CreateIndex)
         End If

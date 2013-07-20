@@ -70,7 +70,7 @@ Public Module WS_Battlegrounds
         For i As Byte = 0 To 2
             If CHARACTERs(GUID).ArenaTeamID(i) <> 0 Then
                 Dim q As New DataTable
-                Database.Query(String.Format("SELECT * FROM arena_teams WHERE arena_id = {0}", CHARACTERs(GUID).ArenaTeamID(i)), q)
+                CharacterDatabase.Query(String.Format("SELECT * FROM arena_teams WHERE arena_id = {0}", CHARACTERs(GUID).ArenaTeamID(i)), q)
                 If q.Rows.Count = 0 Then Exit Sub
 
                 Dim response As New PacketClass(OPCODES.MSG_INSPECT_ARENA_TEAMS)
@@ -140,10 +140,10 @@ Public Module WS_Battlegrounds
 
     Public Sub SendArenaRoster(ByRef Client As ClientClass, ByVal ArenaTeamID As UInteger)
         Dim q As New DataTable
-        Database.Query(String.Format("SELECT * FROM arena_members WHERE member_team = {0}", ArenaTeamID), q)
+        CharacterDatabase.Query(String.Format("SELECT * FROM arena_members WHERE member_team = {0}", ArenaTeamID), q)
         If q.Rows.Count = 0 Then Exit Sub
         Dim q2 As New DataTable
-        Database.Query(String.Format("SELECT * FROM arena_teams WHERE arena_id = {0}", ArenaTeamID), q2)
+        CharacterDatabase.Query(String.Format("SELECT * FROM arena_teams WHERE arena_id = {0}", ArenaTeamID), q2)
         If q2.Rows.Count = 0 Then Exit Sub
 
         Dim response As New PacketClass(OPCODES.SMSG_ARENA_TEAM_ROSTER)
@@ -170,7 +170,7 @@ Public Module WS_Battlegrounds
                 response.AddUInt32(q.Rows(i).Item("member_personalrating")) 'Personal rating?
             Else
                 Dim q3 As New DataTable
-                Database.Query(String.Format("SELECT char_name, char_level, char_class FROM characters WHERE char_guid = {0}", q.Rows(i).Item("member_id")), q3)
+                CharacterDatabase.Query(String.Format("SELECT char_name, char_level, char_class FROM characters WHERE char_guid = {0}", q.Rows(i).Item("member_id")), q3)
                 If q3.Rows.Count = 0 Then GoTo NextMember
 
                 response.AddUInt64(q.Rows(i).Item("member_id"))
@@ -198,7 +198,7 @@ NextMember:
 
     Public Sub SendArenaQueryResponse(ByRef Client As ClientClass, ByVal ArenaTeamID As UInteger)
         Dim q As New DataTable
-        Database.Query(String.Format("SELECT * FROM arena_teams WHERE arena_id = {0}", ArenaTeamID), q)
+        CharacterDatabase.Query(String.Format("SELECT * FROM arena_teams WHERE arena_id = {0}", ArenaTeamID), q)
         If q.Rows.Count = 0 Then Exit Sub
 
         Dim response As New PacketClass(OPCODES.SMSG_ARENA_TEAM_QUERY_RESPONSE)
@@ -216,7 +216,7 @@ NextMember:
 
     Public Sub SendArenaStats(ByRef Client As ClientClass, ByVal ArenaTeamID As UInteger)
         Dim q As New DataTable
-        Database.Query(String.Format("SELECT * FROM arena_teams WHERE arena_id = {0}", ArenaTeamID), q)
+        CharacterDatabase.Query(String.Format("SELECT * FROM arena_teams WHERE arena_id = {0}", ArenaTeamID), q)
         If q.Rows.Count = 0 Then Exit Sub
 
         'DONE: Read it from the DB

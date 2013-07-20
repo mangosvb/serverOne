@@ -51,11 +51,11 @@ Public Module WC_Network
             Try
 
                 m_Socket = New Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
-                m_Socket.Bind(New IPEndPoint(Net.IPAddress.Parse(Config.WSHost), Config.WSPort))
+                m_Socket.Bind(New IPEndPoint(Net.IPAddress.Parse(Config.WCHost), Config.WCPort))
                 m_Socket.Listen(5)
                 m_Socket.BeginAccept(AddressOf AcceptConnection, Nothing)
 
-                Log.WriteLine(LogType.SUCCESS, "Listening on {0} on port {1}", Net.IPAddress.Parse(Config.WSHost), Config.WSPort)
+                Log.WriteLine(LogType.SUCCESS, "Listening on {0} on port {1}", Net.IPAddress.Parse(Config.WCHost), Config.WCPort)
 
                 'Create Remoting Channel
                 Select Case Config.ClusterMethod
@@ -168,7 +168,7 @@ Public Module WC_Network
                         SyncLock CType(Worlds, ICollection).SyncRoot
                             Worlds.Remove(Map)
                             WorldsInfo.Remove(Map)
-                            Log.WriteLine(LogType.INFORMATION, "Disconnected World Server: {0:000}", Map)
+                            Log.WriteLine(LogType.INFORMATION, "Disconnected World Map: {0:000}", Map)
                         End SyncLock
                     End Try
                 End If
@@ -188,7 +188,7 @@ Public Module WC_Network
                 For Each w As KeyValuePair(Of UInteger, IWorld) In Worlds
                     Try
                         If SentPingTo.ContainsKey(WorldsInfo(w.Key)) Then
-                            Log.WriteLine(LogType.NETWORK, "World [M{0:0000}] ping: {1}ms", w.Key, SentPingTo(WorldsInfo(w.Key)))
+                            Log.WriteLine(LogType.NETWORK, "World Map {0:000} ping: {1}ms", w.Key, SentPingTo(WorldsInfo(w.Key)))
                         Else
                             MyTime = timeGetTime
                             ServerTime = w.Value.Ping(MyTime)
@@ -197,14 +197,14 @@ Public Module WC_Network
                             WorldsInfo(w.Key).Latency = Latency
                             SentPingTo(WorldsInfo(w.Key)) = Latency
 
-                            Log.WriteLine(LogType.NETWORK, "World [M{0:0000}] ping: {1}ms", w.Key, Latency)
+                            Log.WriteLine(LogType.NETWORK, "World Map {0:000} ping: {1}ms", w.Key, Latency)
 
                             'Query CPU and Memory usage
                             w.Value.ServerInfo(WorldsInfo(w.Key).CPUUsage, WorldsInfo(w.Key).MemoryUsage)
                         End If
 
                     Catch ex As Exception
-                        Log.WriteLine(LogType.WARNING, "World [M{0:0000}] down.", w.Key)
+                        Log.WriteLine(LogType.WARNING, "World Map {0:000} Unavailable!", w.Key)
 
                         DeadServers.Add(w.Key)
                     End Try

@@ -268,7 +268,7 @@ Module WS_CharMovement
 
             'DONE: Handling quest triggers
             q.Clear()
-            Database.Query(String.Format("SELECT * FROM areatrigger_involvedrelation WHERE id = {0};", triggerID), q)
+            WorldDatabase.Query(String.Format("SELECT * FROM areatrigger_involvedrelation WHERE id = {0};", triggerID), q)
             If q.Rows.Count > 0 Then
                 OnQuestExplore(Client.Character, triggerID)
                 Exit Sub
@@ -276,7 +276,7 @@ Module WS_CharMovement
 
             'TODO: Handling tavern triggers
             q.Clear()
-            Database.Query(String.Format("SELECT * FROM areatrigger_tavern WHERE id = {0};", triggerID), q)
+            WorldDatabase.Query(String.Format("SELECT * FROM areatrigger_tavern WHERE id = {0};", triggerID), q)
             If q.Rows.Count > 0 Then
                 SetFlag(Client.Character.cPlayerFlags, PlayerFlag.PLAYER_FLAG_RESTING, True)
                 Client.Character.SetUpdateFlag(EPlayerFields.PLAYER_FLAGS, Client.Character.cPlayerFlags)
@@ -285,7 +285,7 @@ Module WS_CharMovement
 
             'DONE: Handling teleport triggers
             q.Clear()
-            Database.Query(String.Format("SELECT * FROM areatrigger_teleport WHERE id = {0};", triggerID), q)
+            WorldDatabase.Query(String.Format("SELECT * FROM areatrigger_teleport WHERE id = {0};", triggerID), q)
             If q.Rows.Count > 0 Then
                 If q.Rows(0).Item("required_level") <> 0 AndAlso Client.Character.Level < q.Rows(0).Item("required_level") Then
                     SendAreaTriggerMessage(Client, "Your level is too low")
@@ -408,7 +408,7 @@ Module WS_CharMovement
 
         'DONE: Send weather
         Dim MySQLQuery As New DataTable
-        Database.Query(String.Format("SELECT * FROM weather WHERE weather_zone = {0};", Client.Character.ZoneID), MySQLQuery)
+        WorldDatabase.Query(String.Format("SELECT * FROM weather WHERE weather_zone = {0};", Client.Character.ZoneID), MySQLQuery)
         If MySQLQuery.Rows.Count = 0 Then
             SendWeather(0, 0, Client)
         Else

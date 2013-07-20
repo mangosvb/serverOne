@@ -79,7 +79,7 @@ Public Module WC_Character
         Public Sub ReLoad()
             'DONE: Get character info from DB
             Dim MySQLQuery As New DataTable
-            Database.Query(String.Format("SELECT * FROM characters WHERE char_guid = {0};", GUID), MySQLQuery)
+            CharacterDatabase.Query(String.Format("SELECT * FROM characters WHERE char_guid = {0};", GUID), MySQLQuery)
 
             Race = CType(MySQLQuery.Rows(0).Item("char_race"), Byte)
             Classe = CType(MySQLQuery.Rows(0).Item("char_class"), Byte)
@@ -144,16 +144,16 @@ Public Module WC_Character
         'Login
         Public Sub OnLogin()
             'DONE: Update character status in database
-            Database.Update("UPDATE characters SET char_online = 1 WHERE char_guid = " & GUID & ";")
+            CharacterDatabase.Update("UPDATE characters SET char_online = 1 WHERE char_guid = " & GUID & ";")
 
             'TODO: SMSG_ACCOUNT_DATA_MD5
             SendAccountMD5(Client, Me)
 
             'DONE: SMSG_TRIGGER_CINEMATIC
             Dim q As New DataTable
-            Database.Query(String.Format("SELECT char_moviePlayed FROM characters WHERE char_guid = {0} AND char_moviePlayed = 0;", GUID), q)
+            CharacterDatabase.Query(String.Format("SELECT char_moviePlayed FROM characters WHERE char_guid = {0} AND char_moviePlayed = 0;", GUID), q)
             If q.Rows.Count > 0 Then
-                Database.Update("UPDATE characters SET char_moviePlayed = 1 WHERE char_guid = " & GUID & ";")
+                CharacterDatabase.Update("UPDATE characters SET char_moviePlayed = 1 WHERE char_guid = " & GUID & ";")
                 SendTrigerCinematic(Client, Me)
             End If
 
@@ -192,7 +192,7 @@ Public Module WC_Character
 
         Public Sub OnLogout()
             'DONE: Update character status in database
-            Database.Update("UPDATE characters SET char_online = 0 WHERE char_guid = " & GUID & ";")
+            CharacterDatabase.Update("UPDATE characters SET char_online = 0 WHERE char_guid = " & GUID & ";")
 
             'DONE: Leave group
             If IsInGroup Then
@@ -233,7 +233,7 @@ Public Module WC_Character
 
         If GUID = 0 Then
             Dim q As New DataTable
-            Database.Query(String.Format("SELECT char_guid FROM characters WHERE char_name = ""{0}"";", EscapeString(Name)), q)
+            CharacterDatabase.Query(String.Format("SELECT char_guid FROM characters WHERE char_name = ""{0}"";", EscapeString(Name)), q)
 
             If q.Rows.Count > 0 Then
                 Return CType(q.Rows(0).Item("char_guid"), ULong)
@@ -250,7 +250,7 @@ Public Module WC_Character
             Return CHARACTERs(GUID).Name
         Else
             Dim q As New DataTable
-            Database.Query(String.Format("SELECT char_name FROM characters WHERE char_guid = ""{0}"";", GUID), q)
+            CharacterDatabase.Query(String.Format("SELECT char_name FROM characters WHERE char_guid = ""{0}"";", GUID), q)
 
             If q.Rows.Count > 0 Then
                 Return CType(q.Rows(0).Item("char_name"), String)

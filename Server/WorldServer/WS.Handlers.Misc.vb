@@ -90,7 +90,7 @@ Public Module WS_Handlers_Misc
                     Exit Sub
                 Else
                     Dim MySQLQuery As New DataTable
-                    Database.Query(String.Format("SELECT char_name, char_race, char_class, char_gender FROM characters WHERE char_guid = ""{0}"";", GUID), MySQLQuery)
+                    CharacterDatabase.Query(String.Format("SELECT char_name, char_race, char_class, char_gender FROM characters WHERE char_guid = ""{0}"";", GUID), MySQLQuery)
 
                     If MySQLQuery.Rows.Count > 0 Then
                         SMSG_NAME_QUERY_RESPONSE.AddUInt64(GUID)

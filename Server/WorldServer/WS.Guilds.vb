@@ -170,7 +170,7 @@ Public Module WS_Guilds
 
         If Type = 9 Then
             Dim q As New DataTable
-            Database.Query(String.Format("SELECT guild_id FROM guilds WHERE guild_name = '{0}'", Name), q)
+            CharacterDatabase.Query(String.Format("SELECT guild_id FROM guilds WHERE guild_name = '{0}'", Name), q)
             If q.Rows.Count > 0 Then
                 SendGuildResult(Client, GuildCommand.GUILD_CREATE_S, GuildError.GUILD_NAME_EXISTS, Name)
             End If
@@ -180,7 +180,7 @@ Public Module WS_Guilds
             End If
         Else
             Dim q As New DataTable
-            Database.Query(String.Format("SELECT arena_id FROM arena_teams WHERE arena_name = '{0}'", Name), q)
+            CharacterDatabase.Query(String.Format("SELECT arena_id FROM arena_teams WHERE arena_name = '{0}'", Name), q)
             If q.Rows.Count > 0 Then
                 SendArenaCommandResult(Client, ArenaTeamCommandTypes.ERR_ARENA_TEAM_CREATE_S, Name, "", ArenaTeamCommandErrors.ERR_ARENA_TEAM_NAME_EXISTS_S)
             End If
@@ -219,7 +219,7 @@ Public Module WS_Guilds
         tmpItem.AddEnchantment(tmpItem.GUID - GUID_ITEM, 0, 0, 0)
         If Client.Character.ItemADD(tmpItem) Then
             'Save petition into database
-            Database.Update(String.Format("INSERT INTO petitions (petition_id, petition_itemGuid, petition_owner, petition_name, petition_type, petition_signedMembers) VALUES ({0}, {0}, {1}, '{2}', {3}, 0);", tmpItem.GUID - GUID_ITEM, Client.Character.GUID - GUID_PLAYER, Name, Type))
+            CharacterDatabase.Update(String.Format("INSERT INTO petitions (petition_id, petition_itemGuid, petition_owner, petition_name, petition_type, petition_signedMembers) VALUES ({0}, {0}, {1}, '{2}', {3}, 0);", tmpItem.GUID - GUID_ITEM, Client.Character.GUID - GUID_PLAYER, Name, Type))
         Else
             'No free inventory slot
             tmpItem.Delete()
@@ -228,7 +228,7 @@ Public Module WS_Guilds
 
     Public Sub SendPetitionSignatures(ByRef c As CharacterObject, ByVal iGUID As ULong)
         Dim MySQLQuery As New DataTable
-        Database.Query("SELECT * FROM petitions WHERE petition_itemGuid = " & iGUID - GUID_ITEM & ";", MySQLQuery)
+        CharacterDatabase.Query("SELECT * FROM petitions WHERE petition_itemGuid = " & iGUID - GUID_ITEM & ";", MySQLQuery)
         If MySQLQuery.Rows.Count = 0 Then Exit Sub
 
         Dim response As New PacketClass(OPCODES.SMSG_PETITION_SHOW_SIGNATURES)
@@ -263,7 +263,7 @@ Public Module WS_Guilds
         Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_PETITION_QUERY [pGUID={3} iGUID={2:X}]", Client.IP, Client.Port, ItemGUID, PetitionGUID)
 
         Dim MySQLQuery As New DataTable
-        Database.Query("SELECT * FROM petitions WHERE petition_itemGuid = " & ItemGUID - GUID_ITEM & ";", MySQLQuery)
+        CharacterDatabase.Query("SELECT * FROM petitions WHERE petition_itemGuid = " & ItemGUID - GUID_ITEM & ";", MySQLQuery)
         If MySQLQuery.Rows.Count = 0 Then Exit Sub
 
         Dim response As New PacketClass(OPCODES.SMSG_PETITION_QUERY_RESPONSE)
@@ -307,7 +307,7 @@ Public Module WS_Guilds
 
         Log.WriteLine(LogType.DEBUG, "[{0}:{1}] MSG_PETITION_RENAME [NewName={3} GUID={2:X}]", Client.IP, Client.Port, ItemGUID, NewName)
 
-        Database.Update("UPDATE petitions SET petition_name = '" & NewName & "' WHERE petition_itemGuid = " & ItemGUID - GUID_ITEM & ";")
+        CharacterDatabase.Update("UPDATE petitions SET petition_name = '" & NewName & "' WHERE petition_itemGuid = " & ItemGUID - GUID_ITEM & ";")
 
         'DONE: Update client-side name information
         Dim response As New PacketClass(OPCODES.MSG_PETITION_RENAME)
@@ -326,7 +326,7 @@ Public Module WS_Guilds
 
         'DONE: Get info
         Dim q As New DataTable
-        Database.Query("SELECT * FROM petitions WHERE petition_itemGuid = " & ItemGUID - GUID_ITEM & " LIMIT 1;", q)
+        CharacterDatabase.Query("SELECT * FROM petitions WHERE petition_itemGuid = " & ItemGUID - GUID_ITEM & " LIMIT 1;", q)
         If q.Rows.Count = 0 Then Exit Sub
         Dim Type As Byte = q.Rows(0).Item("petition_type")
         Dim Name As String = q.Rows(0).Item("petition_name")
@@ -354,7 +354,7 @@ Public Module WS_Guilds
         Dim q2 As New DataTable
         If Type < 9 Then
             'DONE: Check if in arena team
-            Database.Query(String.Format("SELECT member_id FROM arena_members WHERE member_id = {0} AND member_type = {1}", Client.Character.GUID, Type), q2)
+            CharacterDatabase.Query(String.Format("SELECT member_id FROM arena_members WHERE member_id = {0} AND member_type = {1}", Client.Character.GUID, Type), q2)
             If q2.Rows.Count > 0 Then
                 SendArenaCommandResult(Client, ArenaTeamCommandTypes.ERR_ARENA_TEAM_CREATE_S, Name, "", ArenaTeamCommandErrors.ERR_ALREADY_IN_ARENA_TEAM)
                 Exit Sub
@@ -363,7 +363,7 @@ Public Module WS_Guilds
 
         If Type = 9 Then
             'DONE: Create guild and add members
-            Database.Query(String.Format("INSERT INTO guilds (guild_name, guild_leader, guild_cYear, guild_cMonth, guild_cDay) VALUES ('{0}', {1}, {2}, {3}, {4}); SELECT guild_id FROM guilds WHERE guild_name = '{0}';", Name, Client.Character.GUID, Now.Year - 2006, Now.Month, Now.Day), q2)
+            CharacterDatabase.Query(String.Format("INSERT INTO guilds (guild_name, guild_leader, guild_cYear, guild_cMonth, guild_cDay) VALUES ('{0}', {1}, {2}, {3}, {4}); SELECT guild_id FROM guilds WHERE guild_name = '{0}';", Name, Client.Character.GUID, Now.Year - 2006, Now.Month, Now.Day), q2)
 
             AddCharacterToGuild(Client.Character, q2.Rows(0).Item("guild_id"), 0)
 
@@ -383,7 +383,7 @@ Public Module WS_Guilds
             Dim BackGround As UInteger = packet.GetUInt32
             'DONE: Create the team
             q2.Clear()
-            Database.Query(String.Format("INSERT INTO arena_teams (arena_name, arena_captain, arena_type, arena_emblemstyle, arena_emblemcolor, arena_borderstyle, arena_bordercolor, arena_background) VALUES ('{0}', {1}, {2}, {3}, {4}, {5}, {6}, {7}); SELECT arena_id FROM arena_teams WHERE arena_name = '{0}';", Name, Client.Character.GUID, Type, Icon, IconColor, Border, BorderColor, BackGround), q2)
+            CharacterDatabase.Query(String.Format("INSERT INTO arena_teams (arena_name, arena_captain, arena_type, arena_emblemstyle, arena_emblemcolor, arena_borderstyle, arena_bordercolor, arena_background) VALUES ('{0}', {1}, {2}, {3}, {4}, {5}, {6}, {7}); SELECT arena_id FROM arena_teams WHERE arena_name = '{0}';", Name, Client.Character.GUID, Type, Icon, IconColor, Border, BorderColor, BackGround), q2)
 
             Dim Slot As Byte = 0
             If Type = 2 Then
@@ -397,7 +397,7 @@ Public Module WS_Guilds
             End If
 
             'DONE: Add owner to the team
-            Database.Update(String.Format("INSERT INTO arena_members (member_id, member_team, member_type) VALUES ({0}, {1}, {2})", Client.Character.GUID, q2.Rows(0).Item("arena_id"), Type))
+            CharacterDatabase.Update(String.Format("INSERT INTO arena_members (member_id, member_team, member_type) VALUES ({0}, {1}, {2})", Client.Character.GUID, q2.Rows(0).Item("arena_id"), Type))
             Client.Character.ArenaTeamID(Slot) = CUInt(q2.Rows(0).Item("arena_id"))
             Client.Character.SetUpdateFlag(EPlayerFields.PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + (Slot * 6), Client.Character.ArenaTeamID(Slot))
             Client.Character.SendCharacterUpdate()
@@ -405,7 +405,7 @@ Public Module WS_Guilds
 
             'DONE: Add members to the team
             For i As Byte = 1 To Type - 1
-                Database.Update(String.Format("INSERT INTO arena_members (member_id, member_team, member_type) VALUES ({0}, {1}, {2})", CType(q.Rows(0).Item("petition_signedMember" & i), ULong), q2.Rows(0).Item("arena_id"), Type))
+                CharacterDatabase.Update(String.Format("INSERT INTO arena_members (member_id, member_team, member_type) VALUES ({0}, {1}, {2})", CType(q.Rows(0).Item("petition_signedMember" & i), ULong), q2.Rows(0).Item("arena_id"), Type))
                 If CHARACTERs.ContainsKey(CType(q.Rows(0).Item("petition_signedMember" & i), ULong)) Then
                     CHARACTERs(CType(q.Rows(0).Item("petition_signedMember" & i), ULong)).ArenaTeamID(Slot) = CUInt(q2.Rows(0).Item("arena_id"))
                     CHARACTERs(CType(q.Rows(0).Item("petition_signedMember" & i), ULong)).SetUpdateFlag(EPlayerFields.PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + (Slot * 6), CUInt(q2.Rows(0).Item("arena_id")))
@@ -450,10 +450,10 @@ Public Module WS_Guilds
         Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_PETITION_SIGN [GUID={2:X} Unk={3}]", Client.IP, Client.Port, ItemGUID, Unk)
 
         Dim MySQLQuery As New DataTable
-        Database.Query("SELECT petition_signedMembers, petition_owner FROM petitions WHERE petition_itemGuid = " & ItemGUID - GUID_ITEM & ";", MySQLQuery)
+        CharacterDatabase.Query("SELECT petition_signedMembers, petition_owner FROM petitions WHERE petition_itemGuid = " & ItemGUID - GUID_ITEM & ";", MySQLQuery)
         If MySQLQuery.Rows.Count = 0 Then Exit Sub
 
-        Database.Update("UPDATE petitions SET petition_signedMembers = petition_signedMembers + 1, petition_signedMember" & (MySQLQuery.Rows(0).Item("petition_signedMembers") + 1) & " = " & Client.Character.GUID & " WHERE petition_itemGuid = " & ItemGUID - GUID_ITEM & ";")
+        CharacterDatabase.Update("UPDATE petitions SET petition_signedMembers = petition_signedMembers + 1, petition_signedMember" & (MySQLQuery.Rows(0).Item("petition_signedMembers") + 1) & " = " & Client.Character.GUID & " WHERE petition_itemGuid = " & ItemGUID - GUID_ITEM & ";")
 
         'DONE: Send result to both players
         Dim response As New PacketClass(OPCODES.SMSG_PETITION_SIGN_RESULTS)
@@ -473,7 +473,7 @@ Public Module WS_Guilds
 
         'DONE: Get petition owner
         Dim q As New DataTable
-        Database.Query("SELECT petition_owner FROM petitions WHERE petition_itemGuid = " & ItemGUID - GUID_ITEM & " LIMIT 1;", q)
+        CharacterDatabase.Query("SELECT petition_owner FROM petitions WHERE petition_itemGuid = " & ItemGUID - GUID_ITEM & " LIMIT 1;", q)
 
         'DONE: Send message to player
         Dim response As New PacketClass(OPCODES.MSG_PETITION_DECLINE)
@@ -522,7 +522,7 @@ Public Module WS_Guilds
 
     'Basic Guild Framework
     Public Sub AddCharacterToGuild(ByRef c As CharacterObject, ByVal GuildID As Integer, Optional ByVal GuildRank As Integer = 4)
-        Database.Update(String.Format("UPDATE characters SET char_guildId = {0}, char_guildRank = {2}, char_guildOffNote = '', char_guildPNote = '' WHERE char_guid = {1};", GuildID, c.GUID, GuildRank))
+        CharacterDatabase.Update(String.Format("UPDATE characters SET char_guildId = {0}, char_guildRank = {2}, char_guildOffNote = '', char_guildPNote = '' WHERE char_guid = {1};", GuildID, c.GUID, GuildRank))
 
         c.GuildID = GuildID
         c.GuildRank = GuildRank
@@ -531,10 +531,10 @@ Public Module WS_Guilds
         c.SendCharacterUpdate(True)
     End Sub
     Public Sub AddCharacterToGuild(ByVal GUID As ULong, ByVal GuildID As Integer, Optional ByVal GuildRank As Integer = 4)
-        Database.Update(String.Format("UPDATE characters SET char_guildId = {0}, char_guildRank = {2}, char_guildOffNote = '', char_guildPNote = '' WHERE char_guid = {1};", GuildID, GUID, GuildRank))
+        CharacterDatabase.Update(String.Format("UPDATE characters SET char_guildId = {0}, char_guildRank = {2}, char_guildOffNote = '', char_guildPNote = '' WHERE char_guid = {1};", GuildID, GUID, GuildRank))
     End Sub
     Public Sub RemoveCharacterFromGuild(ByRef c As CharacterObject)
-        Database.Update(String.Format("UPDATE characters SET char_guildId = {0}, char_guildRank = 0, char_guildOffNote = '', char_guildPNote = '' WHERE char_guid = {1};", 0, c.GUID))
+        CharacterDatabase.Update(String.Format("UPDATE characters SET char_guildId = {0}, char_guildRank = 0, char_guildOffNote = '', char_guildPNote = '' WHERE char_guid = {1};", 0, c.GUID))
 
         c.GuildID = 0
         c.GuildRank = 0
@@ -543,11 +543,11 @@ Public Module WS_Guilds
         c.SendCharacterUpdate(True)
     End Sub
     Public Sub RemoveCharacterFromGuild(ByVal GUID As ULong)
-        Database.Update(String.Format("UPDATE characters SET char_guildId = {0}, char_guildRank = 0, char_guildOffNote = '', char_guildPNote = '' WHERE char_guid = {1};", 0, GUID))
+        CharacterDatabase.Update(String.Format("UPDATE characters SET char_guildId = {0}, char_guildRank = 0, char_guildOffNote = '', char_guildPNote = '' WHERE char_guid = {1};", 0, GUID))
     End Sub
     Public Sub BroadcastToGuild(ByRef packet As PacketClass, ByVal GuildID As Integer)
         Dim q As New DataTable
-        Database.Query(String.Format("SELECT char_guid FROM characters WHERE char_guildID = {0} AND char_online = 1;", GuildID), q)
+        CharacterDatabase.Query(String.Format("SELECT char_guid FROM characters WHERE char_guildID = {0} AND char_online = 1;", GuildID), q)
 
         For Each r As DataRow In q.Rows
             If CHARACTERs.ContainsKey(CType(r.Item("char_guid"), Long)) Then
@@ -573,7 +573,7 @@ Public Module WS_Guilds
 
         'DONE: Send message to everyone
         Dim q As New DataTable
-        Database.Query(String.Format("SELECT char_guid FROM characters WHERE char_guildID = {0} AND char_online = 1;", GuildID), q)
+        CharacterDatabase.Query(String.Format("SELECT char_guid FROM characters WHERE char_guildID = {0} AND char_online = 1;", GuildID), q)
 
         For Each r As DataRow In q.Rows
             If CHARACTERs.ContainsKey(CType(r.Item("char_guid"), Long)) Then
@@ -603,7 +603,7 @@ Public Module WS_Guilds
 
         'DONE: Send message to everyone
         Dim q As New DataTable
-        Database.Query(String.Format("SELECT char_guid FROM characters WHERE char_guildID = {0} AND char_online = 1;", GuildID), q)
+        CharacterDatabase.Query(String.Format("SELECT char_guid FROM characters WHERE char_guildID = {0} AND char_online = 1;", GuildID), q)
 
         For Each r As DataRow In q.Rows
             If CHARACTERs.ContainsKey(CType(r.Item("char_guid"), Long)) Then
@@ -619,7 +619,7 @@ Public Module WS_Guilds
         'WARNING: This opcode is used also in character enum, so there must not be used any references to CharacterObject, only ClientClass
 
         Dim MySQLQuery As New DataTable
-        Database.Query("SELECT * FROM guilds WHERE guild_id = " & GuildID & ";", MySQLQuery)
+        CharacterDatabase.Query("SELECT * FROM guilds WHERE guild_id = " & GuildID & ";", MySQLQuery)
         If MySQLQuery.Rows.Count = 0 Then Throw New ApplicationException("GuildID " & GuildID & " not found in database.")
 
         Dim response As New PacketClass(OPCODES.SMSG_GUILD_QUERY_RESPONSE)
@@ -648,7 +648,7 @@ Public Module WS_Guilds
         If c.GuildID = 0 Then Exit Sub
 
         Dim MySQLQuery As New DataTable
-        Database.Query("SELECT * FROM guilds WHERE guild_id = " & c.GuildID & ";", MySQLQuery)
+        CharacterDatabase.Query("SELECT * FROM guilds WHERE guild_id = " & c.GuildID & ";", MySQLQuery)
         If MySQLQuery.Rows.Count = 0 Then Throw New ApplicationException("GuildID " & c.GuildID & " not found in database.")
 
         'DONE: Count the ranks
@@ -666,7 +666,7 @@ Public Module WS_Guilds
 
         'DONE: Count the members
         Dim Members As New DataTable
-        Database.Query("SELECT char_online, char_guid, char_name, char_class, char_level, char_zone_id, char_guildRank, char_guildPNote, char_guildOffNote FROM characters WHERE char_guildId = " & c.GuildID & ";", Members)
+        CharacterDatabase.Query("SELECT char_online, char_guid, char_name, char_class, char_level, char_zone_id, char_guildRank, char_guildPNote, char_guildOffNote FROM characters WHERE char_guildId = " & c.GuildID & ";", Members)
 
         Dim response As New PacketClass(OPCODES.SMSG_GUILD_ROSTER)
         response.AddInt32(Members.Rows.Count)
@@ -729,7 +729,7 @@ Public Module WS_Guilds
     End Sub
     Public Sub SendGuildBankInfo(ByRef c As CharacterObject)
         Dim q As New DataTable
-        Database.Query(String.Format("SELECT guild_banktabs, guild_bankmoney FROM guilds WHERE guild_id = {0}", c.GuildID), q)
+        CharacterDatabase.Query(String.Format("SELECT guild_banktabs, guild_bankmoney FROM guilds WHERE guild_id = {0}", c.GuildID), q)
         If q.Rows.Count = 0 Then Exit Sub
         Dim BankTabCount As Byte = CByte(q.Rows(0).Item("guild_banktabs"))
 
@@ -743,7 +743,7 @@ Public Module WS_Guilds
         If BankTabCount > 0 Then
             For i As Byte = 0 To BankTabCount - 1
                 q.Clear()
-                Database.Query(String.Format("SELECT tab_name, tab_icon FROM guildbanktabs WHERE tab_guildid = {0} AND tab_id = {1}", c.GuildID, i), q)
+                CharacterDatabase.Query(String.Format("SELECT tab_name, tab_icon FROM guildbanktabs WHERE tab_guildid = {0} AND tab_id = {1}", c.GuildID, i), q)
                 If q.Rows.Count > 0 Then
                     response.AddString(q.Rows(0).Item("tab_name")) 'Name
                     response.AddString(q.Rows(0).Item("tab_icon")) 'Icon
@@ -817,7 +817,7 @@ Public Module WS_Guilds
 
         'DONE: Create guild data
         Dim MySQLQuery As New DataTable
-        Database.Query(String.Format("INSERT INTO guilds (guild_name, guild_leader, guild_cYear, guild_cMonth, guild_cDay) VALUES (""{0}"", {1}, {2}, {3}, {4}); SELECT guild_id FROM guilds WHERE guild_name = ""{0}"";", guildName, Client.Character.GUID, Now.Year - 2006, Now.Month, Now.Day), MySQLQuery)
+        CharacterDatabase.Query(String.Format("INSERT INTO guilds (guild_name, guild_leader, guild_cYear, guild_cMonth, guild_cDay) VALUES (""{0}"", {1}, {2}, {3}, {4}); SELECT guild_id FROM guilds WHERE guild_name = ""{0}"";", guildName, Client.Character.GUID, Now.Year - 2006, Now.Month, Now.Day), MySQLQuery)
 
         AddCharacterToGuild(Client.Character, MySQLQuery.Rows(0).Item("guild_id"), 0)
     End Sub
@@ -833,7 +833,7 @@ Public Module WS_Guilds
 
         'DONE: Get guild data
         Dim q As New DataTable
-        Database.Query(String.Format("SELECT guild_name, guild_cYear, guild_cMonth, guild_cDay FROM guilds WHERE guild_id = " & Client.Character.GuildID & ";"), q)
+        CharacterDatabase.Query(String.Format("SELECT guild_name, guild_cYear, guild_cMonth, guild_cDay FROM guilds WHERE guild_id = " & Client.Character.GuildID & ";"), q)
         If q.Rows.Count = 0 Then
             SendGuildResult(Client, GuildCommand.GUILD_CREATE_S, GuildError.GUILD_INTERNAL)
             Exit Sub
@@ -884,7 +884,7 @@ Public Module WS_Guilds
             Exit Sub
         End If
 
-        Database.Update(String.Format("UPDATE guilds SET guild_rank{1} = ""{2}"", guild_rank{1}_Rights = {3} WHERE guild_id = {0};", Client.Character.GuildID, rankID, rankName.Replace("""", "_").Replace("'", "_"), rankRights))
+        CharacterDatabase.Update(String.Format("UPDATE guilds SET guild_rank{1} = ""{2}"", guild_rank{1}_Rights = {3} WHERE guild_id = {0};", Client.Character.GuildID, rankID, rankName.Replace("""", "_").Replace("'", "_"), rankRights))
 
         SendGuildQuery(Client, Client.Character.GuildID)
         SendGuildRoster(Client.Character)
@@ -905,7 +905,7 @@ Public Module WS_Guilds
         End If
 
         Dim MySQLQuery As New DataTable
-        Database.Query("SELECT * FROM guilds WHERE guild_id = " & Client.Character.GuildID & ";", MySQLQuery)
+        CharacterDatabase.Query("SELECT * FROM guilds WHERE guild_id = " & Client.Character.GuildID & ";", MySQLQuery)
         If MySQLQuery.Rows.Count = 0 Then Throw New ApplicationException("GuildID " & Client.Character.GuildID & " not found in database.")
 
         Dim GuildPos As Integer
@@ -934,7 +934,7 @@ Public Module WS_Guilds
             Exit Sub
         End If
 
-        Database.Update(String.Format("UPDATE guilds SET guild_rank{1} = ""{2}"", guild_rank{1}_Rights = {3} WHERE guild_id = {0};", Client.Character.GuildID, GuildPos, NewRankName.Replace("""", "_").Replace("'", "_"), GuildRankRights.GR_RIGHT_GCHATLISTEN Or GuildRankRights.GR_RIGHT_GCHATSPEAK))
+        CharacterDatabase.Update(String.Format("UPDATE guilds SET guild_rank{1} = ""{2}"", guild_rank{1}_Rights = {3} WHERE guild_id = {0};", Client.Character.GuildID, GuildPos, NewRankName.Replace("""", "_").Replace("'", "_"), GuildRankRights.GR_RIGHT_GCHATLISTEN Or GuildRankRights.GR_RIGHT_GCHATSPEAK))
 
         SendGuildQuery(Client, Client.Character.GuildID)
         SendGuildRoster(Client.Character)
@@ -953,7 +953,7 @@ Public Module WS_Guilds
         End If
 
         Dim MySQLQuery As New DataTable
-        Database.Query("SELECT * FROM guilds WHERE guild_id = " & Client.Character.GuildID & ";", MySQLQuery)
+        CharacterDatabase.Query("SELECT * FROM guilds WHERE guild_id = " & Client.Character.GuildID & ";", MySQLQuery)
         If MySQLQuery.Rows.Count = 0 Then Throw New ApplicationException("GuildID " & Client.Character.GuildID & " not found in database.")
 
         Dim GuildPos As Integer
@@ -982,7 +982,7 @@ Public Module WS_Guilds
             Exit Sub
         End If
 
-        Database.Update(String.Format("UPDATE guilds SET guild_rank{1} = ""{2}"", guild_rank{1}_Rights = {3} WHERE guild_id = {0};", Client.Character.GuildID, GuildPos, "", 0))
+        CharacterDatabase.Update(String.Format("UPDATE guilds SET guild_rank{1} = ""{2}"", guild_rank{1}_Rights = {3} WHERE guild_id = {0};", Client.Character.GuildID, GuildPos, "", 0))
 
         SendGuildQuery(Client, Client.Character.GuildID)
         SendGuildRoster(Client.Character)
@@ -1002,7 +1002,7 @@ Public Module WS_Guilds
             Exit Sub
         End If
 
-        Database.Update(String.Format("UPDATE guilds SET guild_info = ""{1}"" WHERE guild_id = {0};", Client.Character.GuildID, guildInfo.Replace("""", "_").Replace("'", "_")))
+        CharacterDatabase.Update(String.Format("UPDATE guilds SET guild_info = ""{1}"" WHERE guild_id = {0};", Client.Character.GuildID, guildInfo.Replace("""", "_").Replace("'", "_")))
     End Sub
     Public Sub On_CMSG_GUILD_LEADER(ByRef packet As PacketClass, ByRef Client As ClientClass)
         If (packet.Data.Length - 1) < 6 Then Exit Sub
@@ -1021,7 +1021,7 @@ Public Module WS_Guilds
 
         'DONE: Find new leader's GUID
         Dim MySQLQuery As New DataTable
-        Database.Query("SELECT char_guid, char_guildId, char_guildrank FROM characters WHERE char_name = '" & playerName & "';", MySQLQuery)
+        CharacterDatabase.Query("SELECT char_guid, char_guildId, char_guildrank FROM characters WHERE char_name = '" & playerName & "';", MySQLQuery)
         If MySQLQuery.Rows.Count = 0 Then
             SendGuildResult(Client, GuildCommand.GUILD_INVITE_S, GuildError.GUILD_PLAYER_NOT_FOUND, playerName)
             Exit Sub
@@ -1038,9 +1038,9 @@ Public Module WS_Guilds
             CHARACTERs(CULng(MySQLQuery.Rows(0).Item("char_guid"))).SetUpdateFlag(EPlayerFields.PLAYER_GUILDRANK, 0)
             CHARACTERs(CULng(MySQLQuery.Rows(0).Item("char_guid"))).SendCharacterUpdate()
         End If
-        Database.Update(String.Format("UPDATE guilds SET guild_leader = ""{1}"" WHERE guild_id = {0};", Client.Character.GuildID, MySQLQuery.Rows(0).Item("char_guid")))
-        Database.Update(String.Format("UPDATE characters SET char_guildRank = {0} WHERE char_guid = {1};", 0, MySQLQuery.Rows(0).Item("char_guid")))
-        Database.Update(String.Format("UPDATE characters SET char_guildRank = {0} WHERE char_guid = {1};", Client.Character.GuildRank, Client.Character.GUID))
+        CharacterDatabase.Update(String.Format("UPDATE guilds SET guild_leader = ""{1}"" WHERE guild_id = {0};", Client.Character.GuildID, MySQLQuery.Rows(0).Item("char_guid")))
+        CharacterDatabase.Update(String.Format("UPDATE characters SET char_guildRank = {0} WHERE char_guid = {1};", 0, MySQLQuery.Rows(0).Item("char_guid")))
+        CharacterDatabase.Update(String.Format("UPDATE characters SET char_guildRank = {0} WHERE char_guid = {1};", Client.Character.GuildRank, Client.Character.GUID))
 
         'DONE: Send notify message
         Dim response As New PacketClass(OPCODES.SMSG_GUILD_EVENT)
@@ -1072,7 +1072,7 @@ Public Module WS_Guilds
             Exit Sub
         End If
 
-        Database.Update(String.Format("UPDATE guilds SET guild_tEmblemStyle = {1}, guild_tEmblemColor = {2}, guild_tBorderStyle = {3}, guild_tBorderColor = {4}, guild_tBackgroundColor = {5} WHERE guild_id = {0};", Client.Character.GuildID, tEmblemStyle, tEmblemColor, tBorderStyle, tBorderColor, tBackgroundColor))
+        CharacterDatabase.Update(String.Format("UPDATE guilds SET guild_tEmblemStyle = {1}, guild_tEmblemColor = {2}, guild_tBorderStyle = {3}, guild_tBorderColor = {4}, guild_tBackgroundColor = {5} WHERE guild_id = {0};", Client.Character.GuildID, tEmblemStyle, tEmblemColor, tBorderStyle, tBorderColor, tBackgroundColor))
 
         SendGuildQuery(Client, Client.Character.GuildID)
 
@@ -1099,7 +1099,7 @@ Public Module WS_Guilds
 
         'DONE: Clear all members
         Dim q As New DataTable
-        Database.Query(String.Format("SELECT char_guid FROM characters WHERE char_guildID = {0};", Client.Character.GuildID), q)
+        CharacterDatabase.Query(String.Format("SELECT char_guid FROM characters WHERE char_guildID = {0};", Client.Character.GuildID), q)
 
         Dim response As New PacketClass(OPCODES.SMSG_GUILD_EVENT)
         response.AddInt8(GuildEvent.DISBANDED)
@@ -1119,15 +1119,15 @@ Public Module WS_Guilds
         response.Dispose()
 
         'DONE: Delete guild information
-        Database.Update("DELETE FROM guilds WHERE guild_id = " & GuildID & ";")
-        Database.Update("DELETE FROM guildbanktabs WHERE tab_guildid = " & GuildID & ";")
+        CharacterDatabase.Update("DELETE FROM guilds WHERE guild_id = " & GuildID & ";")
+        CharacterDatabase.Update("DELETE FROM guildbanktabs WHERE tab_guildid = " & GuildID & ";")
     End Sub
 
     'Members Options
     Public Sub SendGuildMOTD(ByRef c As CharacterObject)
         If c.IsInGuild Then
             Dim MySQLQuery As New DataTable
-            Database.Query("SELECT guild_MOTD FROM guilds WHERE guild_id = " & c.GuildID & ";", MySQLQuery)
+            CharacterDatabase.Query("SELECT guild_MOTD FROM guilds WHERE guild_id = " & c.GuildID & ";", MySQLQuery)
             If MySQLQuery.Rows.Count = 0 Then Throw New ApplicationException("GuildID " & c.GuildID & " not found in database.")
 
             If MySQLQuery.Rows(0).Item("guild_MOTD") <> "" Then
@@ -1157,7 +1157,7 @@ Public Module WS_Guilds
             Exit Sub
         End If
 
-        Database.Update(String.Format("UPDATE guilds SET guild_MOTD = ""{1}"" WHERE guild_id = ""{0}"";", Client.Character.GuildID, motd.Replace("""", "_").Replace("'", "_")))
+        CharacterDatabase.Update(String.Format("UPDATE guilds SET guild_MOTD = ""{1}"" WHERE guild_id = ""{0}"";", Client.Character.GuildID, motd.Replace("""", "_").Replace("'", "_")))
 
         Dim response As New PacketClass(OPCODES.SMSG_GUILD_EVENT)
         response.AddInt8(GuildEvent.MOTD)
@@ -1186,7 +1186,7 @@ Public Module WS_Guilds
             Exit Sub
         End If
 
-        Database.Update(String.Format("UPDATE characters SET char_guildOffNote = ""{1}"" WHERE char_name = ""{0}"";", playerName, Note.Replace("""", "_").Replace("'", "_")))
+        CharacterDatabase.Update(String.Format("UPDATE characters SET char_guildOffNote = ""{1}"" WHERE char_name = ""{0}"";", playerName, Note.Replace("""", "_").Replace("'", "_")))
 
         SendGuildRoster(Client.Character)
     End Sub
@@ -1207,7 +1207,7 @@ Public Module WS_Guilds
             Exit Sub
         End If
 
-        Database.Update(String.Format("UPDATE characters SET char_guildPNote = ""{1}"" WHERE char_name = ""{0}"";", playerName, Note.Replace("""", "_").Replace("'", "_")))
+        CharacterDatabase.Update(String.Format("UPDATE characters SET char_guildPNote = ""{1}"" WHERE char_name = ""{0}"";", playerName, Note.Replace("""", "_").Replace("'", "_")))
 
         SendGuildRoster(Client.Character)
     End Sub
@@ -1229,7 +1229,7 @@ Public Module WS_Guilds
 
         'DONE: Find player2's guid
         Dim q As New DataTable
-        Database.Query("SELECT char_guid FROM characters WHERE char_name = '" & playerName.Replace("'", "_") & "';", q)
+        CharacterDatabase.Query("SELECT char_guid FROM characters WHERE char_name = '" & playerName.Replace("'", "_") & "';", q)
 
         'DONE: Removed checks
         If q.Rows.Count = 0 Then
@@ -1275,7 +1275,7 @@ Public Module WS_Guilds
 
         'DONE: Find promoted player's guid
         Dim q As New DataTable
-        Database.Query("SELECT char_guid FROM characters WHERE char_name = '" & playerName.Replace("'", "_") & "';", q)
+        CharacterDatabase.Query("SELECT char_guid FROM characters WHERE char_name = '" & playerName.Replace("'", "_") & "';", q)
 
         'DONE: Promoted checks
         If q.Rows.Count = 0 Then
@@ -1299,13 +1299,13 @@ Public Module WS_Guilds
 
         'DONE: Do the real update
         c.GuildRank -= 1
-        Database.Update(String.Format("UPDATE characters SET char_guildRank = {0} WHERE char_guid = {1};", c.GuildRank, c.GUID))
+        CharacterDatabase.Update(String.Format("UPDATE characters SET char_guildRank = {0} WHERE char_guid = {1};", c.GuildRank, c.GUID))
         c.SetUpdateFlag(EPlayerFields.PLAYER_GUILDRANK, c.GuildRank)
         c.SendCharacterUpdate(True)
 
         'DONE: Get rank name
         q.Clear()
-        Database.Query(String.Format("SELECT guild_rank{0} FROM guilds WHERE guild_id = {1} LIMIT 1;", c.GuildRank, c.GuildID), q)
+        CharacterDatabase.Query(String.Format("SELECT guild_rank{0} FROM guilds WHERE guild_id = {1} LIMIT 1;", c.GuildRank, c.GuildID), q)
         If q.Rows.Count = 0 Then Throw New ApplicationException("Guild rank " & c.GuildRank & " for guild " & c.GuildID & " not found!")
 
         'DONE: Send event to guild
@@ -1335,7 +1335,7 @@ Public Module WS_Guilds
 
         'DONE: Find promoted player's guid
         Dim q As New DataTable
-        Database.Query("SELECT char_guid FROM characters WHERE char_name = '" & playerName.Replace("'", "_") & "';", q)
+        CharacterDatabase.Query("SELECT char_guid FROM characters WHERE char_name = '" & playerName.Replace("'", "_") & "';", q)
 
         'DONE: Promoted checks
         If q.Rows.Count = 0 Then
@@ -1359,7 +1359,7 @@ Public Module WS_Guilds
 
         'DONE: Max defined rank check
         q.Clear()
-        Database.Query(String.Format("SELECT guild_rank{0} FROM guilds WHERE guild_id = {1} LIMIT 1;", c.GuildRank + 1, c.GuildID), q)
+        CharacterDatabase.Query(String.Format("SELECT guild_rank{0} FROM guilds WHERE guild_id = {1} LIMIT 1;", c.GuildRank + 1, c.GuildID), q)
         If q.Rows.Count = 0 Then
             SendGuildResult(Client, GuildCommand.GUILD_INVITE_S, GuildError.GUILD_INTERNAL)
             Exit Sub
@@ -1370,13 +1370,13 @@ Public Module WS_Guilds
 
         'DONE: Do the real update
         c.GuildRank += 1
-        Database.Update(String.Format("UPDATE characters SET char_guildRank = {0} WHERE char_guid = {1};", c.GuildRank, c.GUID))
+        CharacterDatabase.Update(String.Format("UPDATE characters SET char_guildRank = {0} WHERE char_guid = {1};", c.GuildRank, c.GUID))
         c.SetUpdateFlag(EPlayerFields.PLAYER_GUILDRANK, c.GuildRank)
         c.SendCharacterUpdate(True)
 
         'DONE: Get rank name
         q.Clear()
-        Database.Query(String.Format("SELECT guild_rank{0} FROM guilds WHERE guild_id = {1} LIMIT 1;", c.GuildRank, c.GuildID), q)
+        CharacterDatabase.Query(String.Format("SELECT guild_rank{0} FROM guilds WHERE guild_id = {1} LIMIT 1;", c.GuildRank, c.GuildID), q)
         If q.Rows.Count = 0 Then Throw New ApplicationException("Guild rank " & c.GuildRank & " for guild " & c.GuildID & " not found!")
 
         'DONE: Send event to guild
@@ -1409,7 +1409,7 @@ Public Module WS_Guilds
 
         'DONE: Find invited player's guid
         Dim q As New DataTable
-        Database.Query("SELECT char_guid FROM characters WHERE char_name = '" & playerName.Replace("'", "_") & "';", q)
+        CharacterDatabase.Query("SELECT char_guid FROM characters WHERE char_name = '" & playerName.Replace("'", "_") & "';", q)
 
         'DONE: Invited checks
         If q.Rows.Count = 0 Then
@@ -1434,7 +1434,7 @@ Public Module WS_Guilds
 
         'DONE: Get guild info and send invitation
         q.Clear()
-        Database.Query("SELECT guild_name FROM guilds WHERE guild_id = " & Client.Character.GuildID & ";", q)
+        CharacterDatabase.Query("SELECT guild_name FROM guilds WHERE guild_id = " & Client.Character.GuildID & ";", q)
         If q.Rows.Count = 0 Then
             SendGuildResult(Client, GuildCommand.GUILD_CREATE_S, GuildError.GUILD_INTERNAL)
             Exit Sub
@@ -1545,15 +1545,15 @@ Public Module WS_Guilds
         If Client.Character.Copper < BankTabPrice Then Exit Sub
 
         Dim q As New DataTable
-        Database.Query(String.Format("SELECT guild_banktabs FROM guilds WHERE guild_id = {0}", Client.Character.GuildID), q)
+        CharacterDatabase.Query(String.Format("SELECT guild_banktabs FROM guilds WHERE guild_id = {0}", Client.Character.GuildID), q)
         If q.Rows.Count = 0 Then Exit Sub
         If CByte(q.Rows(0).Item("guild_banktabs")) >= 6 Then Exit Sub
         If CByte(q.Rows(0).Item("guild_banktabs")) <> TabID Then Exit Sub
 
         'TODO: Create the tab
-        Database.Update(String.Format("DELETE FROM guildbanktabs WHERE tab_guildid={0} AND tab_id={1}", Client.Character.GuildID, CByte(q.Rows(0).Item("guild_banktabs"))))
-        Database.Update(String.Format("INSERT INTO guildbanktabs (tab_id, tab_guildid, tab_name, tab_icon, tab_text) VALUES ({1},{0},'Tab {0}','','')", Client.Character.GuildID, CByte(q.Rows(0).Item("guild_banktabs"))))
-        Database.Update(String.Format("UPDATE guilds SET guild_banktabs = {1} WHERE guild_id = {0}", Client.Character.GuildID, CByte(q.Rows(0).Item("guild_banktabs")) + 1))
+        CharacterDatabase.Update(String.Format("DELETE FROM guildbanktabs WHERE tab_guildid={0} AND tab_id={1}", Client.Character.GuildID, CByte(q.Rows(0).Item("guild_banktabs"))))
+        CharacterDatabase.Update(String.Format("INSERT INTO guildbanktabs (tab_id, tab_guildid, tab_name, tab_icon, tab_text) VALUES ({1},{0},'Tab {0}','','')", Client.Character.GuildID, CByte(q.Rows(0).Item("guild_banktabs"))))
+        CharacterDatabase.Update(String.Format("UPDATE guilds SET guild_banktabs = {1} WHERE guild_id = {0}", Client.Character.GuildID, CByte(q.Rows(0).Item("guild_banktabs")) + 1))
         Client.Character.Copper -= BankTabPrice
         Client.Character.SetUpdateFlag(EPlayerFields.PLAYER_FIELD_COINAGE, Client.Character.Copper)
         Client.Character.SendCharacterUpdate(False)
@@ -1571,7 +1571,7 @@ Public Module WS_Guilds
         Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_GUILD_BANK_DEPOSIT_MONEY [GUID={2:X} Money={3}]", Client.IP, Client.Port, GUID, Money)
 
         Dim q As New DataTable
-        Database.Query(String.Format("SELECT guild_bankmoney FROM guilds WHERE guild_id = {0}", Client.Character.GuildID), q)
+        CharacterDatabase.Query(String.Format("SELECT guild_bankmoney FROM guilds WHERE guild_id = {0}", Client.Character.GuildID), q)
         If q.Rows.Count = 0 Then Exit Sub
 
         If (CULng(q.Rows(0).Item("guild_bankmoney")) + CULng(Money)) > ULong.MaxValue Then Money = ULong.MaxValue - CULng(q.Rows(0).Item("guild_bankmoney"))
@@ -1581,7 +1581,7 @@ Public Module WS_Guilds
         Client.Character.SetUpdateFlag(EPlayerFields.PLAYER_FIELD_COINAGE, Client.Character.Copper)
         Client.Character.SendCharacterUpdate(False)
 
-        Database.Update(String.Format("UPDATE guilds SET guild_bankmoney = '{1}' WHERE guild_id = {0}", Client.Character.GuildID, guildMoney))
+        CharacterDatabase.Update(String.Format("UPDATE guilds SET guild_bankmoney = '{1}' WHERE guild_id = {0}", Client.Character.GuildID, guildMoney))
     End Sub
 
     Public Sub On_CMSG_SET_GUILD_BANK_TEXT(ByRef packet As PacketClass, ByRef Client As ClientClass)
@@ -1603,7 +1603,7 @@ Public Module WS_Guilds
             End If
             Log.WriteLine(LogType.DEBUG, "Text = {0}", Text)
 
-            Database.Update(String.Format("UPDATE guildbanktabs SET tab_text='{2}' WHERE tab_guildid = {0} AND tab_id = {1} and tab_text <> '{2}'", Client.Character.GuildID, TabID, Text))
+            CharacterDatabase.Update(String.Format("UPDATE guildbanktabs SET tab_text='{2}' WHERE tab_guildid = {0} AND tab_id = {1} and tab_text <> '{2}'", Client.Character.GuildID, TabID, Text))
         Catch e As Exception
             Log.WriteLine(LogType.CRITICAL, "Error while setting tab text.{0}", vbNewLine & e.ToString)
         End Try
@@ -1621,7 +1621,7 @@ Public Module WS_Guilds
         If Client.Character.GuildID = 0 OrElse TabID >= 6 OrElse Name.Length = 0 OrElse Icon.Length = 0 Then Exit Sub
         Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_GUILD_BANK_UPDATE_TAB [GUID={2:X} TabID={2}]", Client.IP, Client.Port, GUID, TabID)
 
-        Database.Update(String.Format("UPDATE guildbanktabs SET tab_name='{2}', tab_icon='{3}' WHERE tab_guildid = {0} AND tab_id = {1}", Client.Character.GuildID, TabID, Name, Icon))
+        CharacterDatabase.Update(String.Format("UPDATE guildbanktabs SET tab_name='{2}', tab_icon='{3}' WHERE tab_guildid = {0} AND tab_id = {1}", Client.Character.GuildID, TabID, Name, Icon))
 
         SendGuildBankInfo(Client.Character)
         SendGuildBankContent(Client.Character, TabID)
@@ -1642,7 +1642,7 @@ Public Module WS_Guilds
         Log.WriteLine(LogType.DEBUG, "[{0}:{1}] MSG_QUERY_GUILD_BANK_TEXT [TabID={2}]", Client.IP, Client.Port, TabID)
 
         Dim q As New DataTable
-        Database.Query(String.Format("SELECT tab_text FROM guildbanktabs WHERE tab_guildid = {0} AND tab_id = {1}", Client.Character.GuildID, TabID), q)
+        CharacterDatabase.Query(String.Format("SELECT tab_text FROM guildbanktabs WHERE tab_guildid = {0} AND tab_id = {1}", Client.Character.GuildID, TabID), q)
         If q.Rows.Count = 0 Then Exit Sub
 
         Dim response As New PacketClass(OPCODES.MSG_QUERY_GUILD_BANK_TEXT)

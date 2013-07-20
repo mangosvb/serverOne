@@ -70,7 +70,7 @@ Public Module WS_NPCs
         Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_TRAINER_BUY_SPELL [GUID={2} Spell={3}]", Client.IP, Client.Port, cGUID, SpellID)
 
         Dim MySQLQuery As New DataTable
-        Database.Query(String.Format("SELECT * FROM trainer_spells WHERE entry = {0} AND learn_spell = {1};", WORLD_CREATUREs(cGUID).ID, SpellID), MySQLQuery)
+        WorldDatabase.Query(String.Format("SELECT * FROM trainer_spells WHERE entry = {0} AND learn_spell = {1};", WORLD_CREATUREs(cGUID).ID, SpellID), MySQLQuery)
         If MySQLQuery.Rows.Count = 0 Then Exit Sub
 
         'DONE: Check requirements
@@ -146,10 +146,10 @@ Public Module WS_NPCs
         Dim TrainerSQLQuery As New DataTable
         Dim SpellSQLQuery As New DataTable
         Dim npcTextSQLQuery As New DataTable
-        Database.Query(String.Format("SELECT req_class, trainer_type, trainer_ui_window_message, cannot_train_gossip_textid FROM trainer_defs WHERE entry = {0}", WORLD_CREATUREs(cGUID).ID) & " LIMIT 1;", TrainerSQLQuery)
-        Database.Query(String.Format("SELECT * FROM trainer_spells WHERE entry = {0};", WORLD_CREATUREs(cGUID).ID), SpellSQLQuery)
+        WorldDatabase.Query(String.Format("SELECT req_class, trainer_type, trainer_ui_window_message, cannot_train_gossip_textid FROM trainer_defs WHERE entry = {0}", WORLD_CREATUREs(cGUID).ID) & " LIMIT 1;", TrainerSQLQuery)
+        WorldDatabase.Query(String.Format("SELECT * FROM trainer_spells WHERE entry = {0};", WORLD_CREATUREs(cGUID).ID), SpellSQLQuery)
         noTrainID = CType(TrainerSQLQuery.Rows(0).Item("cannot_train_gossip_textid"), Integer)
-        Database.Query(String.Format("SELECT * FROM npctext WHERE entry = {0};", noTrainID), npcTextSQLQuery)
+        WorldDatabase.Query(String.Format("SELECT * FROM npctext WHERE entry = {0};", noTrainID), npcTextSQLQuery)
 
         Dim SpellsList As New ArrayList
         For Each SellRow As DataRow In SpellSQLQuery.Rows
@@ -416,7 +416,7 @@ Public Module WS_NPCs
 
         Dim itemPrice As Integer = 0
         Dim MySQLQuery As New DataTable
-        Database.Query(String.Format("SELECT ExtendedCost, sellamount, currentcount FROM npc_vendor WHERE entry = {0} AND item = {1} AND (incrtime = 0 OR currentcount > (sellamount * {2}));", WORLD_CREATUREs(vendorGUID).ID, itemID, count), MySQLQuery)
+        WorldDatabase.Query(String.Format("SELECT ExtendedCost, sellamount, currentcount FROM npc_vendor WHERE entry = {0} AND item = {1} AND (incrtime = 0 OR currentcount > (sellamount * {2}));", WORLD_CREATUREs(vendorGUID).ID, itemID, count), MySQLQuery)
         If MySQLQuery.Rows.Count = 0 Then
             'DONE: This is hack preventation. Used with WPE Pro packet editing of itemID value
             Dim errorPckt As New PacketClass(OPCODES.SMSG_BUY_FAILED)
@@ -502,7 +502,7 @@ Public Module WS_NPCs
             Dim CurCount As Short = CByte(MySQLQuery.Rows(0).Item("currentcount"))
             CurCount -= count * CByte(MySQLQuery.Rows(0).Item("sellamount"))
             If CurCount < 0 Then CurCount = 0
-            Database.Update(String.Format("UPDATE npc_vendor SET currentcount = {0} WHERE entry = {1} AND item = {2}", CurCount, WORLD_CREATUREs(vendorGUID).ID, itemID))
+            WorldDatabase.Update(String.Format("UPDATE npc_vendor SET currentcount = {0} WHERE entry = {1} AND item = {2}", CurCount, WORLD_CREATUREs(vendorGUID).ID, itemID))
             Dim okPckt As New PacketClass(OPCODES.SMSG_BUY_ITEM)
             okPckt.AddUInt64(vendorGUID)
             okPckt.AddInt32(itemID)
@@ -539,7 +539,7 @@ Public Module WS_NPCs
 
         Dim itemPrice As Integer = 0
         Dim MySQLQuery As New DataTable
-        Database.Query(String.Format("SELECT ExtendedCost FROM npc_vendor WHERE entry = {0} AND item = {1};", WORLD_CREATUREs(vendorGUID).ID, itemID), MySQLQuery)
+        WorldDatabase.Query(String.Format("SELECT ExtendedCost FROM npc_vendor WHERE entry = {0} AND item = {1};", WORLD_CREATUREs(vendorGUID).ID, itemID), MySQLQuery)
 
         'DONE: Reputation discount
         Dim DiscountMod As Single = Client.Character.GetDiscountMod(WORLD_CREATUREs(vendorGUID).Faction)
@@ -770,7 +770,7 @@ Public Module WS_NPCs
             packet.AddUInt64(GUID)
 
             Dim MySQLQuery As New DataTable
-            Database.Query(String.Format("SELECT * FROM npc_vendor WHERE entry = {0};", CType(WORLD_CREATUREs(GUID), CreatureObject).ID), MySQLQuery)
+            WorldDatabase.Query(String.Format("SELECT * FROM npc_vendor WHERE entry = {0};", CType(WORLD_CREATUREs(GUID), CreatureObject).ID), MySQLQuery)
             Dim DataPos As Integer = packet.Data.Length
             packet.AddInt8(0) 'Will be updated later
 
@@ -789,7 +789,7 @@ Public Module WS_NPCs
                             Else
                                 CurCount = CByte(SellRow.Item("maxcount"))
                             End If
-                            Database.Update(String.Format("UPDATE npc_vendor SET lastrefill = {0}, currentcount = {1} WHERE entry = {2} AND item = {3};", GetTimestamp(Now), CurCount, SellRow.Item("entry"), SellRow.Item("item")))
+                            WorldDatabase.Update(String.Format("UPDATE npc_vendor SET lastrefill = {0}, currentcount = {1} WHERE entry = {2} AND item = {3};", GetTimestamp(Now), CurCount, SellRow.Item("entry"), SellRow.Item("item")))
                         End If
                     ElseIf CInt(SellRow.Item("incrtime")) <= 0 Then
                         CurCount = 1
@@ -863,7 +863,7 @@ Public Module WS_NPCs
             Client.Character.Copper -= dbcBankBagSlotPrices(Client.Character.Items_AvailableBankSlots)
             Client.Character.Items_AvailableBankSlots += 1
 
-            Database.Update(String.Format("UPDATE characters SET char_bankSlots = {0}, char_copper = {1};", Client.Character.Items_AvailableBankSlots, Client.Character.Copper))
+            WorldDatabase.Update(String.Format("UPDATE characters SET char_bankSlots = {0}, char_copper = {1};", Client.Character.Items_AvailableBankSlots, Client.Character.Copper))
 
             Client.Character.SetUpdateFlag(EPlayerFields.PLAYER_FIELD_COINAGE, Client.Character.Copper)
             Client.Character.SetUpdateFlag(EPlayerFields.PLAYER_BYTES_2, (Client.Character.FacialHair + (&HEE << 8) + (CType(Client.Character.Items_AvailableBankSlots, Integer) << 16) + (CType(Client.Character.RestState, Integer) << 24)))
@@ -1071,7 +1071,7 @@ Public Module WS_NPCs
             End If
             If (CREATURESDatabase(WORLD_CREATUREs(cGUID).ID).cNpcFlags And NPCFlags.UNIT_NPC_FLAG_TRAINER) = NPCFlags.UNIT_NPC_FLAG_TRAINER Then
                 Dim TrainerSQLQuery As New DataTable
-                Database.Query(String.Format("SELECT req_class, cannot_train_gossip_textid FROM trainer_defs WHERE entry = {0}", WORLD_CREATUREs(cGUID).ID) & " LIMIT 1;", TrainerSQLQuery)
+                WorldDatabase.Query(String.Format("SELECT req_class, cannot_train_gossip_textid FROM trainer_defs WHERE entry = {0}", WORLD_CREATUREs(cGUID).ID) & " LIMIT 1;", TrainerSQLQuery)
                 If (CType(TrainerSQLQuery.Rows(0).Item("req_class"), Integer) = CType(c.Classe, Integer)) Or (CType(TrainerSQLQuery.Rows(0).Item("req_class"), Integer) = 0) Then
                     If (CType(TrainerSQLQuery.Rows(0).Item("req_class"), Integer) = 0) Then
                         npcMenu.AddMenu("I am interested in professions training.", MenuIcon.MENUICON_TRAINER)
@@ -1171,5 +1171,3 @@ Public Module WS_NPCs
     End Class
 #End Region
 End Module
-
-

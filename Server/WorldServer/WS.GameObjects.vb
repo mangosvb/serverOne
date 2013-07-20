@@ -38,7 +38,7 @@ Public Module WS_GameObjects
 
         Public Sub New(ByVal ID_ As Integer)
             Dim MySQLQuery As New DataTable
-            Database.Query(String.Format("SELECT * FROM gameObjects WHERE gameObject_id = {0};", ID_), MySQLQuery)
+            WorldDatabase.Query(String.Format("SELECT * FROM gameObjects WHERE gameObject_id = {0};", ID_), MySQLQuery)
 
             If MySQLQuery.Rows.Count = 0 Then
                 Log.WriteLine(LogType.FAILED, "GameObject {0} not found in SQL database!", ID_)
@@ -66,7 +66,7 @@ Public Module WS_GameObjects
         End Sub
         Public Sub Save()
             If found_ = False Then
-                Database.Update("INSERT INTO gameObjects (gameObject_id)  VALUES (" & ID & ");")
+                WorldDatabase.Update("INSERT INTO gameObjects (gameObject_id)  VALUES (" & ID & ");")
             End If
 
             Dim tmp As String = "UPDATE gameObjects SET"
@@ -81,7 +81,7 @@ Public Module WS_GameObjects
             Next
 
             tmp = tmp + String.Format(" WHERE gameObject_id = ""{0}"";", ID)
-            Database.Update(tmp)
+            WorldDatabase.Update(tmp)
         End Sub
     End Class
     'WARNING: Use only with WORLD_GAMEOBJECTs()
@@ -231,7 +231,7 @@ Public Module WS_GameObjects
             'WARNING: Use only for loading from DB
             If Info Is Nothing Then
                 Dim MySQLQuery As New DataTable
-                Database.Query(String.Format("SELECT * FROM spawns_gameobjects WHERE spawn_id = {0};", cGUID), MySQLQuery)
+                WorldDatabase.Query(String.Format("SELECT * FROM spawns_gameobjects WHERE spawn_id = {0};", cGUID), MySQLQuery)
                 If MySQLQuery.Rows.Count > 0 Then
                     Info = MySQLQuery.Rows(0)
                 Else
@@ -339,7 +339,7 @@ Public Module WS_GameObjects
             If Not Loot Is Nothing Then Return True
             'DONE: Loot generation
             Dim MySQLQuery As New DataTable
-            Database.Query(String.Format("SELECT * FROM loots_gameobject WHERE loot_object = {0};", ID), MySQLQuery)
+            WorldDatabase.Query(String.Format("SELECT * FROM loots_gameobject WHERE loot_object = {0};", ID), MySQLQuery)
             If MySQLQuery.Rows.Count = 0 Then Return False
 
             'TODO: Check if we're in a heroic instance!

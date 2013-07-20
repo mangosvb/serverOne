@@ -82,7 +82,7 @@ Public Module WS_DBCLoad
 
         Try
             'Set all characters offline
-            Database.Update("UPDATE characters SET char_online = 0;")
+            CharacterDatabase.Update("UPDATE characters SET char_online = 0;")
 
         Catch e As Exception
             Log.WriteLine(LogType.FAILED, "Internal database initialization failed! [{0}]{1}{2}", e.Message, vbNewLine, e.ToString)
