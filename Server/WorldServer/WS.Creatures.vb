@@ -1162,13 +1162,15 @@ Public Module WS_Creatures
 
             SeenBy.Clear()
         End Sub
+	
         Public Sub MoveCell()
             If CellX <> GetMapTileX(positionX) OrElse CellY <> GetMapTileY(positionY) Then
                 Maps(MapID).Tiles(CellX, CellY).CreaturesHere.Remove(GUID)
                 GetMapTile(positionX, positionY, CellX, CellY)
 
                 'If creature changes cell then it's sent back to spawn, if the creature is a waypoint walker this won't be very good :/
-                If Maps(MapID).Tiles(CellX, CellY) Is Nothing Then
+                ' Hopefully the Not isWaypoint will override the above comment.
+                If (Maps(MapID).Tiles(CellX, CellY) Is Nothing) Then
 
                     aiScript.State = TBaseAI.AIState.AI_WANDERING
                     MoveTo(SpawnX, SpawnY, SpawnZ, True)
@@ -1178,6 +1180,15 @@ Public Module WS_Creatures
                 End If
             End If
         End Sub
+
+        Sub CastSpell(ByVal p1 As Integer, ByVal GUID_PLAYER As ULong)
+            Throw New NotImplementedException
+        End Sub
+
+        Sub CastSpell(ByVal p1 As Integer)
+            Throw New NotImplementedException
+        End Sub
+
     End Class
 #End Region
 #Region "WS.Creatures.HelperSubs"
