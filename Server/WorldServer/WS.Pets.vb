@@ -149,7 +149,17 @@ Public Module WS_Pets
 #Region "WS.Pets.Handlers"
 
     Public Sub on_CMSG_PET_NAME_QUERY(ByRef packet As PacketClass, ByRef Client As ClientClass)
+        packet.GetInt16()
+        Dim PetNumber As Integer = packet.GetInt32()
+        Dim PetGUID As ULong = packet.GetInt64()
 
+        Dim response As New PacketClass(OPCODES.SMSG_PET_NAME_QUERY_RESPONSE)
+        response.AddInt32(PetNumber)
+        response.AddString("Pet")
+        response.AddInt32(EUnitFields.UNIT_FIELD_PET_NAME_TIMESTAMP)
+        Client.Send(response)
+
+        response.Dispose()
 
     End Sub
 
@@ -163,4 +173,3 @@ Public Module WS_Pets
 #End Region
 
 End Module
-
