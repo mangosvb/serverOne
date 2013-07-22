@@ -118,6 +118,7 @@ Public Module WC_Handlers
         'PacketHandlers(OPCODES.CMSG_CHANNEL_UNSILENCE_VOICE) = CType(AddressOf On_CMSG_CHANNEL_UNSILENCE_VOICE, HandlePacket) 'UNHANDLED
         'PacketHandlers(OPCODES.CMSG_CHANNEL_UNSILENCE_ALL) = CType(AddressOf On_CMSG_CHANNEL_UNSILENCE_ALL, HandlePacket) 'UNHANDLED
         PacketHandlers(OPCODES.CMSG_SET_ACTIVE_VOICE_CHANNEL) = CType(AddressOf On_CMSG_SET_ACTIVE_VOICE_CHANNEL, HandlePacket)
+        PacketHandlers(OPCODES.CMSG_GET_CHANNEL_MEMBER_COUNT) = CType(AddressOf On_CMSG_GET_CHANNEL_MEMBER_COUNT, HandlePacket)
         'PacketHandlers(OPCODES.CMSG_ADD_VOICE_IGNORE) = CType(AddressOf On_CMSG_ADD_VOICE_IGNORE, HandlePacket) 'UNHANDLED
         'PacketHandlers(OPCODES.CMSG_DEL_VOICE_IGNORE) = CType(AddressOf On_CMSG_DEL_VOICE_IGNORE, HandlePacket) 'UNHANDLED
 

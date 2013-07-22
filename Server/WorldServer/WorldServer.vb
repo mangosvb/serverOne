@@ -101,9 +101,9 @@ Public Module WS_Main
         <XmlElement(ElementName:="CreateOther")> Public CreateOther As Boolean = False
 
         <XmlElement(ElementName:="ClusterConnectMethod")> Public ClusterMethod As String = "tcp"
-        <XmlElement(ElementName:="ClusterConnectHost")> Public ClusterHost As String = "127.0.0.1"
+        <XmlElement(ElementName:="ClusterConnectHost")> Public ClusterHost As String = "localhost"
         <XmlElement(ElementName:="ClusterConnectPort")> Public ClusterPort As Integer = 50001
-        <XmlElement(ElementName:="LocalConnectHost")> Public LocalHost As String = "127.0.0.1"
+        <XmlElement(ElementName:="LocalConnectHost")> Public LocalHost As String = "localhost"
         <XmlElement(ElementName:="LocalConnectPort")> Public LocalPort As Integer = 50002
     End Class
 

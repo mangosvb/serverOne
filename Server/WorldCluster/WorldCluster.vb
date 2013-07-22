@@ -63,7 +63,7 @@ Public Module WorldCluster
         <XmlElement(ElementName:="WorldDatabase")> Public WorldDatabase As String = "root;password;localhost;3306;mvb_dev;MySQL"
 
         <XmlElement(ElementName:="ClusterListenMethod")> Public ClusterMethod As String = "tcp"
-        <XmlElement(ElementName:="ClusterListenHost")> Public ClusterHost As String = "127.0.0.1"
+        <XmlElement(ElementName:="ClusterListenHost")> Public ClusterHost As String = "localhost"
         <XmlElement(ElementName:="ClusterListenPort")> Public ClusterPort As Integer = 50001
         <XmlArray(ElementName:="ClusterFirewall"), XmlArrayItem(GetType(String), ElementName:="IP")> Public Firewall As New ArrayList
 
@@ -131,13 +131,13 @@ Public Module WorldCluster
             Log.LogLevel = Config.LogLevel
 
             'DONE: Cleaning up the packet log
-            'If Config.PacketLogging Then
-            '    Try
-            '        File.Delete("packets.log")
-            '    Catch
-            '        Console.WriteLine("Error removing packets.log")
-            '    End Try
-            'End If
+            If Config.PacketLogging Then
+                Try
+                    File.Delete("packets.log")
+                Catch
+                    Console.WriteLine("Error removing packets.log")
+                End Try
+            End If
 
         Catch e As Exception
             Console.WriteLine(e.ToString)
@@ -147,10 +147,10 @@ Public Module WorldCluster
 
 #Region "WS.DataAccess"
     Public Database As New SQL
-    'Public Database As New Sql
-    Public AccountDatabase As New SQL
-    Public CharacterDatabase As New SQL
-    Public WorldDatabase As New SQL
+        'Public Database As New Sql
+        Public AccountDatabase As New SQL
+        Public CharacterDatabase As New SQL
+        Public WorldDatabase As New SQL
     Public Sub AccountSQLEventHandler(ByVal MessageID As SQL.EMessages, ByVal OutBuf As String)
         'Public Sub SLQEventHandler(ByVal MessageID As SQL.EMessages, ByVal OutBuf As String)
         Select Case MessageID

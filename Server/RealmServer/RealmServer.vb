@@ -136,6 +136,9 @@ Public Module RS_Main
 
             Console.WriteLine(".[done]")
 
+            'DONE: Creating logger
+            Common.BaseWriter.CreateLog(Config.LogType, Config.LogConfig, Log)
+            Log.LogLevel = Config.LogLevel
 
             'DONE: Setting SQL Connection
             Dim AccountDBSettings() As String = Split(Config.AccountDatabase, ";")
@@ -157,6 +160,7 @@ Public Module RS_Main
 #End Region
 
 #Region "RS.Sockets"
+    Public LastConnections As New Dictionary(Of UInteger, Date)
     Public RS As RealmServerClass
     Class RealmServerClass
         Public _flagStopListen As Boolean = False
@@ -266,6 +270,20 @@ Public Module RS_Main
         Public Sub Process()
             IP = CType(Socket.RemoteEndPoint, IPEndPoint).Address
             Port = CType(Socket.RemoteEndPoint, IPEndPoint).Port
+
+            'DONE: Connection spam protection
+            Dim IpInt As UInteger = IP2Int(IP.ToString)
+            If LastConnections.ContainsKey(IpInt) Then
+                If Now > LastConnections(IpInt) Then
+                    LastConnections(IpInt) = Now.AddSeconds(5)
+                Else
+                    Socket.Close()
+                    Me.Dispose()
+                    Exit Sub
+                End If
+            Else
+                LastConnections.Add(IpInt, Now.AddSeconds(5))
+            End If
 
             Dim Buffer() As Byte
             Dim bytes As Integer
@@ -862,4 +880,19 @@ Public Module RS_Main
             Next
         End While
     End Sub
+
+    Function IP2Int(ByVal IP As String) As UInteger
+        Dim IpSplit() As String = IP.Split(".")
+        If IpSplit.Length <> 4 Then Return 0
+        Dim IpBytes(3) As Byte
+        Try
+            IpBytes(0) = CByte(IpSplit(3))
+            IpBytes(1) = CByte(IpSplit(2))
+            IpBytes(2) = CByte(IpSplit(1))
+            IpBytes(3) = CByte(IpSplit(0))
+            Return BitConverter.ToUInt32(IpBytes, 0)
+        Catch
+            Return 0
+        End Try
+    End Function
 End Module
