@@ -216,28 +216,33 @@ Public Module WS_Corpses
 
             Dim list() As ULong
 
-            'DONE: Sending to players in <CENTER> Cell
-            If Maps(MapID).Tiles(CellX, CellY).PlayersHere.Count > 0 Then
-                Dim packet As New PacketClass(OPCODES.SMSG_UPDATE_OBJECT)
-                packet.AddInt32(1)
-                packet.AddInt8(0)
-                Dim tmpUpdate As New UpdateClass(FIELD_MASK_SIZE_CORPSE)
-                FillAllUpdateFlags(tmpUpdate, Nothing)
-                tmpUpdate.AddToPacket(packet, ObjectUpdateType.UPDATETYPE_CREATE_OBJECT, Me, 0)
+            'DONE: Sending to players in nearby cells
+            Dim packet As New PacketClass(OPCODES.SMSG_UPDATE_OBJECT)
+            packet.AddInt32(1)
+            'packet.AddInt8(0)
+            Dim tmpUpdate As New UpdateClass(FIELD_MASK_SIZE_CORPSE)
+            FillAllUpdateFlags(tmpUpdate, Nothing)
+            tmpUpdate.AddToPacket(packet, ObjectUpdateType.UPDATETYPE_CREATE_OBJECT, Me)
+            tmpUpdate.Dispose()
 
-                With Maps(MapID).Tiles(CellX, CellY)
-                    list = .PlayersHere.ToArray
-                    For Each plGUID As ULong In list
-                        If CHARACTERs(plGUID).CanSee(Me) Then
-                            CHARACTERs(plGUID).Client.SendMultiplyPackets(packet)
-                            CHARACTERs(plGUID).corpseObjectsNear.Add(GUID)
-                            SeenBy.Add(plGUID)
-                        End If
-                    Next
-                End With
-                tmpUpdate.Dispose()
-                packet.Dispose()
-            End If
+            For i As Short = -1 To 1
+                For j As Short = -1 To 1
+                    If (CellX + i) >= 0 AndAlso (CellX + i) <= 63 AndAlso (CellY + j) >= 0 AndAlso (CellY + j) <= 63 AndAlso Maps(MapID).Tiles(CellX + i, CellY + j) IsNot Nothing AndAlso Maps(MapID).Tiles(CellX + i, CellY + j).PlayersHere.Count > 0 Then
+                        With Maps(MapID).Tiles(CellX + i, CellY + j)
+                            list = .PlayersHere.ToArray
+                            For Each plGUID As ULong In list
+                                If CHARACTERs.ContainsKey(plGUID) AndAlso CHARACTERs(plGUID).CanSee(Me) Then
+                                    CHARACTERs(plGUID).Client.SendMultiplyPackets(packet)
+                                    CHARACTERs(plGUID).corpseObjectsNear.Add(GUID)
+                                    SeenBy.Add(plGUID)
+                                End If
+                            Next
+                        End With
+                    End If
+                Next
+            Next
+
+            packet.Dispose()
 
         End Sub
         Public Sub RemoveFromWorld()
