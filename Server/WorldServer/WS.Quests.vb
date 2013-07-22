@@ -541,10 +541,6 @@ Public Module WS_Quests
         'DONE: Avaible quests
         Dim MySQLQuery As New DataTable
 
-        'NOTE: This is more complex query with checking requirements (may do some slowdowns)
-        'Database.Query(String.Format("SELECT * FROM quests q WHERE q.NPC_Start = {0} AND q.Level_Start <= {1} AND NOT EXISTS(SELECT * FROM characters_quests WHERE char_guid = {2} AND quest_id = q.id) " & _
-        '"AND (q.Required_Quest = 0 OR EXISTS(SELECT * FROM characters_quests WHERE char_guid = {2} AND quest_status = -1 AND quest_id = q.Required_Quest));", _
-        'WORLD_CREATUREs(GUID).ID, c.Level + 1, c.GUID), MySQLQuery)
         WorldDatabase.Query(String.Format("SELECT s.questid, q.Title, q.Level_Normal FROM queststarters s LEFT JOIN quests q ON (s.questid=q.id) WHERE s.type = {0} AND s.typeid = {1} AND q.Level_Start <= {2} AND (q.Required_Race = 0 OR (Required_Race & {4}) > 0) AND (q.Required_Class = 0 OR (Required_Class & {5}) > 0) " & _
             "AND NOT EXISTS(SELECT * FROM " & CharacterDatabase.SQLDBName & ".characters_quests WHERE char_guid = {3} AND quest_id = q.id) AND (q.Required_Quest1 = 0 OR EXISTS(SELECT * FROM " & CharacterDatabase.SQLDBName & ".characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest1)) " & _
             "AND (q.Required_Quest2 = 0 OR EXISTS(SELECT * FROM " & CharacterDatabase.SQLDBName & ".characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest2)) AND (q.Required_Quest3 = 0 OR EXISTS(SELECT * FROM " & CharacterDatabase.SQLDBName & ".characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest3)) " & _
@@ -575,9 +571,6 @@ Public Module WS_Quests
         'DONE: Avaible quests
         Dim MySQLQuery As New DataTable
 
-        'Database.Query(String.Format("SELECT * FROM quests q WHERE q.NPC_Start = -{0} AND q.Level_Start <= {1} AND NOT EXISTS(SELECT * FROM characters_quests WHERE char_guid = {2} AND quest_id = q.id) " & _
-        '"AND (q.Required_Quest = 0 OR EXISTS(SELECT * FROM characters_quests WHERE char_guid = {2} AND quest_status = -1 AND quest_id = q.Required_Quest));", _
-        'WORLD_GAMEOBJECTs(GUID).ID, c.Level + 1, c.GUID), MySQLQuery)
         WorldDatabase.Query(String.Format("SELECT s.questid, q.Title, q.Level_Normal FROM queststarters s LEFT JOIN quests q ON (s.questid=q.id) WHERE s.type = {0} AND s.typeid = {1} AND q.Level_Start <= {2} AND (q.Required_Race = 0 OR (Required_Race & {4}) > 0) AND (q.Required_Class = 0 OR (Required_Class & {5}) > 0) " & _
             "AND NOT EXISTS(SELECT * FROM " & CharacterDatabase.SQLDBName & ".characters_quests WHERE char_guid = {3} AND quest_id = q.id) AND (q.Required_Quest1 = 0 OR EXISTS(SELECT * FROM " & CharacterDatabase.SQLDBName & ".characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest1)) " & _
             "AND (q.Required_Quest2 = 0 OR EXISTS(SELECT * FROM " & CharacterDatabase.SQLDBName & ".characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest2)) AND (q.Required_Quest3 = 0 OR EXISTS(SELECT * FROM " & CharacterDatabase.SQLDBName & ".characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest3)) " & _
@@ -1316,8 +1309,6 @@ Public Module WS_Quests
             If MySQLQuery.Rows.Count = 0 Then
                 'DONE: Do SQL query for gray quests
                 Dim MySQLQueryForGray As New DataTable
-                'Database.Query(String.Format("SELECT q.id FROM quests q WHERE q.NPC_Start = {0} AND q.Level_Start < {1} AND NOT EXISTS(SELECT * FROM characters_quests WHERE char_guid = {2} AND quest_id = q.id) LIMIT 1;", _
-                'WORLD_CREATUREs(cGUID).ID, c.Level + 6, c.GUID), MySQLQuery)
                 If GuidIsCreature(cGUID) Then
                     WorldDatabase.Query(String.Format("SELECT questid FROM queststarters s LEFT JOIN quests q ON (s.questid=q.id) WHERE s.type = {0} AND s.typeid = {1} AND q.Level_Start < {2} AND (q.Level_Normal = -1 OR q.Level_Normal > {6}) AND (q.Required_Race = 0 OR (Required_Race & {4}) > 0) AND (q.Required_Class = 0 OR (Required_Class & {5}) > 0) " & _
                     "AND NOT EXISTS(SELECT * FROM " & CharacterDatabase.SQLDBName & ".characters_quests WHERE char_guid = {3} AND quest_id = q.id);", _
@@ -1659,12 +1650,16 @@ Public Module WS_Quests
 
             'DONE: Remove quest
             For i = 0 To QUEST_SLOTS
-                If Not Client.Character.TalkQuests Is Nothing Then
-                    If Client.Character.TalkQuests(i).ID = Client.Character.TalkCurrentQuest.ID Then
-                        Client.Character.TalkCompleteQuest(i)
-                        Exit For
+                Try
+                    If Not Client.Character.TalkQuests Is Nothing Then
+                        If Client.Character.TalkQuests(i).ID = Client.Character.TalkCurrentQuest.ID Then
+                            Client.Character.TalkCompleteQuest(i)
+                            Exit For
+                        End If
                     End If
-                End If
+                Catch ex As Exception
+                    Log.WriteLine(LogType.FAILED, "Quest Slots - Talk Complete Quest")
+                End Try
             Next
 
             'DONE: XP Calculations
