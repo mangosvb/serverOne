@@ -92,21 +92,21 @@ Public Module WC_Handlers_Voice
         If Client.Character IsNot Nothing Then
             'Only ingame chat possible
 
-            'If isVoiceEnabled Then
-            '    Dim response As New PacketClass(OPCODES.SMSG_AVAILABLE_VOICE_CHANNEL)
-            '    response.AddUInt64(VOICE_CHANNEL_ID)            'Channel ID
-            '    response.AddInt8(0)                             'Type (00=custom channel, 03=party, 04=raid?)
-            '    packet.AddString("Test Channel")                'Name (not applicable to party/raid)
-            '    response.AddUInt64(Client.Character.GUID)       'Player GUID
-            '    Client.Send(response)
-            '    response.Dispose()
-            'Else
-            '    Dim response As New PacketClass(OPCODES.SMSG_VOICE_SESSION_LEAVE)
-            '    response.AddUInt64(Client.Character.GUID)       'Player GUID
-            '    response.AddUInt64(VOICE_CHANNEL_ID)            'Channel ID
-            '    Client.Send(response)
-            '    response.Dispose()
-            'End If
+            If isVoiceEnabled Then
+                Dim response As New PacketClass(OPCODES.SMSG_AVAILABLE_VOICE_CHANNEL)
+                response.AddUInt64(VOICE_CHANNEL_ID)            'Channel ID
+                response.AddInt8(0)                             'Type (00=custom channel, 03=party, 04=raid?)
+                packet.AddString("Test Channel")                'Name (not applicable to party/raid)
+                response.AddUInt64(Client.Character.GUID)       'Player GUID
+                Client.Send(response)
+                response.Dispose()
+            Else
+                Dim response As New PacketClass(OPCODES.SMSG_VOICE_SESSION_LEAVE)
+                response.AddUInt64(Client.Character.GUID)       'Player GUID
+                response.AddUInt64(VOICE_CHANNEL_ID)            'Channel ID
+                Client.Send(response)
+                response.Dispose()
+            End If
         End If
 
     End Sub
@@ -118,8 +118,12 @@ Public Module WC_Handlers_Voice
         Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_SET_ACTIVE_VOICE_CHANNEL [{2}{3}]", Client.IP, Client.Port, Type, ":" & Channel)
 
         If Type <> VoiceChannelType.NONE Then
-            If CHAT_CHANNELs.ContainsKey(Channel) And TypeOf CHAT_CHANNELs(Channel) Is VoiceChatChannelClass Then
-                CType(CHAT_CHANNELs(Channel), VoiceChatChannelClass).VoiceUpdate(Client.Character)
+            If Type <> VoiceChannelType.PARTY Then
+                If Type <> VoiceChannelType.CHANNEL Then
+                    If CHAT_CHANNELs.ContainsKey(Channel) And TypeOf CHAT_CHANNELs(Channel) Is VoiceChatChannelClass Then
+                        CType(CHAT_CHANNELs(Channel), VoiceChatChannelClass).VoiceUpdate(Client.Character)
+                    End If
+                End If
             End If
         End If
     End Sub
