@@ -92,16 +92,16 @@ Public Module WS_Handlers_Chat
                 Dim Message As String = packet.GetString()
 
                 'DONE: Handle admin/gm commands
-                If ToUser = "WARDEN" AndAlso Client.Character.Access > 0 Then
-                    Dim toWarden As PacketClass = BuildChatMessage(WardenGUID, Message, ChatMsg.CHAT_MSG_REPLY, LANGUAGES.LANG_UNIVERSAL)
-                    Client.Send(toWarden)
-                    toWarden.Dispose()
+                'If ToUser = "WARDEN" AndAlso Client.Character.Access > 0 Then
+                '    Dim toWarden As PacketClass = BuildChatMessage(WardenGUID, Message, ChatMsg.CHAT_MSG_REPLY, LANGUAGES.LANG_UNIVERSAL)
+                '    Client.Send(toWarden)
+                '    toWarden.Dispose()
 
-                    OnCommand(Client, Message)
-                    Exit Sub
-                Else
-                    Log.WriteLine(LogType.WARNING, "This chat message type should not be here!")
-                End If
+                '    OnCommand(Client, Message)
+                '    Exit Sub
+                'Else
+                '    Log.WriteLine(LogType.WARNING, "This chat message type should not be here!")
+                'End If
                 Exit Select
 
             Case ChatMsg.CHAT_MSG_CHANNEL, ChatMsg.CHAT_MSG_PARTY, ChatMsg.CHAT_MSG_RAID, ChatMsg.CHAT_MSG_RAID_WARNING, ChatMsg.CHAT_MSG_RAID_LEADER
