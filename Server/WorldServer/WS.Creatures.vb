@@ -387,7 +387,7 @@ Public Module WS_Creatures
             Update.SetUpdateFlag(EUnitFields.UNIT_NPC_FLAGS, CREATURESDatabase(ID).cNpcFlags)
 
             Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_FLAGS, cUnitFlags)
-            If Character.Access > AccessLevel.PlayerVip Then
+            If Character.Access > AccessLevel.Player Then
                 Update.SetUpdateFlag(EUnitFields.UNIT_DYNAMIC_FLAGS, cDynamicFlags Or DynamicFlags.UNIT_DYNFLAG_SPECIALINFO)
                 Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_MINDAMAGE, CreatureInfo.Damage.Minimum)
                 Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXDAMAGE, CreatureInfo.Damage.Maximum)
@@ -1437,7 +1437,7 @@ Public Module WS_Creatures
             response.Dispose()
             'Log.WriteLine(LogType.DEBUG, "[{0}:{1}] SMSG_CREATURE_QUERY_RESPONSE", Client.IP, Client.Port)
         Catch e As Exception
-            Log.WriteLine(LogType.FAILED, "Unknown Error: Unable to find CreatureID={0} in database.", CreatureID)
+            Log.WriteLine(LogType.FAILED, "Unknown Error: Unable to find CreatureID={0} in database. Error:{1} : Inner:{2}", CreatureID, e.Message, e.InnerException)
         End Try
     End Sub
     Public Sub On_CMSG_NPC_TEXT_QUERY(ByRef packet As PacketClass, ByRef Client As ClientClass)

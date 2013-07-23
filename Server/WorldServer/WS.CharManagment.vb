@@ -5089,7 +5089,7 @@ CheckXPAgain:
         End If
 
         'DONE: Check for both horde and alliance
-        If Account_Access <= AccessLevel.PlayerVip Then
+        If Account_Access <= AccessLevel.Player Then
             MySQLQuery.Clear()
             CharacterDatabase.Query(String.Format("SELECT char_race FROM characters WHERE account_id = ""{0}"" LIMIT 1;", Account_ID), MySQLQuery)
             If MySQLQuery.Rows.Count > 0 Then
@@ -5099,10 +5099,10 @@ CheckXPAgain:
             End If
         End If
 
-        'DONE: Check for MAX characters limit, only for non GM/Admin
+        'DONE: Check for MAX characters limit
         MySQLQuery.Clear()
         CharacterDatabase.Query(String.Format("SELECT char_name FROM characters WHERE account_id = ""{0}"";", Account_ID), MySQLQuery)
-        If MySQLQuery.Rows.Count >= 10 AndAlso Account_Access <= AccessLevel.PlayerVip Then
+        If MySQLQuery.Rows.Count >= 10 AndAlso Account_Access <= AccessLevel.Player Then
             Return AuthResponseCodes.CHAR_CREATE_SERVER_LIMIT
         End If
 

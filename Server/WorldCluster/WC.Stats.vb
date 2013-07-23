@@ -94,7 +94,7 @@ Public Module WC_Stats
                     CountPlayersAlliance += 1
                 End If
 
-                If c.Value.Access > AccessLevel.PlayerVip Then CountGMs += 1
+                If c.Value.Access > AccessLevel.Player Then CountGMs += 1
                 Latency += c.Value.Latency
             End If
         Next
