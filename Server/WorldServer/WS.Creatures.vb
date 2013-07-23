@@ -238,7 +238,6 @@ Public Module WS_Creatures
         Public SpawnO As Single = 0
         Public Faction As Short = 0
         Public MoveType As Byte = 0
-        Public cEmoteState As Short = 0
         Public cStandState As Byte = 0
         Public ExpireTimer As Timer = Nothing
 
