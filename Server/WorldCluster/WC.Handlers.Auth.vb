@@ -340,19 +340,6 @@ Public Module WC_Handlers_Auth
         Try
             Dim q As New DataTable
 
-            'DONE: Players can now only remove their own characters, not someone elses :)
-            Database.Query(String.Format("SELECT accounts.account_id FROM accounts, characters WHERE account = ""{0}"" AND char_guid = {1} AND accounts.account_id = characters.account_id;", Client.Account, guid), q)
-            If q.Rows.Count = 0 Then
-                'DONE: Ban and exit, showing nice message to player ;)
-                response.AddInt8(AuthResponseCodes.AUTH_BANNED)
-                Client.Send(response)
-                Ban_Account(Client.Account, "Packet manipulation")
-                Thread.Sleep(3500)
-                Client.Delete()
-                Exit Sub
-            End If
-            q.Clear()
-
             CharacterDatabase.Query(String.Format("SELECT item_guid FROM characters_inventory WHERE item_bag = {0};", guid), q)
             For Each row As DataRow In q.Rows
                 'DONE: Delete items

@@ -8,10 +8,9 @@ End Enum
 Public Enum AccessLevel As Byte
     Trial = 0
     Player = 1
-    PlayerVip = 2
-    GameMaster = 3
+    GameMaster = 2
+    Developer = 3
     Admin = 4
-    Developer = 5
 End Enum
 
 Public Interface ICluster
