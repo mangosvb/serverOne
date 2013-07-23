@@ -132,6 +132,10 @@ Public Module WS_Network
         Public Sub ClientDisconnect(ByVal ID As UInteger) Implements Common.IWorld.ClientDisconnect
             Log.WriteLine(LogType.NETWORK, "[{0:000000}] Client disconnected", ID)
 
+            If CLIENTs(ID).Character IsNot Nothing Then
+                CLIENTs(ID).Character.Save()
+            End If
+
             CLIENTs(ID).Delete()
             CLIENTs.Remove(ID)
         End Sub

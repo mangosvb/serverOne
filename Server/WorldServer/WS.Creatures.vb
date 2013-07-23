@@ -1165,7 +1165,7 @@ Public Module WS_Creatures
 
             SeenBy.Clear()
         End Sub
-	
+
         Public Sub MoveCell()
             If CellX <> GetMapTileX(positionX) OrElse CellY <> GetMapTileY(positionY) Then
                 Maps(MapID).Tiles(CellX, CellY).CreaturesHere.Remove(GUID)
