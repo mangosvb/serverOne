@@ -94,11 +94,11 @@ Public Module WS_Creatures
                 TalkScript = tmpScript.Invoke("TalkScript")
                 tmpScript.Dispose()
             Else
-                ''If Info_Str = "Directions" Then
-                ''    Dim tmpScript As New ScriptedObject("scripts\creatures\Directions.vb", "", True)
-                ''    TalkScript = tmpScript.Invoke("TalkScript")
-                ''    tmpScript.Dispose()
-                ''End If
+                If Info_Str = "Directions" Then
+                    Dim tmpScript As New ScriptedObject("scripts\creatures\Directions.vb", "", True)
+                    TalkScript = tmpScript.Invoke("TalkScript")
+                    tmpScript.Dispose()
+                End If
                 If cNpcFlags = 0 Then
                     TalkScript = Nothing
                 ElseIf cNpcFlags = NPCFlags.UNIT_NPC_FLAG_GOSSIP Then
