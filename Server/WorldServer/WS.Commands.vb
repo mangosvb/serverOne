@@ -972,24 +972,24 @@ Public Module WS_Commands
         Return True
     End Function
 
-    <ChatCommandAttribute("Port", "PORT <X>,<Y>,<Z>,<ORIENTATION>,<MAP> - Teleports Character To Given Coordinates.", AccessLevel.GameMaster)> _
+    <ChatCommandAttribute("telecoord", "Teleport Coordinates <X>,<Y>,<Z>,<ORIENTATION>,<MAP> - Teleports Character To Given Coordinates.", AccessLevel.GameMaster)> _
     Public Function cmdPort(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         If Message = "" Then Return False
 
         Dim tmp() As String
         tmp = Split(Trim(Message), ",")
 
-        Dim posX As Single = tmp(0)
-        Dim posY As Single = tmp(1)
-        Dim posZ As Single = tmp(2)
-        Dim posO As Single = tmp(3)
-        Dim posMap As Integer = tmp(4)
+        Dim posX As Single = tmp(1)
+        Dim posY As Single = tmp(2)
+        Dim posZ As Single = tmp(3)
+        Dim posO As Single = tmp(4)
+        Dim posMap As Integer = tmp(0)
 
         c.Teleport(posX, posY, posZ, posO, posMap)
         Return True
     End Function
 
-    <ChatCommandAttribute("PortByName", "PORT <LocationName> - Teleports Character To The LocationName Location. Use PortByName list to get a list of locations.", AccessLevel.GameMaster)> _
+    <ChatCommandAttribute("Teleport", "Teleport <LocationName> - Teleports Character To The LocationName Location. Use Teleport list to get a list of locations.", AccessLevel.GameMaster)> _
     Public Function cmdPortByName(ByRef c As CharacterObject, ByVal location As String) As Boolean
 
         If location = "" Then Return False
