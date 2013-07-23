@@ -235,6 +235,7 @@ Public Module RS_Main
         Public Account As String = ""
         Public Expansion As ExpansionLevel = ExpansionLevel.NORMAL
         Public UpdateFile As String = ""
+        Public Access As AccessLevel = AccessLevel.Player
 
         Public Sub OnData(ByVal data() As Byte)
             Select Case data(0)
