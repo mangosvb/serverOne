@@ -1356,51 +1356,58 @@ Public Module WS_Quests
             Dim Count As Integer = 0, status As QuestgiverStatus
             Dim response As New PacketClass(OPCODES.SMSG_QUESTGIVER_STATUS_MULTIPLE)
             response.AddInt32(Count) 'Count updated later
-
-            For Each cGUID As ULong In Client.Character.creaturesNear
-                If WORLD_CREATUREs.ContainsKey(cGUID) AndAlso (CType(WORLD_CREATUREs(cGUID), CreatureObject).CreatureInfo.cNpcFlags And NPCFlags.UNIT_NPC_FLAG_QUESTGIVER) Then
-                    'DONE: Send creature questgivers
-                    If Client.Character.GetReaction(WORLD_CREATUREs(cGUID).Faction) >= TReaction.NEUTRAL Then
-                        status = GetQuestgiverStatus(Client.Character, cGUID)
-                        response.AddUInt64(cGUID)
-                        response.AddInt8(status)
-                        Count += 1
-                    End If
-                End If
-            Next
-
-            For Each gGUID As ULong In Client.Character.gameObjectsNear
-                If WORLD_GAMEOBJECTs.ContainsKey(gGUID) Then
-                    'DONE: Send gameobject questgivers
-                    If WORLD_GAMEOBJECTs(gGUID).Type = GameObjectType.GAMEOBJECT_TYPE_QUESTGIVER AndAlso Client.Character.GetReaction(WORLD_GAMEOBJECTs(gGUID).Faction) >= TReaction.NEUTRAL Then
-                        status = GetQuestgiverStatus(Client.Character, gGUID)
-                        response.AddUInt64(gGUID)
-                        response.AddInt8(status)
-                        Count += 1
-                    End If
-                    'DONE: Activate/Deactivate chests used for quests
-                    If CType(WORLD_GAMEOBJECTs(gGUID), GameObjectObject).Type = GameObjectType.GAMEOBJECT_TYPE_CHEST Then
-                        Dim UsedForQuest As Byte = IsGameObjectUsedForQuest(WORLD_GAMEOBJECTs(gGUID), Client.Character)
-                        If UsedForQuest > 0 Then
-                            Dim ChestActivate As New PacketClass(OPCODES.SMSG_UPDATE_OBJECT)
-                            ChestActivate.AddInt32(1)
-                            ChestActivate.AddInt8(0)
-                            Dim UpdateData As New UpdateClass
-                            WORLD_GAMEOBJECTs(gGUID).Flags = WORLD_GAMEOBJECTs(gGUID).Flags Or 4
-                            If UsedForQuest = 2 Then
-                                UpdateData.SetUpdateFlag(EGameObjectFields.GAMEOBJECT_DYN_FLAGS, 9)
-                            Else
-                                UpdateData.SetUpdateFlag(EGameObjectFields.GAMEOBJECT_DYN_FLAGS, 0)
-                            End If
-                            UpdateData.SetUpdateFlag(EGameObjectFields.GAMEOBJECT_FLAGS, WORLD_GAMEOBJECTs(gGUID).Flags)
-                            UpdateData.AddToPacket(ChestActivate, ObjectUpdateType.UPDATETYPE_VALUES, CType(WORLD_GAMEOBJECTs(gGUID), GameObjectObject), 1)
-                            Client.Send(ChestActivate)
-                            UpdateData.Dispose()
-                            ChestActivate.Dispose()
+            Try
+                For Each cGUID As ULong In Client.Character.creaturesNear
+                    If WORLD_CREATUREs.ContainsKey(cGUID) AndAlso (CType(WORLD_CREATUREs(cGUID), CreatureObject).CreatureInfo.cNpcFlags And NPCFlags.UNIT_NPC_FLAG_QUESTGIVER) Then
+                        'DONE: Send creature questgivers
+                        If Client.Character.GetReaction(WORLD_CREATUREs(cGUID).Faction) >= TReaction.NEUTRAL Then
+                            status = GetQuestgiverStatus(Client.Character, cGUID)
+                            response.AddUInt64(cGUID)
+                            response.AddInt8(status)
+                            Count += 1
                         End If
                     End If
-                End If
-            Next
+                Next
+            Catch e As Exception
+                Log.WriteLine(LogType.CRITICAL, "Error in questgiver (Section 1) multiple status query.{0}", vbNewLine & e.ToString)
+            End Try
+
+            Try
+                For Each gGUID As ULong In Client.Character.gameObjectsNear
+                    If WORLD_GAMEOBJECTs.ContainsKey(gGUID) Then
+                        'DONE: Send gameobject questgivers
+                        If WORLD_GAMEOBJECTs(gGUID).Type = GameObjectType.GAMEOBJECT_TYPE_QUESTGIVER AndAlso Client.Character.GetReaction(WORLD_GAMEOBJECTs(gGUID).Faction) >= TReaction.NEUTRAL Then
+                            status = GetQuestgiverStatus(Client.Character, gGUID)
+                            response.AddUInt64(gGUID)
+                            response.AddInt8(status)
+                            Count += 1
+                        End If
+                        'DONE: Activate/Deactivate chests used for quests
+                        If CType(WORLD_GAMEOBJECTs(gGUID), GameObjectObject).Type = GameObjectType.GAMEOBJECT_TYPE_CHEST Then
+                            Dim UsedForQuest As Byte = IsGameObjectUsedForQuest(WORLD_GAMEOBJECTs(gGUID), Client.Character)
+                            If UsedForQuest > 0 Then
+                                Dim ChestActivate As New PacketClass(OPCODES.SMSG_UPDATE_OBJECT)
+                                ChestActivate.AddInt32(1)
+                                ChestActivate.AddInt8(0)
+                                Dim UpdateData As New UpdateClass
+                                WORLD_GAMEOBJECTs(gGUID).Flags = WORLD_GAMEOBJECTs(gGUID).Flags Or 4
+                                If UsedForQuest = 2 Then
+                                    UpdateData.SetUpdateFlag(EGameObjectFields.GAMEOBJECT_DYN_FLAGS, 9)
+                                Else
+                                    UpdateData.SetUpdateFlag(EGameObjectFields.GAMEOBJECT_DYN_FLAGS, 0)
+                                End If
+                                UpdateData.SetUpdateFlag(EGameObjectFields.GAMEOBJECT_FLAGS, WORLD_GAMEOBJECTs(gGUID).Flags)
+                                UpdateData.AddToPacket(ChestActivate, ObjectUpdateType.UPDATETYPE_VALUES, CType(WORLD_GAMEOBJECTs(gGUID), GameObjectObject), 1)
+                                Client.Send(ChestActivate)
+                                UpdateData.Dispose()
+                                ChestActivate.Dispose()
+                            End If
+                        End If
+                    End If
+                Next
+            Catch e As Exception
+                Log.WriteLine(LogType.CRITICAL, "Error in questgiver (Section 2) multiple status query.{0}", vbNewLine & e.ToString)
+            End Try
 
             If Count > 0 Then
                 response.AddInt32(Count, 4) 'Update the count
