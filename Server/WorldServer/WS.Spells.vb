@@ -54,6 +54,7 @@ Public Module WS_Spells
     Public Const MAX_POSITIVE_AURA_EFFECTs As Integer = 40
     Public Const MAX_NEGATIVE_AURA_EFFECTs As Integer = MAX_AURA_EFFECTs_VISIBLE - MAX_POSITIVE_AURA_EFFECTs
 
+    Public spellSchoolConversionTable() As UInteger = {1, 2, 4, 8, 16, 32, 64}
 
     Public Enum TargetType
         AllCharacters = -2
@@ -167,12 +168,38 @@ Public Module WS_Spells
         AURA_PROC_ON_SPELL_CRIT_HIT = &H40000000
         AURA_PROC_TARGET_SELF = &H80000000                   'our custom flag to decide if AURA_PROC target is self or victim
     End Enum
+    Public Enum SpellAuraStates As Integer
+        AURASTATE_FLAG_DODGE_BLOCK = 1
+        AURASTATE_FLAG_HEALTH20 = 2
+        AURASTATE_FLAG_BERSERK = 4
+        AURASTATE_FLAG_JUDGEMENT = 16
+        AURASTATE_FLAG_PARRY = 64
+        AURASTATE_FLAG_LASTKILLWITHHONOR = 512
+        AURASTATE_FLAG_CRITICAL = 1024
+        AURASTATE_FLAG_HEALTH35 = 4096
+        AURASTATE_FLAG_IMMOLATE = 8192
+        AURASTATE_FLAG_REJUVENATE = 16384
+        AURASTATE_FLAG_POISON = 32768
+    End Enum
     Public Enum AuraTickFlags As Byte
         FLAG_PERIODIC_DAMAGE = &H2
         FLAG_PERIODIC_TRIGGER_SPELL = &H4
         FLAG_PERIODIC_HEAL = &H8
         FLAG_PERIODIC_LEECH = &H10
         FLAG_PERIODIC_ENERGIZE = &H20
+    End Enum
+    Public Enum AuraFlags
+        AFLAG_NONE = &H0
+        AFLAG_VISIBLE = &H1
+        AFLAG_EFF_INDEX_1 = &H2
+        AFLAG_EFF_INDEX_2 = &H4
+        AFLAG_NOT_GUID = &H8
+        AFLAG_CANCELLABLE = &H10
+        AFLAG_HAS_DURATION = &H20
+        AFLAG_UNK2 = &H40
+        AFLAG_NEGATIVE = &H80
+        AFLAG_POSITIVE = &H1F
+        AFLAG_MASK = &HFF
     End Enum
     Public Enum SpellProcFlags As Byte
         PROC_ON_DAMAGE_RECEIVED = 3
@@ -224,6 +251,7 @@ Public Module WS_Spells
         SPELL_ATTR_EX_CHANNELED_2 = &H40 'channeled 2
         SPELL_ATTR_EX_NEGATIVE = &H80 'negative spell?
         SPELL_ATTR_EX_NOT_IN_COMBAT_TARGET = &H100 'Spell req target not to be in combat state
+        SPELL_ATTR_EX_NOT_PASSIVE = &H400 'not passive? (if this flag is set and SPELL_PASSIVE is set in Attributes it shouldn't be counted as a passive?)
         SPELL_ATTR_EX_DISPEL_AURAS_ON_IMMUNITY = &H8000 'remove auras on immunity
         SPELL_ATTR_EX_UNAFFECTED_BY_SCHOOL_IMMUNE = &H10000 'unaffected by school immunity
         SPELL_ATTR_EX_REQ_COMBO_POINTS1 = &H100000 'Req combo points on target
@@ -262,8 +290,14 @@ Public Module WS_Spells
         TARGET_FLAG_ITEM = &H1010           'Item -&H10?
         TARGET_FLAG_SOURCE_LOCATION = &H20  'PBAE
         TARGET_FLAG_DEST_LOCATION = &H40    'Targeted AE
+        TARGET_FLAG_OBJECT_UNK = &H80
+        TARGET_FLAG_PVP_CORPSE = &H200
         TARGET_FLAG_OBJECT = &H800
+        TARGET_FLAG_TRADE_ITEM = &H1000
         TARGET_FLAG_STRING = &H2000
+        TARGET_FLAG_UNK1 = &H4000
+        TARGET_FLAG_CORPSE = &H8000
+        TARGET_FLAG_UNK2 = &H10000
 
         'TARGET_FLAG_PLAYER_CORPSE = &H200  'Player Corpse
         'TARGET_FLAG_SELF = &H100           'Self
@@ -447,6 +481,7 @@ Public Module WS_Spells
         TARGET_NOTHING = 0
 
         TARGET_SELF = 1
+        TARGET_RANDOM_ENEMY_CHAIN_IN_AREA = 2           'Only one spell has this one, but regardless, it's a target type after all
         TARGET_PET = 5
         TARGET_SELECTED_ENEMY = 6
         TARGET_AREA_EFFECT_ENEMY = 15

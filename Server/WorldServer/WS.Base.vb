@@ -38,8 +38,10 @@ Public Module WS_Base
 
         Public Invisibility As InvisibilityLevel = InvisibilityLevel.VISIBLE
         Public Invisibility_Value As Integer = 0
+        Public Invisibility_Bonus As Integer = 0
         Public CanSeeInvisibility As InvisibilityLevel = InvisibilityLevel.INIVISIBILITY
         Public CanSeeInvisibility_Stealth As Integer = 0
+        Public CanSeeStealth As Boolean = False
         Public CanSeeInvisibility_Invisibility As Integer = 0
         Public Overridable Function CanSee(ByRef c As BaseObject) As Boolean
             If GUID = c.GUID Then Return False
@@ -94,7 +96,11 @@ Public Module WS_Base
         Public CreatedBy As ULong = 0
         Public CreatedBySpell As Integer = 0
 
+        Public cEmoteState As Integer = 0
+        Public EquipedItems() As Integer = {0, 0, 0}
+
         'Temporaly variables
+        Public AuraState As Integer = 0
         Public Spell_Silenced As Boolean = False
         Public Spell_Pacifyed As Boolean = False
         Public Spell_ThreatModifier As Single = 1.0F
@@ -122,13 +128,25 @@ Public Module WS_Base
                 Return (Not (Life.Current > 0))
             End Get
         End Property
+        Public Overridable ReadOnly Property Exist() As Boolean
+            Get
+                If TypeOf Me Is CharacterObject Then
+                    Return CHARACTERs.ContainsKey(GUID)
+                ElseIf TypeOf Me Is CreatureObject Then
+                    Return WORLD_CREATUREs.ContainsKey(GUID)
+                End If
+                Return False
+            End Get
+        End Property
 
         'Spell Aura Managment
         Public ActiveSpells(MAX_AURA_EFFECTs - 1) As BaseActiveSpell
+        Public ActiveSpells_Aura(MAX_AURA_EFFECT_FLAGs - 1) As Integer
         Public ActiveSpells_Flags(MAX_AURA_EFFECT_FLAGs - 1) As Integer
         Public ActiveSpells_Count(MAX_AURA_EFFECT_FLAGs - 1) As Integer
         Public ActiveSpells_Level(MAX_AURA_EFFECT_FLAGs - 1) As Integer
         Public Sub SetAura(ByVal SpellID As Integer, ByVal Slot As Integer, ByVal Duration As Integer)
+            If ActiveSpells(Slot) Is Nothing Then Exit Sub
             'DONE: Passive auras are not displayed
             If SpellID <> 0 AndAlso SPELLs.ContainsKey(SpellID) AndAlso CType(SPELLs(SpellID), SpellInfo).IsPassive Then Exit Sub
 
@@ -139,44 +157,38 @@ Public Module WS_Base
             'DONE: Check if the spell is negative
             Dim Positive As Boolean = True
             If SpellID Then Positive = (Not CType(SPELLs(SpellID), SpellInfo).IsNegative)
-            ActiveSpells_Flags(AuraFlag_Slot) = (ActiveSpells_Flags(AuraFlag_Slot) And (Not (&HFF << AuraFlag_SubSlot)))
-            If SpellID <> 0 Then
-                If Positive Then
-                    ActiveSpells_Flags(AuraFlag_Slot) = (ActiveSpells_Flags(AuraFlag_Slot) Or (&H1F << AuraFlag_SubSlot))
-                Else
-                    ActiveSpells_Flags(AuraFlag_Slot) = (ActiveSpells_Flags(AuraFlag_Slot) Or (&H9 << AuraFlag_SubSlot))
-                End If
+            ActiveSpells(Slot).Flags = 0
+            If SpellID Then
+                ActiveSpells(Slot).Flags = ActiveSpells(Slot).Flags Or AuraFlags.AFLAG_VISIBLE
+                ActiveSpells(Slot).Flags = ActiveSpells(Slot).Flags Or AuraFlags.AFLAG_EFF_INDEX_1
+                ActiveSpells(Slot).Flags = ActiveSpells(Slot).Flags Or AuraFlags.AFLAG_EFF_INDEX_2
+                ActiveSpells(Slot).Flags = ActiveSpells(Slot).Flags Or AuraFlags.AFLAG_NOT_GUID
+                If Positive Then ActiveSpells(Slot).Flags = ActiveSpells(Slot).Flags Or AuraFlags.AFLAG_CANCELLABLE
+                If Duration Then ActiveSpells(Slot).Flags = ActiveSpells(Slot).Flags Or AuraFlags.AFLAG_HAS_DURATION
             End If
 
-            Dim tmpLevel As Byte = 0
-            If SpellID Then tmpLevel = CType(SPELLs(SpellID), SpellInfo).spellLevel
-            SetAuraStackCount(Slot, 0)
-            SetAuraSlotLevel(Slot, tmpLevel)
+            Dim SpellLevel As Byte = MAX_LEVEL
+            If ActiveSpells(Slot).SpellCaster IsNot Nothing Then SpellLevel = ActiveSpells(Slot).SpellCaster.Level
+            ActiveSpells(Slot).StackCount = 1
+            ActiveSpells(Slot).Level = SpellLevel
+
+            If SpellID = 0 Then
+                ActiveSpells(Slot).StackCount = 0
+            End If
 
             'DONE: Sending updates
-            If TypeOf Me Is CharacterObject Then
-                CType(Me, CharacterObject).SetUpdateFlag(EUnitFields.UNIT_FIELD_AURA + Slot, SpellID)
-                CType(Me, CharacterObject).SetUpdateFlag(EUnitFields.UNIT_FIELD_AURAFLAGS + AuraFlag_Slot, ActiveSpells_Flags(AuraFlag_Slot))
-                CType(Me, CharacterObject).SetUpdateFlag(EUnitFields.UNIT_FIELD_AURAAPPLICATIONS + AuraFlag_Slot, ActiveSpells_Count(AuraFlag_Slot))
-                CType(Me, CharacterObject).SetUpdateFlag(EUnitFields.UNIT_FIELD_AURALEVELS + AuraFlag_Slot, ActiveSpells_Level(AuraFlag_Slot))
-                CType(Me, CharacterObject).SendCharacterUpdate(True)
+            Dim SendAuraUpdate(Slot)
 
-                Dim SMSG_UPDATE_AURA_DURATION As New PacketClass(OPCODES.SMSG_UPDATE_AURA_DURATION)
-                SMSG_UPDATE_AURA_DURATION.AddInt8(Slot)
-                SMSG_UPDATE_AURA_DURATION.AddInt32(Duration)
-                CType(Me, CharacterObject).Client.Send(SMSG_UPDATE_AURA_DURATION)
-                SMSG_UPDATE_AURA_DURATION.Dispose()
-            Else
-                Dim tmpUpdate As New UpdateClass
-                Dim tmpPacket As New UpdatePacketClass
-                tmpUpdate.SetUpdateFlag(EUnitFields.UNIT_FIELD_AURA + Slot, SpellID)
-                tmpUpdate.SetUpdateFlag(EUnitFields.UNIT_FIELD_AURAFLAGS + AuraFlag_Slot, ActiveSpells_Flags(AuraFlag_Slot))
-                tmpUpdate.SetUpdateFlag(EUnitFields.UNIT_FIELD_AURAAPPLICATIONS + AuraFlag_Slot, ActiveSpells_Count(AuraFlag_Slot))
-                tmpUpdate.SetUpdateFlag(EUnitFields.UNIT_FIELD_AURALEVELS + AuraFlag_Slot, ActiveSpells_Level(AuraFlag_Slot))
-                tmpUpdate.AddToPacket(CType(tmpPacket, UpdatePacketClass), ObjectUpdateType.UPDATETYPE_VALUES, CType(Me, CreatureObject), 0)
-                SendToNearPlayers(CType(tmpPacket, UpdatePacketClass))
-                tmpPacket.Dispose()
-                tmpUpdate.Dispose()
+            If SpellID Then
+                Dim packet As New PacketClass(OPCODES.SMSG_AURACASTLOG)
+                packet.AddUInt64(ActiveSpells(Slot).SpellCaster.GUID)
+                packet.AddUInt64(GUID)
+                packet.AddInt32(SpellID)
+                packet.AddUInt64(0)
+
+                If TypeOf Me Is CharacterObject Then CType(Me, CharacterObject).Client.SendMultiplyPackets(packet)
+                SendToNearPlayers(packet)
+                packet.Dispose()
             End If
 
         End Sub
@@ -351,6 +363,8 @@ NextAura:
         Public SpellDuration As Integer = 0
         Public SpellCaster As BaseUnit = Nothing
 
+        Public Flags As Byte = 0
+        Public Level As Byte = 0
         Public StackCount As Integer = 0
 
         Public Aura1 As ApplyAuraHandler = Nothing
