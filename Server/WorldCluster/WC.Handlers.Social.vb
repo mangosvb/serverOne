@@ -315,9 +315,20 @@ Public Module WC_Handlers_Social
         Dim GUID As ULong = packet.GetUInt64()
 
         Try
-
+            Dim q As New DataTable
+            CharacterDatabase.Query(String.Format("SELECT flags FROM characters_social WHERE char_guid = {0} AND guid = {1};", Client.Character.GUID, GUID), q)
+            If q.Rows.Count > 0 Then
+                Dim flags As Integer = CType(q.Rows(0).Item("flags"), Integer)
+                Dim newFlags As Integer = (flags And (Not SocialFlag.SOCIAL_FLAG_FRIEND))
+                If (newFlags And (SocialFlag.SOCIAL_FLAG_FRIEND Or SocialFlag.SOCIAL_FLAG_IGNORED)) = 0 Then
                     CharacterDatabase.Update(String.Format("DELETE FROM characters_social WHERE guid = {1} AND char_guid = {0};", Client.Character.GUID, GUID))
-            response.AddInt8(FriendResult.FRIEND_REMOVED)
+                Else
+                    CharacterDatabase.Update(String.Format("UPDATE characters_social SET flags = {2} WHERE guid = {1} AND char_guid = {0};", Client.Character.GUID, GUID, newFlags))
+                End If
+                response.AddInt8(FriendResult.FRIEND_REMOVED)
+            Else
+                response.AddInt8(FriendResult.FRIEND_NOT_FOUND)
+            End If
         Catch
             response.AddInt8(FriendResult.FRIEND_DB_ERROR)
         End Try
@@ -336,8 +347,21 @@ Public Module WC_Handlers_Social
         Dim GUID As ULong = packet.GetUInt64()
 
         Try
+            Dim q As New DataTable
+            CharacterDatabase.Query(String.Format("SELECT flags FROM characters_social WHERE char_guid = {0} AND guid = {1};", Client.Character.GUID, GUID), q)
+
+            If q.Rows.Count > 0 Then
+                Dim flags As Integer = CType(q.Rows(0).Item("flags"), Integer)
+                Dim newFlags As Integer = (flags And (Not SocialFlag.SOCIAL_FLAG_IGNORED))
+                If (newFlags And (SocialFlag.SOCIAL_FLAG_FRIEND Or SocialFlag.SOCIAL_FLAG_IGNORED)) = 0 Then
                     CharacterDatabase.Update(String.Format("DELETE FROM characters_social WHERE guid = {1} AND char_guid = {0};", Client.Character.GUID, GUID))
-            response.AddInt8(FriendResult.FRIEND_IGNORE_REMOVED)
+                Else
+                    CharacterDatabase.Update(String.Format("UPDATE characters_social SET flags = {2} WHERE guid = {1} AND char_guid = {0};", Client.Character.GUID, GUID, newFlags))
+                End If
+                response.AddInt8(FriendResult.FRIEND_IGNORE_REMOVED)
+            Else
+                response.AddInt8(FriendResult.FRIEND_IGNORE_NOT_FOUND)
+            End If
             Client.Character.IgnoreList.Remove(GUID)
         Catch
             response.AddInt8(FriendResult.FRIEND_DB_ERROR)
