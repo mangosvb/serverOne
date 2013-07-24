@@ -323,6 +323,11 @@ Public Module WS_Main
 #End If
         InitializeInternalDatabase()
         IntializePacketHandlers()
+
+        '        System.Diagnostics.Process.Start("RealmServer.exe")
+        '        System.Diagnostics.Process.Start("Worldcluster.exe")
+
+
         WS = New WorldServerClass
         GC.Collect()
 
