@@ -159,7 +159,7 @@ Public Module WS_Commands
 #End Region
 #Region "WS.Commands.InternalCommands"
 
-    <ChatCommandAttribute("Help", "HELP <CMD>" & vbNewLine & "Displays usage information about command, if no command specified - displays list of available commands.")> _
+    <ChatCommandAttribute("CommandList", "Command List" & vbNewLine & "Displays usage information about commands, if no command specified - displays list of available commands.")> _
     Public Function Help(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         If Trim(Message) <> "" Then
             Dim Command As ChatCommand = CType(ChatCommands(Trim(UCase(Message))), ChatCommand)
@@ -175,7 +175,7 @@ Public Module WS_Commands
             For Each Command As KeyValuePair(Of String, ChatCommand) In ChatCommands
                 If CType(Command.Value, ChatCommand).CommandAccess <= c.Access Then cmdList += UCase(Command.Key) & ", "
             Next
-            cmdList += vbNewLine + "Use HELP <CMD> for usage information about particular command."
+            cmdList += vbNewLine + "Use CommandList <CMD> for usage information about particular command."
             c.CommandResponse(cmdList)
         End If
 
@@ -433,8 +433,8 @@ Public Module WS_Commands
 
         Return True
     End Function
-    <ChatCommandAttribute("MSGGame", "MSGGAME <TEXT> - Send text message to all players on the server.", AccessLevel.GameMaster), _
-     ChatCommandAttribute("GameMessage", "GAMEMESSAGE <TEXT> - Send text message to all players on the server.", AccessLevel.GameMaster)> _
+
+    <ChatCommandAttribute("GameMessage", "GAMEMESSAGE <TEXT> - Send text message to all players on the server.", AccessLevel.GameMaster)> _
     Public Function cmdGameMessage(ByRef c As CharacterObject, ByVal Text As String) As Boolean
         If Text = "" Then Return False
 
@@ -448,8 +448,8 @@ Public Module WS_Commands
         packet.Dispose()
         Return True
     End Function
-    <ChatCommandAttribute("MSGServer", "MSGSERVER <TYPE> <TEXT> - Send text message to all players on the server.", AccessLevel.GameMaster), _
-     ChatCommandAttribute("ServerMessage", "SERVERMESSAGE <TYPE> <TEXT> - Send text message to all players on the server.", AccessLevel.GameMaster)> _
+
+    <ChatCommandAttribute("ServerMessage", "SERVERMESSAGE <TYPE> <TEXT> - Send text message to all players on the server.", AccessLevel.GameMaster)> _
     Public Function cmdServerMessage(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         '1,"[SERVER] Shutdown in %s"
         '2,"[SERVER] Restart in %s"
@@ -472,8 +472,8 @@ Public Module WS_Commands
 
         Return True
     End Function
-    <ChatCommandAttribute("MSGNotify", "MSGNOTIFY <TEXT> - Send text message to all players on the server.", AccessLevel.GameMaster), _
-     ChatCommandAttribute("NotifyMessage", "NOTIFYMESSAGE <TEXT> - Send text message to all players on the server.", AccessLevel.GameMaster)> _
+
+    <ChatCommandAttribute("NotifyMessage", "NOTIFYMESSAGE <TEXT> - Send text message to all players on the server.", AccessLevel.GameMaster)> _
     Public Function cmdNotificationMessage(ByRef c As CharacterObject, ByVal Text As String) As Boolean
         If Text = "" Then Return False
 
@@ -889,7 +889,7 @@ Public Module WS_Commands
         Return True
     End Function
 
-    <ChatCommandAttribute("GoToStart", "GOTOSTART <RACE> - Instantly teleports selected character to specified race start location.", AccessLevel.GameMaster)> _
+    <ChatCommandAttribute("Start", "Start Location <RACE> - Instantly teleports selected character to specified race start location.", AccessLevel.GameMaster)> _
     Public Function cmdGoToStart(ByRef c As CharacterObject, ByVal StringRace As String) As Boolean
         If c.TargetGUID = 0 Then
             c.CommandResponse("Select target first!")
@@ -1322,9 +1322,7 @@ Public Module WS_Commands
     End Function
 
     '****************************************** SPAWNING COMMANDs ***************************************************
-    <ChatCommandAttribute("Del", "DEL <ID> - Delete selected creature or gameobject."), _
-     ChatCommandAttribute("Delete", "DELETE <ID> - Delete selected creature or gameobject."), _
-     ChatCommandAttribute("Remove", "REMOVE <ID> - Delete selected creature or gameobject.")> _
+    <ChatCommandAttribute("Del", "DEL <ID> - Delete selected creature or gameobject.")> _
     Public Function cmdDeleteObject(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         If c.TargetGUID = 0 Then
             c.CommandResponse("Select target first!")
@@ -1391,8 +1389,7 @@ Public Module WS_Commands
         Return True
     End Function
 
-    <ChatCommandAttribute("AddNPC", "ADDNPC <ID> - Spawn creature at your position."), _
-     ChatCommandAttribute("AddCreature", "ADDCREATURE <ID> - Spawn creature at your position.")> _
+    <ChatCommandAttribute("AddNPC", "ADDNPC <ID> - Spawn creature at your position.")> _
     Public Function cmdAddCreature(ByRef c As CharacterObject, ByVal Message As String) As Boolean
 
         Dim tmpCr As CreatureObject = New CreatureObject(CType(Message, Integer), c.positionX, c.positionY, c.positionZ, c.orientation, c.MapID)
@@ -1472,8 +1469,8 @@ Public Module WS_Commands
 
         Return True
     End Function
-    <ChatCommandAttribute("AddGO", "ADDGO <ID> - Spawn game object at your position."), _
-     ChatCommandAttribute("AddGameObject", "ADDGAMEOBJECT <ID> - Spawn game object at your position.")> _
+
+    <ChatCommandAttribute("AddGameObject", "ADDGAMEOBJECT <ID> - Spawn game object at your position.")> _
     Public Function cmdAddGameObject(ByRef c As CharacterObject, ByVal Message As String) As Boolean
 
         Dim tmpGO As GameObjectObject = New GameObjectObject(CType(Message, Integer), c.MapID, c.positionX, c.positionY, c.positionZ, c.orientation)
