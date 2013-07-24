@@ -33,21 +33,7 @@ Public Module RS_Main
     Dim WS_STATUS() As String = {"ONLINE/G", "ONLINE/R", "OFFLINE "}
     Public ConsoleColor As New ConsoleColor
 
-
-    '1.10.2 - 5302
-    '1.11.2 - 5462
-    '1.12.0 - 5595
-    '1.12.1 - 5875
-    '2.00.1 - 6180
-    '2.00.3 - 6299
-    '2.00.4 - 6314
-    '2.00.5 - 6320
-    '2.00.6 - 6337
-    '2.00.7 - 6383
-    '2.00.8 - 6403
-    '2.00.10 - 6448
-    '2.00.12 - 6546
-    Const REQUIRED_BUILD_LOW As Integer = 8089
+    Const REQUIRED_BUILD_LOW As Integer = 8606
     Const REQUIRED_BUILD_HIGH As Integer = 8606
     Const CONNETION_SLEEP_TIME As Integer = 100
 
