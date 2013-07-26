@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Threading
 Imports System.IO
 Imports System.Runtime.InteropServices
@@ -24,9 +23,10 @@ Imports mangosVB.Common
 
 Public Module WS_DBCDatabase
 
-#Region "Maps"
+    #Region "Maps"
 
     Public Maps As New Dictionary(Of Integer, MapInfo)
+    
     Public Class MapInfo
         Public ID As Integer
         Public Type As MapTypes = MapTypes.MAP_COMMON
@@ -69,8 +69,8 @@ Public Module WS_DBCDatabase
 
     End Class
 
-#End Region
-#Region "Chat Channels"
+    #End Region
+    #Region "Chat Channels"
 
     <Flags()> _
     Public Enum ChatChannelsFlags
@@ -86,12 +86,13 @@ Public Module WS_DBCDatabase
         FLAG_LFG = &H40000              ' LookingForGroup
     End Enum
     Public ChatChannelsInfo As New Dictionary(Of Integer, ChatChannelInfo)
+    
     Public Class ChatChannelInfo
         Public Index As Integer
         Public Flags As Integer
         Public Name As String
     End Class
 
-#End Region
+    #End Region
 
 End Module

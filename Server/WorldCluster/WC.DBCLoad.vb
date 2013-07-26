@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System
 Imports System.IO
 Imports mangosVB.Common
@@ -23,7 +22,7 @@ Imports mangosVB.Common.BaseWriter
 
 Public Module WS_DBCLoad
 
-#Region "Maps"
+    #Region "Maps"
     Public Sub InitializeMaps()
         Try
             Dim tmpDBC As DBC.BufferedDBC = New DBC.BufferedDBC("dbc\Map.dbc")
@@ -50,8 +49,8 @@ Public Module WS_DBCLoad
             Console.ForegroundColor = System.ConsoleColor.Gray
         End Try
     End Sub
-#End Region
-#Region "Chat Channels"
+    #End Region
+    #Region "Chat Channels"
     Public Sub InitializeChatChannels()
         Try
             Dim tmpDBC As DBC.BufferedDBC = New DBC.BufferedDBC("dbc\ChatChannels.dbc")
@@ -74,8 +73,8 @@ Public Module WS_DBCLoad
             Console.ForegroundColor = System.ConsoleColor.Gray
         End Try
     End Sub
-#End Region
-#Region "Other"
+    #End Region
+    #Region "Other"
     Public Sub InitializeInternalDatabase()
 
         InitializeLoadDBCs()
@@ -94,6 +93,6 @@ Public Module WS_DBCLoad
         InitializeChatChannels()
     End Sub
 
-#End Region
+    #End Region
 
 End Module

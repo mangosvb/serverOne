@@ -14,10 +14,9 @@
 ' You should have received a copy of the GNU General Public License
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 Public Module WS_Battlegrounds
 
-#Region "WS.Battlegrounds.Constants"
+    #Region "WS.Battlegrounds.Constants"
     Public Enum ArenaTeamCommandTypes As Byte
         ERR_ARENA_TEAM_CREATE_S = &H0
         ERR_ARENA_TEAM_INVITE_SS = &H1
@@ -40,9 +39,9 @@ Public Module WS_Battlegrounds
         ERR_ARENA_TEAM_PLAYER_NOT_FOUND_S = &HB
         ERR_ARENA_TEAM_NOT_ALLIED = &HC
     End Enum
-#End Region
+    #End Region
 
-#Region "WS.Battlegrounds.Handlers"
+    #Region "WS.Battlegrounds.Handlers"
     Public Sub On_CMSG_ARENA_TEAM_QUERY(ByRef packet As PacketClass, ByRef Client As ClientClass)
         If (packet.Data.Length - 1) < 9 Then Exit Sub
         packet.GetInt16()
@@ -125,9 +124,9 @@ Public Module WS_Battlegrounds
         Client.Send(response)
         response.Dispose()
     End Sub
-#End Region
+    #End Region
 
-#Region "WS.Battlegrounds.Functions"
+    #Region "WS.Battlegrounds.Functions"
     Public Sub SendArenaCommandResult(ByRef Client As ClientClass, ByVal ErrorType As ArenaTeamCommandTypes, ByVal String1 As String, ByVal String2 As String, ByVal ErrorCode As ArenaTeamCommandErrors)
         Dim packet As New PacketClass(OPCODES.SMSG_ARENA_TEAM_COMMAND_RESULT)
         packet.AddInt32(ErrorType)
@@ -189,7 +188,7 @@ Public Module WS_Battlegrounds
                 response.AddUInt32(q.Rows(i).Item("member_wonsseason")) 'Wins season
                 response.AddUInt32(q.Rows(i).Item("member_personalrating")) 'Personal rating?
             End If
-NextMember:
+            NextMember:
         Next
 
         Client.Send(response)
@@ -231,6 +230,6 @@ NextMember:
         Client.Send(response)
         response.Dispose()
     End Sub
-#End Region
+    #End Region
 
 End Module

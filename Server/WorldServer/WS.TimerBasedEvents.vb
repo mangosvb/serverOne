@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Threading
 Imports System.Collections.Generic
 Imports mangosVB.Common.BaseWriter
@@ -28,8 +27,9 @@ Public Module WS_TimerBasedEvents
     Public CharacterSaver As TCharacterSaver
 
     'NOTE: Regenerates players' Mana, Life and Rage
+    
     Public Class TRegenerator
-        Implements IDisposable
+    Implements IDisposable
 
         Private RegenerationTimer As Threading.Timer = Nothing
         Private RegenerationWorking As Boolean = False
@@ -60,7 +60,7 @@ Public Module WS_TimerBasedEvents
                     'DONE: If all invalid check passed then regenerate
                     'DONE: If dead don't regenerate
                     If (Not Character.Value.DEAD) AndAlso (Character.Value.underWaterTimer Is Nothing) AndAlso (Character.Value.LogoutTimer Is Nothing) AndAlso (Character.Value.Client IsNot Nothing) Then
-                        With CType(Character.Value, CharacterObject)
+                        With Character.Value
 
                             BaseMana = .Mana.Current
                             BaseRage = .Rage.Current
@@ -72,17 +72,17 @@ Public Module WS_TimerBasedEvents
                             'DONE: In combat do not decrease, but send updates
                             If .ManaType = ManaTypes.TYPE_RAGE Then
                                 If (.cUnitFlags And UnitFlags.UNIT_FLAG_IN_COMBAT) = 0 Then
-                                    If .Rage.Current > 0 Then
+                                        If .Rage.Current > 0 Then
                                         .Rage.Current -= REGENERATION_RAGE
                                         If .Rage.Current < 0 Then .Rage.Current = 0
                                     End If
-                                ElseIf .RageRegenBonus <> 0 Then 'In Combat Regen from spells
+                                    ElseIf .RageRegenBonus <> 0 Then 'In Combat Regen from spells
                                     .Rage.Increment(.RageRegenBonus)
                                 End If
                             End If
 
                             'Energy
-                            If .ManaType = ManaTypes.TYPE_ENERGY AndAlso .Energy.Current < .Energy.Maximum Then
+                                If .ManaType = ManaTypes.TYPE_ENERGY AndAlso .Energy.Current < .Energy.Maximum Then
                                 .Energy.Increment(REGENERATION_ENERGY)
                             End If
 
@@ -91,18 +91,18 @@ Public Module WS_TimerBasedEvents
                             'DONE: Don't regenerate while casting, 5 second rule
                             'TODO: If c.ManaRegenerationWhileCastingPercent > 0 ...
                             If .spellCastManaRegeneration = 0 Then
-                                If .spellCastState = SpellCastState.SPELL_STATE_IDLE AndAlso (.ManaType = ManaTypes.TYPE_MANA OrElse .Classe = Classes.CLASS_DRUID) AndAlso .Mana.Current < .Mana.Maximum Then
+                                    If .spellCastState = SpellCastState.SPELL_STATE_IDLE AndAlso (.ManaType = ManaTypes.TYPE_MANA OrElse .Classe = Classes.CLASS_DRUID) AndAlso .Mana.Current < .Mana.Maximum Then
                                     .Mana.Increment(.ManaRegen)
-                                ElseIf (.ManaType = ManaTypes.TYPE_MANA OrElse .Classe = Classes.CLASS_DRUID) AndAlso .Mana.Current < .Mana.Maximum Then
+                                    ElseIf (.ManaType = ManaTypes.TYPE_MANA OrElse .Classe = Classes.CLASS_DRUID) AndAlso .Mana.Current < .Mana.Maximum Then
                                     .Mana.Increment(.ManaRegenInterrupt)
                                 End If
                             Else
-                                If (.ManaType = ManaTypes.TYPE_MANA OrElse .Classe = Classes.CLASS_DRUID) AndAlso .Mana.Current < .Mana.Maximum Then
+                                    If (.ManaType = ManaTypes.TYPE_MANA OrElse .Classe = Classes.CLASS_DRUID) AndAlso .Mana.Current < .Mana.Maximum Then
                                     .Mana.Increment(.ManaRegenInterrupt)
                                 End If
-                                If .spellCastManaRegeneration < REGENERATION_TIMER Then
+                                    If .spellCastManaRegeneration < REGENERATION_TIMER Then
                                     .spellCastManaRegeneration = 0
-                                Else
+                                    Else
                                     .spellCastManaRegeneration -= REGENERATION_TIMER
                                 End If
                             End If
@@ -137,40 +137,40 @@ Public Module WS_TimerBasedEvents
                             'DONE: Send updates to players near
                             If BaseMana <> .Mana.Current Then
                                 _updateFlag = True
-                                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER1, CType(.Mana.Current, Integer))
+                                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER1, .Mana.Current)
                             End If
                             If BaseRage <> .Rage.Current Or ((.cUnitFlags And UnitFlags.UNIT_FLAG_IN_COMBAT) = UnitFlags.UNIT_FLAG_IN_COMBAT) Then
                                 _updateFlag = True
-                                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER2, CType(.Rage.Current, Integer))
+                                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER2, .Rage.Current)
                             End If
                             If BaseEnergy <> .Energy.Current Then
                                 _updateFlag = True
-                                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER4, CType(.Energy.Current, Integer))
+                                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER4, .Energy.Current)
                             End If
                             If BaseLife <> .Life.Current Then
                                 _updateFlag = True
-                                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, CType(.Life.Current, Integer))
+                                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, .Life.Current)
                             End If
 
                             If _updateFlag Then
                                 Dim myPacket As New PacketClass(OPCODES.SMSG_UPDATE_OBJECT)
                                 myPacket.AddInt32(1)      'Operations.Count
                                 myPacket.AddInt8(0)
-                                UpdateData.AddToPacket(myPacket, ObjectUpdateType.UPDATETYPE_VALUES, CType(Character.Value, CharacterObject), 1)
+                                UpdateData.AddToPacket(myPacket, ObjectUpdateType.UPDATETYPE_VALUES, Character.Value, 1)
                                 .Client.Send(myPacket)
                                 myPacket.Dispose()
 
                                 Dim tmpPacket As New PacketClass(OPCODES.SMSG_UPDATE_OBJECT)
                                 tmpPacket.AddInt32(1)      'Operations.Count
                                 tmpPacket.AddInt8(0)
-                                UpdateData.AddToPacket(tmpPacket, ObjectUpdateType.UPDATETYPE_VALUES, CType(Character.Value, CharacterObject), 0)
+                                UpdateData.AddToPacket(tmpPacket, ObjectUpdateType.UPDATETYPE_VALUES, Character.Value, 0)
                                 .SendToNearPlayers(tmpPacket)
                                 tmpPacket.Dispose()
                             End If
                             UpdateData.Dispose()
 
                             'DONE: Duel counter
-                            If .DuelOutOfBounds <> DUEL_COUNTER_DISABLED Then
+                                If .DuelOutOfBounds <> DUEL_COUNTER_DISABLED Then
                                 .DuelOutOfBounds -= REGENERATION_TIMER
                                 If .DuelOutOfBounds = 0 Then DuelComplete(.DuelPartner, .Client.Character)
                             End If
@@ -195,8 +195,9 @@ Public Module WS_TimerBasedEvents
     End Class
 
     'NOTE: Manages spell durations and DOT spells
+    
     Public Class TSpellManager
-        Implements IDisposable
+    Implements IDisposable
 
         Private SpellManagerTimer As Threading.Timer = Nothing
         Private SpellManagerWorking As Boolean = False
@@ -296,8 +297,9 @@ Public Module WS_TimerBasedEvents
     End Class
 
     'NOTE: Manages ai movement
+    
     Public Class TAIManager
-        Implements IDisposable
+    Implements IDisposable
 
         Public AIManagerTimer As Threading.Timer = Nothing
         Private AIManagerWorking As Boolean = False
@@ -342,8 +344,9 @@ Public Module WS_TimerBasedEvents
     End Class
 
     'NOTE: Manages character savings
+    
     Public Class TCharacterSaver
-        Implements IDisposable
+    Implements IDisposable
 
         Public CharacterSaverTimer As Threading.Timer = Nothing
         Private CharacterSaverWorking As Boolean = False

@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Threading
 Imports System.Net.Sockets
 Imports System.Xml.Serialization
@@ -29,7 +28,7 @@ Imports mangosVB.Common
 
 Public Module WS_Main
 
-#Region "Global.Variables"
+    #Region "Global.Variables"
     'Players' containers
     Public CLIENTs As New Dictionary(Of UInteger, ClientClass)
     Public CHARACTERs As New Dictionary(Of ULong, CharacterObject)
@@ -71,9 +70,10 @@ Public Module WS_Main
 
     Public Const SERVERSEED As Integer = &HDE133700
 
-#End Region
-#Region "Global.Config"
+    #End Region
+    #Region "Global.Config"
     Public Config As XMLConfigFile
+    
     <XmlRoot(ElementName:="WorldServer")> _
     Public Class XMLConfigFile
         <XmlElement(ElementName:="ServerLimit")> Public ServerLimit As Integer = 10
@@ -188,9 +188,9 @@ Public Module WS_Main
             Console.WriteLine(e.ToString)
         End Try
     End Sub
-#End Region
+    #End Region
 
-#Region "WS.DataAccess"
+    #Region "WS.DataAccess"
     Public AccountDatabase As New SQL
     Public CharacterDatabase As New SQL
     Public WorldDatabase As New SQL
@@ -220,7 +220,7 @@ Public Module WS_Main
                 Log.WriteLine(LogType.SUCCESS, "[WORLD] " & OutBuf)
         End Select
     End Sub
-#End Region
+    #End Region
 
     <System.MTAThreadAttribute()> _
     Sub Main()
@@ -312,7 +312,7 @@ Public Module WS_Main
         End If
         WorldDatabase.Update("SET NAMES 'utf8';")
 
-#If DEBUG Then
+        #If DEBUG Then
         Console.ForegroundColor = System.ConsoleColor.White
         Log.WriteLine(LogType.INFORMATION, "Running from: {0}", System.AppDomain.CurrentDomain.BaseDirectory)
         Console.ForegroundColor = System.ConsoleColor.Gray
@@ -320,7 +320,7 @@ Public Module WS_Main
         AccountDatabase.Update("SET SESSION sql_mode='STRICT_ALL_TABLES';")
         CharacterDatabase.Update("SET SESSION sql_mode='STRICT_ALL_TABLES';")
         WorldDatabase.Update("SET SESSION sql_mode='STRICT_ALL_TABLES';")
-#End If
+        #End If
         InitializeInternalDatabase()
         IntializePacketHandlers()
 

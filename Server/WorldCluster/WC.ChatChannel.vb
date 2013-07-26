@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports mangosVB.Common
 Imports mangosVB.Common.BaseWriter
 
@@ -33,7 +32,7 @@ Public Module WS_Channels
     Public VOICE_SERVER_EncryptionKey As Byte() = New Byte() {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
     Public Class ChatChannelClass
-        Implements IDisposable
+    Implements IDisposable
 
         'This is server-side ID
         Public ID As Long = 0
@@ -361,7 +360,7 @@ Public Module WS_Channels
                     Character.Client.Send(packet)
                     packet.Dispose()
                 ElseIf CHARACTERs(GUID).IgnoreList.Contains(Character.GUID) Then
-                    '?
+                '?
                 Else
                     Dim packet1 As PacketClass = BuildChannelNotify(CHANNEL_NOTIFY_FLAGS.CHANNEL_PLAYER_INVITED, Character.GUID, Nothing, CHARACTERs(GUID).Name)
                     Character.Client.Send(packet1)
@@ -615,10 +614,10 @@ Public Module WS_Channels
             Next
         End Sub
         Public Sub Save()
-            'TODO: Saving into database
+        'TODO: Saving into database
         End Sub
         Public Sub Load()
-            'TODO: Loading from database
+        'TODO: Loading from database
         End Sub
 
         <Flags()> _
@@ -639,6 +638,7 @@ Public Module WS_Channels
             CHANNEL_FLAG_LFG = &H40
             CHANNEL_FLAG_VOICE = &H80
         End Enum
+        
         <Flags()> _
         Protected Enum CHANNEL_USER_FLAG As Byte
             CHANNEL_FLAG_NONE = &H0
@@ -649,6 +649,7 @@ Public Module WS_Channels
             CHANNEL_FLAG_CUSTOM = &H10
             CHANNEL_FLAG_MICROPHONE_MUTE = &H20
         End Enum
+        
         Protected Enum CHANNEL_NOTIFY_FLAGS
             CHANNEL_JOINED = 0                      ' %s joined channel.
             CHANNEL_LEFT = 1                        ' %s left channel.
@@ -695,16 +696,16 @@ Public Module WS_Channels
 
             Select Case Notify
                 Case CHANNEL_NOTIFY_FLAGS.CHANNEL_WRONG_PASS, CHANNEL_NOTIFY_FLAGS.CHANNEL_NOT_ON, CHANNEL_NOTIFY_FLAGS.CHANNEL_NOT_MODERATOR, _
-                     CHANNEL_NOTIFY_FLAGS.CHANNEL_NOT_OWNER, CHANNEL_NOTIFY_FLAGS.CHANNEL_YOUCANTSPEAK, CHANNEL_NOTIFY_FLAGS.CHANNEL_INVITED_WRONG_FACTION, _
-                    CHANNEL_NOTIFY_FLAGS.CHANNEL_INVALID_NAME, CHANNEL_NOTIFY_FLAGS.CHANNEL_NOT_MODERATED, CHANNEL_NOTIFY_FLAGS.CHANNEL_THROTTLED, _
-                    CHANNEL_NOTIFY_FLAGS.CHANNEL_NOT_IN_AREA, CHANNEL_NOTIFY_FLAGS.CHANNEL_NOT_IN_LFG
+                CHANNEL_NOTIFY_FLAGS.CHANNEL_NOT_OWNER, CHANNEL_NOTIFY_FLAGS.CHANNEL_YOUCANTSPEAK, CHANNEL_NOTIFY_FLAGS.CHANNEL_INVITED_WRONG_FACTION, _
+                CHANNEL_NOTIFY_FLAGS.CHANNEL_INVALID_NAME, CHANNEL_NOTIFY_FLAGS.CHANNEL_NOT_MODERATED, CHANNEL_NOTIFY_FLAGS.CHANNEL_THROTTLED, _
+                CHANNEL_NOTIFY_FLAGS.CHANNEL_NOT_IN_AREA, CHANNEL_NOTIFY_FLAGS.CHANNEL_NOT_IN_LFG
                     'No extra fields
 
                 Case CHANNEL_NOTIFY_FLAGS.CHANNEL_JOINED, CHANNEL_NOTIFY_FLAGS.CHANNEL_LEFT, CHANNEL_NOTIFY_FLAGS.CHANNEL_SET_PASSWORD, _
-                     CHANNEL_NOTIFY_FLAGS.CHANNEL_CHANGE_OWNER, CHANNEL_NOTIFY_FLAGS.CHANNEL_ENABLE_ANNOUNCE, CHANNEL_NOTIFY_FLAGS.CHANNEL_DISABLE_ANNOUNCE, _
-                     CHANNEL_NOTIFY_FLAGS.CHANNEL_MODERATED, CHANNEL_NOTIFY_FLAGS.CHANNEL_UNMODERATED, CHANNEL_NOTIFY_FLAGS.CHANNEL_YOU_ARE_BANNED, _
-                     CHANNEL_NOTIFY_FLAGS.CHANNEL_ALREADY_ON, CHANNEL_NOTIFY_FLAGS.CHANNEL_INVITED, _
-                     CHANNEL_NOTIFY_FLAGS.CHANNEL_VOICE_ON, CHANNEL_NOTIFY_FLAGS.CHANNEL_VOICE_OFF
+                CHANNEL_NOTIFY_FLAGS.CHANNEL_CHANGE_OWNER, CHANNEL_NOTIFY_FLAGS.CHANNEL_ENABLE_ANNOUNCE, CHANNEL_NOTIFY_FLAGS.CHANNEL_DISABLE_ANNOUNCE, _
+                CHANNEL_NOTIFY_FLAGS.CHANNEL_MODERATED, CHANNEL_NOTIFY_FLAGS.CHANNEL_UNMODERATED, CHANNEL_NOTIFY_FLAGS.CHANNEL_YOU_ARE_BANNED, _
+                CHANNEL_NOTIFY_FLAGS.CHANNEL_ALREADY_ON, CHANNEL_NOTIFY_FLAGS.CHANNEL_INVITED, _
+                CHANNEL_NOTIFY_FLAGS.CHANNEL_VOICE_ON, CHANNEL_NOTIFY_FLAGS.CHANNEL_VOICE_OFF
                     response.AddUInt64(GUID1)
 
                 Case CHANNEL_NOTIFY_FLAGS.CHANNEL_KICKED, CHANNEL_NOTIFY_FLAGS.CHANNEL_BANNED, CHANNEL_NOTIFY_FLAGS.CHANNEL_UNBANNED
@@ -712,7 +713,7 @@ Public Module WS_Channels
                     response.AddUInt64(GUID2)           'Moderator
 
                 Case CHANNEL_NOTIFY_FLAGS.CHANNEL_NOT_ON_FOR_NAME, CHANNEL_NOTIFY_FLAGS.CHANNEL_WHO_OWNER, CHANNEL_NOTIFY_FLAGS.CHANNEL_PLAYER_INVITED, _
-                     CHANNEL_NOTIFY_FLAGS.CHANNEL_PLAYER_INVITE_BANNED, CHANNEL_NOTIFY_FLAGS.CHANNEL_NOT_BANNED
+                CHANNEL_NOTIFY_FLAGS.CHANNEL_PLAYER_INVITE_BANNED, CHANNEL_NOTIFY_FLAGS.CHANNEL_NOT_BANNED
                     response.AddString(Name)
 
                 Case CHANNEL_NOTIFY_FLAGS.CHANNEL_YOU_JOINED
@@ -740,8 +741,9 @@ Public Module WS_Channels
         PARTY = 2
         NONE = 4
     End Enum
+    
     Public Class VoiceChatChannelClass
-        Inherits ChatChannelClass
+    Inherits ChatChannelClass
 
         Public VoiceID As UShort
         Public VoiceType As VoiceChannelType

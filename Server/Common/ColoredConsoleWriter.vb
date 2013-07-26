@@ -20,8 +20,9 @@ Imports System.Runtime.CompilerServices
 
 'Using this logging type, all logs are displayed in console.
 'Writting commands is done trought console.
+
 Public Class ColoredConsoleWriter
-    Inherits BaseWriter
+Inherits BaseWriter
 
     <MethodImplAttribute(MethodImplOptions.Synchronized)> _
     Public Overrides Sub Write(ByVal type As LogType, ByVal formatStr As String, ByVal ParamArray arg() As Object)

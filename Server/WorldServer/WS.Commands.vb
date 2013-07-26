@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Threading
 Imports System.Reflection
 Imports System.Collections.Generic
@@ -24,40 +23,40 @@ Imports mangosVB.Common.BaseWriter
 #Region "WS.Commands.Attributes"
 <AttributeUsage(AttributeTargets.Method, Inherited:=False, AllowMultiple:=True)> _
 Public Class ChatCommandAttribute
-    Inherits System.Attribute
+Inherits System.Attribute
 
-    Private Command As String = ""
-    Private CommandHelp As String = "No information available."
-    Private CommandAccess As AccessLevel = AccessLevel.GameMaster
+    Private command As String = ""
+    Private commandHelp As String = "No information available."
+    Private commandAccess As AccessLevel = AccessLevel.GameMaster
 
     Public Sub New(ByVal cmdName As String, Optional ByVal cmdHelp As String = "No information available.", Optional ByVal cmdAccess As AccessLevel = AccessLevel.GameMaster)
-        Command = cmdName
-        CommandHelp = cmdHelp
-        CommandAccess = cmdAccess
+        command = cmdName
+        commandHelp = cmdHelp
+        commandAccess = cmdAccess
     End Sub
 
-    Public Property cmdName() As String
+    Public Property CmdName() As String
         Get
-            Return Command
+            Return command
         End Get
-        Set(ByVal Value As String)
-            Command = Value
+        Set(ByVal value As String)
+            command = value
         End Set
     End Property
     Public Property cmdHelp() As String
         Get
-            Return CommandHelp
+            Return commandHelp
         End Get
         Set(ByVal Value As String)
-            CommandHelp = Value
+            commandHelp = Value
         End Set
     End Property
     Public Property cmdAccess() As AccessLevel
         Get
-            Return CommandAccess
+            Return commandAccess
         End Get
         Set(ByVal Value As AccessLevel)
-            CommandAccess = Value
+            commandAccess = Value
         End Set
     End Property
 
@@ -66,7 +65,7 @@ End Class
 
 Public Module WS_Commands
 
-#Region "WS.Commands.Framework"
+    #Region "WS.Commands.Framework"
 
     Public Enum AccessLevel As Byte
         Trial = 0
@@ -78,6 +77,7 @@ Public Module WS_Commands
 
     Public ChatCommands As New Dictionary(Of String, ChatCommand)
     Public ScriptedChatCommands As ScriptedObject
+    
     Public Class ChatCommand
         Public CommandHelp As String
         Public CommandAccess As AccessLevel = AccessLevel.GameMaster
@@ -99,7 +99,7 @@ Public Module WS_Commands
                         cmd.CommandAccess = info.cmdAccess
                         cmd.CommandDelegate = ChatCommandDelegate.CreateDelegate(GetType(ChatCommandDelegate), tmpMethod)
 
-                        ChatCommands.Add(UCase(info.cmdName), cmd)
+                        ChatCommands.Add(UCase(info.CmdName), cmd)
                     Next
                 End If
             Next
@@ -117,7 +117,7 @@ Public Module WS_Commands
                             cmd.CommandAccess = info.cmdAccess
                             cmd.CommandDelegate = ChatCommandDelegate.CreateDelegate(GetType(ChatCommandDelegate), tmpMethod)
 
-                            ChatCommands.Add(UCase(info.cmdName), cmd)
+                            ChatCommands.Add(UCase(info.CmdName), cmd)
                         Next
                     End If
                 Next
@@ -156,13 +156,13 @@ Public Module WS_Commands
         End Try
     End Sub
 
-#End Region
-#Region "WS.Commands.InternalCommands"
+    #End Region
+    #Region "WS.Commands.InternalCommands"
 
     <ChatCommandAttribute("CommandList", "Command List" & vbNewLine & "Displays usage information about commands, if no command specified - displays list of available commands.")> _
     Public Function Help(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         If Trim(Message) <> "" Then
-            Dim Command As ChatCommand = CType(ChatCommands(Trim(UCase(Message))), ChatCommand)
+            Dim Command As ChatCommand = ChatCommands(Trim(UCase(Message)))
             If Command Is Nothing Then
                 c.CommandResponse("Unknown command.")
             ElseIf Command.CommandAccess > c.Access Then
@@ -173,7 +173,7 @@ Public Module WS_Commands
         Else
             Dim cmdList As String = "Listing available commands:" & vbNewLine
             For Each Command As KeyValuePair(Of String, ChatCommand) In ChatCommands
-                If CType(Command.Value, ChatCommand).CommandAccess <= c.Access Then cmdList += UCase(Command.Key) & ", "
+                If Command.Value.CommandAccess <= c.Access Then cmdList += UCase(Command.Key) & ", "
             Next
             cmdList += vbNewLine + "Use CommandList <CMD> for usage information about particular command."
             c.CommandResponse(cmdList)
@@ -185,7 +185,7 @@ Public Module WS_Commands
     '****************************************** DEVELOPER COMMANDs *************************************************
     Dim x As Integer = 0
     <ChatCommandAttribute("Test", "This is test command used for debugging. Do not use if you don't know what it does!", AccessLevel.Developer)> _
-    Public Function cmdTest(ByRef c As CharacterObject, ByVal Message As String) As Boolean
+    Public Function CmdTest(ByRef c As CharacterObject, ByVal message As String) As Boolean
         WORLD_GAMEOBJECTs(c.TargetGUID).orientation = 0
         WORLD_GAMEOBJECTs(c.TargetGUID).Rotation(0) = 0
         WORLD_GAMEOBJECTs(c.TargetGUID).Rotation(1) = 0
@@ -214,7 +214,7 @@ Public Module WS_Commands
         packet.AddInt8(0)
         Dim tmpUpdate As New UpdateClass(FIELD_MASK_SIZE_GAMEOBJECT)
         WORLD_GAMEOBJECTs(c.TargetGUID).FillAllUpdateFlags(tmpUpdate, c)
-        tmpUpdate.AddToPacket(packet, ObjectUpdateType.UPDATETYPE_VALUES, CType(WORLD_GAMEOBJECTs(c.TargetGUID), GameObjectObject), 0)
+        tmpUpdate.AddToPacket(packet, ObjectUpdateType.UPDATETYPE_VALUES, WORLD_GAMEOBJECTs(c.TargetGUID), 0)
         tmpUpdate.Dispose()
 
         c.Client.Send(packet)
@@ -224,7 +224,7 @@ Public Module WS_Commands
         Return True
     End Function
     <ChatCommandAttribute("Test2", "This is test command used for debugging. Do not use if you don't know what it does!", AccessLevel.Developer)> _
-    Public Function cmdTest2(ByRef c As CharacterObject, ByVal Message As String) As Boolean
+    Public Function CmdTest2(ByRef c As CharacterObject, ByVal message As String) As Boolean
         c.SetCanFly()
         'Dim packet As New PacketClass(811)
         'packet.AddInt32(4)
@@ -233,11 +233,11 @@ Public Module WS_Commands
     End Function
     Dim currentSpError As SpellFailedReason = SpellFailedReason.CAST_NO_ERROR
     <ChatCommandAttribute("SpellFailedMSG", "SPELLFAILEDMSG <optional ID> - Sends test spell failed message.", AccessLevel.Developer)> _
-    Public Function cmdSpellFailed(ByRef c As CharacterObject, ByVal Message As String) As Boolean
-        If Message = "" Then
+    Public Function CmdSpellFailed(ByRef c As CharacterObject, ByVal message As String) As Boolean
+        If message = "" Then
             currentSpError += 1
         Else
-            currentSpError = Message
+            currentSpError = message
         End If
         SendCastResult(currentSpError, c.Client, 133, 0)
         c.CommandResponse(String.Format("Sent spell failed message:{2} {0} = {1}", currentSpError, CType(currentSpError, Integer), vbNewLine))
@@ -246,11 +246,11 @@ Public Module WS_Commands
 
     Dim currentInvError As InventoryChangeFailure = InventoryChangeFailure.EQUIP_ERR_OK
     <ChatCommandAttribute("InvFailedMSG", "INVFAILEDMSG <optional ID> - Sends test inventory failed message.", AccessLevel.Developer)> _
-    Public Function cmdInventoryFailed(ByRef c As CharacterObject, ByVal Message As String) As Boolean
-        If Message = "" Then
+    Public Function CmdInventoryFailed(ByRef c As CharacterObject, ByVal message As String) As Boolean
+        If message = "" Then
             currentInvError += 1
         Else
-            currentInvError = Message
+            currentInvError = message
         End If
         Dim response As New PacketClass(OPCODES.SMSG_INVENTORY_CHANGE_FAILURE)
         response.AddInt8(currentInvError)
@@ -265,11 +265,11 @@ Public Module WS_Commands
 
     Dim currentInstanceResetError As ResetFailedReason = ResetFailedReason.INSTANCE_RESET_FAILED_ZONING
     <ChatCommandAttribute("InstanceResetFailedMSG", "INSTANCERESETFAILEDMSG <optional ID> - Sends test inventory failed message.", AccessLevel.Developer)> _
-    Public Function cmdInstanceResetFailedReason(ByRef c As CharacterObject, ByVal Message As String) As Boolean
-        If Message = "" Then
+    Public Function CmdInstanceResetFailedReason(ByRef c As CharacterObject, ByVal message As String) As Boolean
+        If message = "" Then
             currentInstanceResetError += 1
         Else
-            currentInstanceResetError = Message
+            currentInstanceResetError = message
         End If
         SendResetInstanceFailed(c.Client, c.MapID, currentInstanceResetError)
         c.CommandResponse(String.Format("Sent instance failed message:{2} {0} = {1}", currentInstanceResetError, CType(currentInstanceResetError, Integer), vbNewLine))
@@ -277,17 +277,17 @@ Public Module WS_Commands
     End Function
 
     <ChatCommandAttribute("CastSpell", "CASTSPELL <SpellID> <Target> - Selected unit will start casting spell. Target can be ME or SELF.", AccessLevel.Developer)> _
-    Public Function cmdCastSpellMe(ByRef c As CharacterObject, ByVal Message As String) As Boolean
-        Dim tmp As String() = Split(Message, " ", 2)
-        Dim SpellID As Integer = tmp(0)
-        Dim Target As String = UCase(tmp(1))
+    Public Function CmdCastSpellMe(ByRef c As CharacterObject, ByVal message As String) As Boolean
+        Dim tmp As String() = Split(message, " ", 2)
+        Dim spellID As Integer = tmp(0)
+        Dim target As String = UCase(tmp(1))
 
         If WORLD_CREATUREs.ContainsKey(c.TargetGUID) Then
-            Select Case Target
+            Select Case target
                 Case "ME"
-                    CType(WORLD_CREATUREs(c.TargetGUID), CreatureObject).CastSpell(SpellID, c)
+                    WORLD_CREATUREs(c.TargetGUID).CastSpell(spellID, c)
                 Case "SELF"
-                    CType(WORLD_CREATUREs(c.TargetGUID), CreatureObject).CastSpell(SpellID, CType(WORLD_CREATUREs(c.TargetGUID), CreatureObject))
+                    WORLD_CREATUREs(c.TargetGUID).CastSpell(spellID, WORLD_CREATUREs(c.TargetGUID))
             End Select
         Else
             c.CommandResponse(String.Format("GUID=[{0:X}] not found or unsupported.", c.TargetGUID))
@@ -297,30 +297,30 @@ Public Module WS_Commands
     End Function
 
     <ChatCommandAttribute("CreateGuild", "CreateGuild <Name> - Creates a guild.", AccessLevel.Developer)> _
-    Public Function cmdCreateGuild(ByRef c As CharacterObject, ByVal Message As String) As Boolean
-        Dim tmp As String() = Split(Message, "", 2)
-        Dim GuildName As String = tmp(0)
+    Public Function CmdCreateGuild(ByRef c As CharacterObject, ByVal message As String) As Boolean
+        Dim tmp As String() = Split(message, "", 2)
+        Dim guildName As String = tmp(0)
 
-        Dim MySQLQuery As New DataTable
-        CharacterDatabase.Query(String.Format("INSERT INTO guilds (guild_name, guild_leader, guild_cYear, guild_cMonth, guild_cDay) VALUES (""{0}"", {1}, {2}, {3}, {4}); SELECT guild_id FROM guilds WHERE guild_name = ""{0}"";", GuildName, c.GUID, Now.Year - 2006, Now.Month, Now.Day), MySQLQuery)
+        Dim mySqlQuery As New DataTable
+        CharacterDatabase.Query(String.Format("INSERT INTO guilds (guild_name, guild_leader, guild_cYear, guild_cMonth, guild_cDay) VALUES (""{0}"", {1}, {2}, {3}, {4}); SELECT guild_id FROM guilds WHERE guild_name = ""{0}"";", guildName, c.GUID, Now.Year - 2006, Now.Month, Now.Day), mySqlQuery)
 
-        AddCharacterToGuild(c, MySQLQuery.Rows(0).Item("guild_id"), 0)
+        AddCharacterToGuild(c, mySqlQuery.Rows(0).Item("guild_id"), 0)
         Return True
     End Function
 
     <ChatCommandAttribute("Cast", "CAST <SpellID> - You will start casting spell on selected target.", AccessLevel.Developer)> _
-    Public Function cmdCastSpell(ByRef c As CharacterObject, ByVal Message As String) As Boolean
-        Dim tmp As String() = Split(Message, " ", 2)
-        Dim SpellID As Integer = tmp(0)
+    Public Function CmdCastSpell(ByRef c As CharacterObject, ByVal message As String) As Boolean
+        Dim tmp As String() = Split(message, " ", 2)
+        Dim spellID As Integer = tmp(0)
 
         If WORLD_CREATUREs.ContainsKey(c.TargetGUID) Then
-            Dim Targets As New SpellTargets
-            Targets.SetTarget_UNIT(WORLD_CREATUREs(c.TargetGUID))
-            CType(SPELLs(SpellID), SpellInfo).Cast(CType(c, CharacterObject), Targets, 0)
+            Dim targets As New SpellTargets
+            targets.SetTarget_UNIT(WORLD_CREATUREs(c.TargetGUID))
+            SPELLs(spellID).Cast(c, targets, 0)
         ElseIf CHARACTERs.ContainsKey(c.TargetGUID) Then
-            Dim Targets As New SpellTargets
-            Targets.SetTarget_UNIT(CHARACTERs(c.TargetGUID))
-            CType(SPELLs(SpellID), SpellInfo).Cast(CType(c, CharacterObject), Targets, 0)
+            Dim targets As New SpellTargets
+            targets.SetTarget_UNIT(CHARACTERs(c.TargetGUID))
+            SPELLs(spellID).Cast(c, targets, 0)
         Else
             c.CommandResponse(String.Format("GUID=[{0:X}] not found or unsupported.", c.TargetGUID))
         End If
@@ -367,9 +367,9 @@ Public Module WS_Commands
 
         If CHARACTERs.ContainsKey(c.TargetGUID) Then
             If UCase(Message) = "TRUE" Then
-                CType(CHARACTERs(c.TargetGUID), CharacterObject).SetWaterWalk()
+                CHARACTERs(c.TargetGUID).SetWaterWalk()
             ElseIf UCase(Message) = "FALSE" Then
-                CType(CHARACTERs(c.TargetGUID), CharacterObject).SetLandWalk()
+                CHARACTERs(c.TargetGUID).SetLandWalk()
             Else
                 Return False
             End If
@@ -493,9 +493,9 @@ Public Module WS_Commands
         If c.TargetGUID = 0 Then Return False
 
         If GuidIsPlayer(c.TargetGUID) Then
-            CType(CHARACTERs(c.TargetGUID), CharacterObject).SendChatMessage(CType(CHARACTERs(c.TargetGUID), CharacterObject), Message, ChatMsg.CHAT_MSG_SAY, LANGUAGES.LANG_UNIVERSAL, , True)
+            CHARACTERs(c.TargetGUID).SendChatMessage(CHARACTERs(c.TargetGUID), Message, ChatMsg.CHAT_MSG_SAY, LANGUAGES.LANG_UNIVERSAL, , True)
         ElseIf GuidIsCreature(c.TargetGUID) Then
-            CType(WORLD_CREATUREs(c.TargetGUID), CreatureObject).SendChatMessage(Message, ChatMsg.CHAT_MSG_MONSTER_SAY, LANGUAGES.LANG_UNIVERSAL, c.GUID)
+            WORLD_CREATUREs(c.TargetGUID).SendChatMessage(Message, ChatMsg.CHAT_MSG_MONSTER_SAY, LANGUAGES.LANG_UNIVERSAL, c.GUID)
         Else
             Return False
         End If
@@ -688,8 +688,8 @@ Public Module WS_Commands
             Dim Maximum As Int16 = tmp(2)
 
             If CHARACTERs(c.TargetGUID).Skills.ContainsKey(SkillID) Then
-                CType(CHARACTERs(c.TargetGUID).Skills(SkillID), TSkill).Base = Maximum
-                CType(CHARACTERs(c.TargetGUID).Skills(SkillID), TSkill).Current = Current
+                CHARACTERs(c.TargetGUID).Skills(SkillID).Base = Maximum
+                CHARACTERs(c.TargetGUID).Skills(SkillID).Current = Current
             Else
                 CHARACTERs(c.TargetGUID).LearnSkill(SkillID, Current, Maximum)
             End If
@@ -820,9 +820,9 @@ Public Module WS_Commands
         End If
 
         If CHARACTERs.ContainsKey(c.TargetGUID) Then
-            CType(CHARACTERs(c.TargetGUID), CharacterObject).Life.Current -= CType(CHARACTERs(c.TargetGUID), CharacterObject).Life.Maximum * 0.1
-            CType(CHARACTERs(c.TargetGUID), CharacterObject).SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, CType(CHARACTERs(c.TargetGUID), CharacterObject).Life.Current)
-            CType(CHARACTERs(c.TargetGUID), CharacterObject).SendCharacterUpdate()
+            CHARACTERs(c.TargetGUID).Life.Current -= CHARACTERs(c.TargetGUID).Life.Maximum * 0.1
+            CHARACTERs(c.TargetGUID).SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, CHARACTERs(c.TargetGUID).Life.Current)
+            CHARACTERs(c.TargetGUID).SendCharacterUpdate()
             Return True
         End If
 
@@ -837,7 +837,7 @@ Public Module WS_Commands
         End If
 
         If CHARACTERs.ContainsKey(c.TargetGUID) Then
-            CType(CHARACTERs(c.TargetGUID), CharacterObject).SetMoveRoot()
+            CHARACTERs(c.TargetGUID).SetMoveRoot()
             Return True
         End If
 
@@ -852,7 +852,7 @@ Public Module WS_Commands
         End If
 
         If CHARACTERs.ContainsKey(c.TargetGUID) Then
-            CType(CHARACTERs(c.TargetGUID), CharacterObject).SetMoveUnroot()
+            CHARACTERs(c.TargetGUID).SetMoveUnroot()
             Return True
         End If
 
@@ -867,7 +867,7 @@ Public Module WS_Commands
         End If
 
         If CHARACTERs.ContainsKey(c.TargetGUID) Then
-            CharacterResurrect(CType(CHARACTERs(c.TargetGUID), CharacterObject))
+            CharacterResurrect(CHARACTERs(c.TargetGUID))
             Return True
         End If
 
@@ -882,7 +882,7 @@ Public Module WS_Commands
         End If
 
         If CHARACTERs.ContainsKey(c.TargetGUID) Then
-            GoToNearestGraveyard(CType(CHARACTERs(c.TargetGUID), CharacterObject))
+            GoToNearestGraveyard(CHARACTERs(c.TargetGUID))
             Return True
         End If
 
@@ -939,7 +939,7 @@ Public Module WS_Commands
     Public Function cmdSummon(ByRef c As CharacterObject, ByVal Name As String) As Boolean
         Dim GUID As ULong = GetGUID(CapitalizeName(Name))
         If CHARACTERs.ContainsKey(GUID) Then
-            CType(CHARACTERs(GUID), CharacterObject).Teleport(c.positionX, c.positionY, c.positionZ, c.orientation, c.MapID)
+            CHARACTERs(GUID).Teleport(c.positionX, c.positionY, c.positionZ, c.orientation, c.MapID)
             Return True
         Else
             c.CommandResponse("Player not found.")
@@ -951,7 +951,7 @@ Public Module WS_Commands
     Public Function cmdAppear(ByRef c As CharacterObject, ByVal Name As String) As Boolean
         Dim GUID As ULong = GetGUID(CapitalizeName(Name))
         If CHARACTERs.ContainsKey(GUID) Then
-            With CType(CHARACTERs(GUID), CharacterObject)
+            With CHARACTERs(GUID)
                 c.Teleport(.positionX, .positionY, .positionZ, .orientation, .MapID)
             End With
             Return True
@@ -1034,10 +1034,10 @@ Public Module WS_Commands
         Dim Damage As Integer = tDamage
 
         If GuidIsCreature(c.TargetGUID) Then
-            CType(WORLD_CREATUREs(c.TargetGUID), CreatureObject).DealDamage(Damage)
+            WORLD_CREATUREs(c.TargetGUID).DealDamage(Damage)
         ElseIf GuidIsPlayer(c.TargetGUID) Then
-            CType(CHARACTERs(c.TargetGUID), CharacterObject).DealDamage(Damage)
-            CType(CHARACTERs(c.TargetGUID), CharacterObject).SystemMessage(c.Name & " slaps you for " & Damage & " damage.")
+            CHARACTERs(c.TargetGUID).DealDamage(Damage)
+            CHARACTERs(c.TargetGUID).SystemMessage(c.Name & " slaps you for " & Damage & " damage.")
         Else
             c.CommandResponse("Not supported target selected.")
         End If
@@ -1054,7 +1054,7 @@ Public Module WS_Commands
                 c.CommandResponse("No target selected.")
             ElseIf CHARACTERs.ContainsKey(c.TargetGUID) Then
                 'DONE: Kick gracefully
-                c.CommandResponse(String.Format("Character [{0}] kicked form server.", CType(CHARACTERs(c.TargetGUID), CharacterObject).Name))
+                c.CommandResponse(String.Format("Character [{0}] kicked form server.", CHARACTERs(c.TargetGUID).Name))
                 Log.WriteLine(LogType.INFORMATION, "[{0}:{1}] Character [{3}] kicked by [{2}].", c.Client.IP.ToString, c.Client.Port, c.Client.Character.Name, CHARACTERs(c.TargetGUID).Name)
                 CHARACTERs(c.TargetGUID).Logout()
             Else
@@ -1066,11 +1066,11 @@ Public Module WS_Commands
             'DONE: Kick by name
             CHARACTERs_Lock.AcquireReaderLock(DEFAULT_LOCK_TIMEOUT)
             For Each Character As KeyValuePair(Of ULong, CharacterObject) In CHARACTERs
-                If UCase(CType(Character.Value, CharacterObject).Name) = Name Then
+                If UCase(Character.Value.Name) = Name Then
                     CHARACTERs_Lock.ReleaseReaderLock()
                     'DONE: Kick gracefully
                     Character.Value.Logout()
-                    c.CommandResponse(String.Format("Character [{0}] kicked form server.", CType(Character.Value, CharacterObject).Name))
+                    c.CommandResponse(String.Format("Character [{0}] kicked form server.", Character.Value.Name))
                     Log.WriteLine(LogType.INFORMATION, "[{0}:{1}] Character [{3}] kicked by [{2}].", c.Client.IP.ToString, c.Client.Port, c.Client.Character.Name, Name)
                     Return True
                 End If
@@ -1087,7 +1087,7 @@ Public Module WS_Commands
         If c.TargetGUID = 0 Then
             c.CommandResponse("No target selected.")
         Else
-            SystemMessage(String.Format("Character [{0}] kicked form server.{3}Reason: {1}{3}GameMaster: [{2}].", SetColor(CType(CHARACTERs(c.TargetGUID), CharacterObject).Name, 255, 0, 0), SetColor(Message, 255, 0, 0), SetColor(c.Name, 255, 0, 0), vbNewLine))
+            SystemMessage(String.Format("Character [{0}] kicked form server.{3}Reason: {1}{3}GameMaster: [{2}].", SetColor(CHARACTERs(c.TargetGUID).Name, 255, 0, 0), SetColor(Message, 255, 0, 0), SetColor(c.Name, 255, 0, 0), vbNewLine))
             Thread.Sleep(2000)
 
             cmdKick(c, "")
@@ -1104,9 +1104,9 @@ Public Module WS_Commands
             If c.TargetGUID = 0 Then
                 c.CommandResponse("No target selected.")
             ElseIf CHARACTERs.ContainsKey(c.TargetGUID) Then
-                c.CommandResponse(String.Format("Character [{0}] kicked form server.", CType(CHARACTERs(c.TargetGUID), CharacterObject).Name))
+                c.CommandResponse(String.Format("Character [{0}] kicked form server.", CHARACTERs(c.TargetGUID).Name))
                 Log.WriteLine(LogType.INFORMATION, "[{0}:{1}] Character [{3}] kicked by [{2}].", c.Client.IP.ToString, c.Client.Port, c.Client.Character.Name, CHARACTERs(c.TargetGUID).Name)
-                CType(CHARACTERs(c.TargetGUID), CharacterObject).Client.Disconnect()
+                CHARACTERs(c.TargetGUID).Client.Disconnect()
             Else
                 c.CommandResponse(String.Format("Character GUID=[{0}] not found.", c.TargetGUID))
             End If
@@ -1116,11 +1116,11 @@ Public Module WS_Commands
             'DONE: Kick by name
             CHARACTERs_Lock.AcquireReaderLock(DEFAULT_LOCK_TIMEOUT)
             For Each Character As KeyValuePair(Of ULong, CharacterObject) In CHARACTERs
-                If UCase(CType(Character.Value, CharacterObject).Name) = Name Then
+                If UCase(Character.Value.Name) = Name Then
                     CHARACTERs_Lock.ReleaseReaderLock()
-                    c.CommandResponse(String.Format("Character [{0}] kicked form server.", CType(Character.Value, CharacterObject).Name))
+                    c.CommandResponse(String.Format("Character [{0}] kicked form server.", Character.Value.Name))
                     Log.WriteLine(LogType.INFORMATION, "[{0}:{1}] Character [{3}] kicked by [{2}].", c.Client.IP.ToString, c.Client.Port, c.Client.Character.Name, Name)
-                    CType(Character.Value, CharacterObject).Client.Disconnect()
+                    Character.Value.Client.Disconnect()
                     Return True
                 End If
             Next
@@ -1211,25 +1211,25 @@ Public Module WS_Commands
             'DONE: Info by selection
             If CHARACTERs.ContainsKey(GUID) Then
                 c.CommandResponse(String.Format("Information for character [{0}]:{1}account = {2}{1}ip = {3}{1}guid = {4:X}{1}access = {5}", _
-                CHARACTERs(GUID).Name, vbNewLine, _
-                CHARACTERs(GUID).Client.Account, _
-                CHARACTERs(GUID).Client.IP.ToString, _
-                CHARACTERs(GUID).GUID, _
-                CHARACTERs(GUID).Access))
+                                                CHARACTERs(GUID).Name, vbNewLine, _
+                                                CHARACTERs(GUID).Client.Account, _
+                                                CHARACTERs(GUID).Client.IP.ToString, _
+                                                CHARACTERs(GUID).GUID, _
+                                                CHARACTERs(GUID).Access))
             ElseIf WORLD_CREATUREs.ContainsKey(GUID) Then
                 c.CommandResponse(String.Format("Information for creature [{0}]:{1}id = {2}{1}guid = {3:X}{1}model = {4}{1}ai = {5}{1}his reaction = {6}", _
-                WORLD_CREATUREs(GUID).Name, vbNewLine, _
-                WORLD_CREATUREs(GUID).ID, _
-                GUID, _
-                CREATURESDatabase(WORLD_CREATUREs(GUID).ID).Model, _
-                WORLD_CREATUREs(GUID).aiScript.GetType().ToString, _
-                c.GetReaction(WORLD_CREATUREs(GUID).Faction)))
+                                                WORLD_CREATUREs(GUID).Name, vbNewLine, _
+                                                WORLD_CREATUREs(GUID).ID, _
+                                                GUID, _
+                                                CREATURESDatabase(WORLD_CREATUREs(GUID).ID).Model, _
+                                                WORLD_CREATUREs(GUID).aiScript.GetType().ToString, _
+                                                c.GetReaction(WORLD_CREATUREs(GUID).Faction)))
             ElseIf WORLD_GAMEOBJECTs.ContainsKey(GUID) Then
                 c.CommandResponse(String.Format("Information for gameobject [{0}]:{1}id = {2}{1}guid = {3:X}{1}model = {4}", _
-                WORLD_GAMEOBJECTs(GUID).Name, vbNewLine, _
-                WORLD_GAMEOBJECTs(GUID).ID, _
-                GUID, _
-                GAMEOBJECTSDatabase(WORLD_GAMEOBJECTs(GUID).ID).Model))
+                                                WORLD_GAMEOBJECTs(GUID).Name, vbNewLine, _
+                                                WORLD_GAMEOBJECTs(GUID).ID, _
+                                                GUID, _
+                                                GAMEOBJECTSDatabase(WORLD_GAMEOBJECTs(GUID).ID).Model))
             Else
                 c.CommandResponse(String.Format("GUID=[{0:X}] not found or unsupported.", GUID))
             End If
@@ -1239,14 +1239,14 @@ Public Module WS_Commands
             'DONE: Info by name
             CHARACTERs_Lock.AcquireReaderLock(DEFAULT_LOCK_TIMEOUT)
             For Each Character As KeyValuePair(Of ULong, CharacterObject) In CHARACTERs
-                If UCase(CType(Character.Value, CharacterObject).Name) = Name Then
+                If UCase(Character.Value.Name) = Name Then
                     CHARACTERs_Lock.ReleaseReaderLock()
                     c.CommandResponse(String.Format("Information for character [{0}]:{1}account = {2}{1}ip = {3}{1}guid = {4}{1}access = {5}", _
-                    CType(Character.Value, CharacterObject).Name, vbNewLine, _
-                    CType(Character.Value, CharacterObject).Client.Account, _
-                    CType(Character.Value, CharacterObject).Client.IP.ToString, _
-                    CType(Character.Value, CharacterObject).GUID, _
-                    CType(Character.Value, CharacterObject).Access))
+                                                    Character.Value.Name, vbNewLine, _
+                                                    Character.Value.Client.Account, _
+                                                    Character.Value.Client.IP.ToString, _
+                                                    Character.Value.GUID, _
+                                                    Character.Value.Access))
                     Exit Function
                 End If
             Next
@@ -1265,9 +1265,9 @@ Public Module WS_Commands
         c.SystemMessage(String.Format("ZCoords: {0} AreaFlag: {1} WaterLevel={2}", GetZCoord(c.positionX, c.positionY, c.MapID), GetAreaFlag(c.positionX, c.positionY, c.MapID), GetWaterLevel(c.positionX, c.positionY, c.MapID)))
         c.ZoneCheck()
         c.SystemMessage(String.Format("ZoneID: {0}", c.ZoneID))
-#If ENABLE_PPOINTS Then
+        #If ENABLE_PPOINTS Then
         c.SystemMessage(String.Format("ZCoords_PP: {0}", GetZCoord_PP(c.positionX, c.positionY, c.MapID)))
-#End If
+        #End If
 
         Return True
     End Function
@@ -1368,7 +1368,7 @@ Public Module WS_Commands
                 Return True
             End If
 
-            CType(WORLD_CREATUREs(c.TargetGUID), CreatureObject).TurnTo(c.positionX, c.positionY)
+            WORLD_CREATUREs(c.TargetGUID).TurnTo(c.positionX, c.positionY)
 
         ElseIf GuidIsGameObject(c.TargetGUID) Then
             'DONE: Turn GO
@@ -1377,7 +1377,7 @@ Public Module WS_Commands
                 Return True
             End If
 
-            CType(WORLD_GAMEOBJECTs(c.TargetGUID), GameObjectObject).TurnTo(c.positionX, c.positionY)
+            WORLD_GAMEOBJECTs(c.TargetGUID).TurnTo(c.positionX, c.positionY)
 
             Dim q As New DataTable
             Dim GUID As ULong = c.TargetGUID - GUID_GAMEOBJECT
@@ -1423,7 +1423,7 @@ Public Module WS_Commands
             Return True
         End If
 
-        CType(WORLD_CREATUREs(c.TargetGUID), CreatureObject).MoveTo(c.positionX, c.positionY, c.positionZ)
+        WORLD_CREATUREs(c.TargetGUID).MoveTo(c.positionX, c.positionY, c.positionZ)
 
         Return True
     End Function
@@ -1442,7 +1442,7 @@ Public Module WS_Commands
         If WORLD_CREATUREs.ContainsKey(c.TargetGUID) Then
             'CType(WORLD_CREATUREs(c.TargetGUID), CreatureObject).Die(CType(c, CharacterObject))
 
-            CType(WORLD_CREATUREs(c.TargetGUID), CreatureObject).DealDamage(CType(WORLD_CREATUREs(c.TargetGUID), CreatureObject).Life.Maximum)
+            WORLD_CREATUREs(c.TargetGUID).DealDamage(WORLD_CREATUREs(c.TargetGUID).Life.Maximum)
             Return True
         End If
         Return True
@@ -1454,7 +1454,7 @@ Public Module WS_Commands
         Dim tmpDistance As Single
 
         For Each GUID As ULong In c.gameObjectsNear
-            tmpDistance = GetDistance(WORLD_GAMEOBJECTs(GUID), CType(c, CharacterObject))
+            tmpDistance = GetDistance(WORLD_GAMEOBJECTs(GUID), c)
             If tmpDistance < minDistance Then
                 minDistance = tmpDistance
                 c.TargetGUID = GUID
@@ -1504,9 +1504,9 @@ Public Module WS_Commands
         Return True
     End Function
 
-#End Region
+    #End Region
 
-#Region "WS.Commands.InternalCommands.HelperSubs"
+    #Region "WS.Commands.InternalCommands.HelperSubs"
 
     Public Function GetGUID(ByVal Name As String) As ULong
         Dim MySQLQuery As New DataTable
@@ -1535,12 +1535,12 @@ Public Module WS_Commands
         UpdateData.SetUpdateFlag(Index, Value)
 
         If GuidIsCreature(GUID) Then
-            UpdateData.AddToPacket(packet, ObjectUpdateType.UPDATETYPE_VALUES, CType(WORLD_CREATUREs(GUID), CreatureObject), 0)
+            UpdateData.AddToPacket(packet, ObjectUpdateType.UPDATETYPE_VALUES, WORLD_CREATUREs(GUID), 0)
         ElseIf GuidIsPlayer(GUID) Then
             If GUID = Client.Character.GUID Then
-                UpdateData.AddToPacket(packet, ObjectUpdateType.UPDATETYPE_VALUES, CType(CHARACTERs(GUID), CharacterObject), 1)
+                UpdateData.AddToPacket(packet, ObjectUpdateType.UPDATETYPE_VALUES, CHARACTERs(GUID), 1)
             Else
-                UpdateData.AddToPacket(packet, ObjectUpdateType.UPDATETYPE_VALUES, CType(CHARACTERs(GUID), CharacterObject), 0)
+                UpdateData.AddToPacket(packet, ObjectUpdateType.UPDATETYPE_VALUES, CHARACTERs(GUID), 0)
             End If
         End If
 
@@ -1549,6 +1549,6 @@ Public Module WS_Commands
         UpdateData.Dispose()
     End Function
 
-#End Region
+    #End Region
 
 End Module

@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System
 Imports System.IO
 Imports System.Threading
@@ -29,7 +28,7 @@ Imports mangosVB.Common
 
 Public Module WC_Network
 
-#Region "WS.Sockets"
+    #Region "WS.Sockets"
 
     Public VS As VoiceServerClass
 
@@ -37,9 +36,9 @@ Public Module WC_Network
     Public DataTransferOut As Long = 0
 
     Class VoiceServerClass
-        Inherits MarshalByRefObject
-        Implements IVoice
-        Implements IDisposable
+    Inherits MarshalByRefObject
+    Implements IVoice
+    Implements IDisposable
 
         <CLSCompliant(False)> _
         Public m_flagStopListen As Boolean = False
@@ -222,6 +221,6 @@ Public Module WC_Network
         End Try
     End Sub
 
-#End Region
+    #End Region
 
 End Module

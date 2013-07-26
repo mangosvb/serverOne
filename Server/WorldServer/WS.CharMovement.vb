@@ -15,14 +15,13 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Threading
 Imports System.Runtime.CompilerServices
 Imports mangosVB.Common.BaseWriter
 
 Module WS_CharMovement
 
-#Region "WS.CharacterMovement.MovementHandlers"
+    #Region "WS.CharacterMovement.MovementHandlers"
 
     Public Enum MovementFlags As Integer
         MOVEMENTFLAG_NONE = &H0
@@ -64,17 +63,17 @@ Module WS_CharMovement
         Client.Character.positionZ = packet.GetFloat()
         Client.Character.orientation = packet.GetFloat()
 
-#If DEBUG Then
+        #If DEBUG Then
         'Log.WriteLine(LogType.NETWORK, "[{0}:{1}] {2} [0x{3:X} {4} {5} {6} {7}]", Client.IP, Client.Port, packet.OpCode, Client.Character.movementFlags, Client.Character.positionX, Client.Character.positionY, Client.Character.positionZ, Client.Character.orientation)
-#End If
+        #End If
 
-#If ENABLE_PPOINTS Then
+        #If ENABLE_PPOINTS Then
         If (Client.Character.movementFlags And groundFlagsMask) = 0 AndAlso _
-           Math.Abs(GetZCoord(Client.Character.positionX, Client.Character.positionY, Client.Character.positionZ, Client.Character.MapID) - Client.Character.positionZ) > PPOINT_LIMIT Then
+        Math.Abs(GetZCoord(Client.Character.positionX, Client.Character.positionY, Client.Character.positionZ, Client.Character.MapID) - Client.Character.positionZ) > PPOINT_LIMIT Then
             Log.WriteLine(LogType.DEBUG, "PPoints: {0} [MapZ = {1}]", Client.Character.positionZ, GetZCoord(Client.Character.positionX, Client.Character.positionY, Client.Character.MapID))
             SetZCoord_PP(Client.Character.positionX, Client.Character.positionY, Client.Character.MapID, Client.Character.positionZ)
         End If
-#End If
+        #End If
 
         If HaveFlags(Client.Character.movementFlags, MovementFlags.MOVEMENTFLAG_ONTRANSPORT) Then
             Dim transportGUID As ULong = packet.GetUInt64
@@ -354,9 +353,9 @@ Module WS_CharMovement
                         Client.Character.LogEnvironmentalDamage(EnviromentalDamage.DAMAGE_FALL, FallDamage)
                         Client.Character.DealDamage(FallDamage)
 
-#If DEBUG Then
+                        #If DEBUG Then
                         Log.WriteLine(LogType.USER, "[{0}:{1}] Client fall time: {2}  Damage: {3}", Client.IP, Client.Port, FallTime, FallDamage)
-#End If
+                        #End If
                     End If
                 End If
             End If
@@ -380,7 +379,7 @@ Module WS_CharMovement
                 UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_BYTES_1, Client.Character.cBytes1)
 
                 'DONE: Send packet
-                UpdateData.AddToPacket(SMSG_UPDATE_OBJECT, ObjectUpdateType.UPDATETYPE_VALUES, CType(Client.Character, CharacterObject), 1)
+                UpdateData.AddToPacket(SMSG_UPDATE_OBJECT, ObjectUpdateType.UPDATETYPE_VALUES, Client.Character, 1)
                 Client.Send(SMSG_UPDATE_OBJECT)
                 SMSG_UPDATE_OBJECT.Dispose()
 
@@ -428,7 +427,7 @@ Module WS_CharMovement
         Client.Character.ZoneCheck()
 
         'DONE: Check for out of continent - coordinates from WorldMapContinent.dbc
-        If IsOutsideOfMap(CType(Client.Character, CharacterObject)) Then
+        If IsOutsideOfMap(Client.Character) Then
             If Client.Character.outsideMapID_ = False Then
                 Client.Character.outsideMapID_ = True
                 Client.Character.StartMirrorTimer(MirrorTimer.FATIGUE, 30000)
@@ -461,9 +460,9 @@ Module WS_CharMovement
         Exit Sub
         'DONE: Creatures that are following you will have a more smooth movement
         For Each CombatUnit As ULong In Client.Character.inCombatWith.ToArray
-            If GuidIsCreature(CombatUnit) AndAlso WORLD_CREATUREs.ContainsKey(CombatUnit) AndAlso CType(WORLD_CREATUREs(CombatUnit), CreatureObject).aiScript IsNot Nothing Then
-                With CType(WORLD_CREATUREs(CombatUnit), CreatureObject)
-                    If (Not .aiScript.aiTarget Is Nothing) AndAlso .aiScript.aiTarget.GUID = Client.Character.GUID Then
+            If GuidIsCreature(CombatUnit) AndAlso WORLD_CREATUREs.ContainsKey(CombatUnit) AndAlso WORLD_CREATUREs(CombatUnit).aiScript IsNot Nothing Then
+                With WORLD_CREATUREs(CombatUnit)
+                        If (Not .aiScript.aiTarget Is Nothing) AndAlso .aiScript.aiTarget.GUID = Client.Character.GUID Then
                         .aiScript.State = TBaseAI.AIState.AI_MOVE_FOR_ATTACK
                         .aiScript.DoThink()
                     End If
@@ -472,8 +471,8 @@ Module WS_CharMovement
         Next
     End Sub
 
-#End Region
-#Region "WS.CharacterMovement.CellFramework"
+    #End Region
+    #Region "WS.CharacterMovement.CellFramework"
 
     Public Sub MAP_Load(ByVal x As Byte, ByVal y As Byte, ByVal Map As Integer)
         For i As Short = -1 To 1
@@ -514,9 +513,9 @@ Module WS_CharMovement
                         Dim youpacket As New UpdatePacketClass
                         Dim tmpUpdate As New UpdateClass(FIELD_MASK_SIZE_PLAYER)
                         CHARACTERs(GUID).FillAllUpdateFlags(tmpUpdate, Character)
-                        tmpUpdate.AddToPacket(CType(youpacket, UpdatePacketClass), ObjectUpdateType.UPDATETYPE_CREATE_OBJECT, CType(CHARACTERs(GUID), CharacterObject), 0)
+                        tmpUpdate.AddToPacket(youpacket, ObjectUpdateType.UPDATETYPE_CREATE_OBJECT, CHARACTERs(GUID), 0)
                         tmpUpdate.Dispose()
-                        Character.Client.Send(CType(youpacket, UpdatePacketClass))
+                        Character.Client.Send(youpacket)
                         youpacket.Dispose()
 
                         CHARACTERs(GUID).SeenBy.Add(Character.GUID)
@@ -527,9 +526,9 @@ Module WS_CharMovement
                         Dim myPacket As New UpdatePacketClass
                         Dim myTmpUpdate As New UpdateClass(FIELD_MASK_SIZE_PLAYER)
                         Character.FillAllUpdateFlags(myTmpUpdate, CHARACTERs(GUID))
-                        myTmpUpdate.AddToPacket(CType(myPacket, UpdatePacketClass), ObjectUpdateType.UPDATETYPE_CREATE_OBJECT, Character, 0)
+                        myTmpUpdate.AddToPacket(myPacket, ObjectUpdateType.UPDATETYPE_CREATE_OBJECT, Character, 0)
                         myTmpUpdate.Dispose()
-                        CHARACTERs(GUID).Client.Send(CType(myPacket, UpdatePacketClass))
+                        CHARACTERs(GUID).Client.Send(myPacket)
                         myPacket.Dispose()
 
                         Character.SeenBy.Add(GUID)
@@ -555,7 +554,7 @@ Module WS_CharMovement
                     If Character.CanSee(WORLD_CREATUREs(GUID)) Then
                         Dim tmpUpdate As New UpdateClass(FIELD_MASK_SIZE_UNIT)
                         WORLD_CREATUREs(GUID).FillAllUpdateFlags(tmpUpdate, Character)
-                        tmpUpdate.AddToPacket(CType(packet, UpdatePacketClass), ObjectUpdateType.UPDATETYPE_CREATE_OBJECT, CType(WORLD_CREATUREs(GUID), CreatureObject), 0)
+                        tmpUpdate.AddToPacket(packet, ObjectUpdateType.UPDATETYPE_CREATE_OBJECT, WORLD_CREATUREs(GUID), 0)
                         tmpUpdate.Dispose()
 
                         Character.creaturesNear.Add(GUID)
@@ -575,7 +574,7 @@ Module WS_CharMovement
                         If Character.CanSee(WORLD_GAMEOBJECTs(GUID)) Then
                             Dim tmpUpdate As New UpdateClass(FIELD_MASK_SIZE_GAMEOBJECT)
                             WORLD_GAMEOBJECTs(GUID).FillAllUpdateFlags(tmpUpdate, Character)
-                            tmpUpdate.AddToPacket(CType(packet, UpdatePacketClass), ObjectUpdateType.UPDATETYPE_CREATE_OBJECT, CType(WORLD_GAMEOBJECTs(GUID), GameObjectObject), 0)
+                            tmpUpdate.AddToPacket(packet, ObjectUpdateType.UPDATETYPE_CREATE_OBJECT, WORLD_GAMEOBJECTs(GUID), 0)
                             tmpUpdate.Dispose()
 
                             Character.gameObjectsNear.Add(GUID)
@@ -596,7 +595,7 @@ Module WS_CharMovement
                         If Character.CanSee(WORLD_CORPSEOBJECTs(GUID)) Then
                             Dim tmpUpdate As New UpdateClass(FIELD_MASK_SIZE_CORPSE)
                             WORLD_CORPSEOBJECTs(GUID).FillAllUpdateFlags(tmpUpdate, Character)
-                            tmpUpdate.AddToPacket(CType(packet, UpdatePacketClass), ObjectUpdateType.UPDATETYPE_CREATE_OBJECT, CType(WORLD_CORPSEOBJECTs(GUID), CorpseObject), 0)
+                            tmpUpdate.AddToPacket(packet, ObjectUpdateType.UPDATETYPE_CREATE_OBJECT, WORLD_CORPSEOBJECTs(GUID), 0)
                             tmpUpdate.Dispose()
 
                             Character.corpseObjectsNear.Add(GUID)
@@ -609,7 +608,7 @@ Module WS_CharMovement
         End If
 
         'DONE: Send the packet
-        Character.Client.Send(CType(packet, UpdatePacketClass))
+        Character.Client.Send(packet)
         packet.Dispose()
 
         'Update nearby cells alaso
@@ -867,7 +866,7 @@ Module WS_CharMovement
                         packet.AddInt8(0)
                         Dim tmpUpdate As New UpdateClass(FIELD_MASK_SIZE_PLAYER)
                         CHARACTERs(GUID).FillAllUpdateFlags(tmpUpdate, Character)
-                        tmpUpdate.AddToPacket(packet, ObjectUpdateType.UPDATETYPE_CREATE_OBJECT, CType(CHARACTERs(GUID), CharacterObject), 0)
+                        tmpUpdate.AddToPacket(packet, ObjectUpdateType.UPDATETYPE_CREATE_OBJECT, CHARACTERs(GUID), 0)
                         tmpUpdate.Dispose()
                         Character.Client.Send(packet)
                         packet.Dispose()
@@ -968,7 +967,7 @@ Module WS_CharMovement
                         packet.AddInt8(0)
                         Dim tmpUpdate As New UpdateClass(FIELD_MASK_SIZE_UNIT)
                         WORLD_CREATUREs(GUID).FillAllUpdateFlags(tmpUpdate, Character)
-                        tmpUpdate.AddToPacket(packet, ObjectUpdateType.UPDATETYPE_CREATE_OBJECT, CType(WORLD_CREATUREs(GUID), CreatureObject), 0)
+                        tmpUpdate.AddToPacket(packet, ObjectUpdateType.UPDATETYPE_CREATE_OBJECT, WORLD_CREATUREs(GUID), 0)
                         tmpUpdate.Dispose()
                         Character.Client.Send(packet)
                         packet.Dispose()
@@ -995,7 +994,7 @@ Module WS_CharMovement
                         packet.AddInt8(0)
                         Dim tmpUpdate As New UpdateClass(FIELD_MASK_SIZE_GAMEOBJECT)
                         WORLD_GAMEOBJECTs(GUID).FillAllUpdateFlags(tmpUpdate, Character)
-                        tmpUpdate.AddToPacket(packet, ObjectUpdateType.UPDATETYPE_CREATE_OBJECT, CType(WORLD_GAMEOBJECTs(GUID), GameObjectObject), 0)
+                        tmpUpdate.AddToPacket(packet, ObjectUpdateType.UPDATETYPE_CREATE_OBJECT, WORLD_GAMEOBJECTs(GUID), 0)
                         tmpUpdate.Dispose()
                         Character.Client.Send(packet)
                         packet.Dispose()
@@ -1024,7 +1023,7 @@ Module WS_CharMovement
                         packet.AddInt8(0)
                         Dim tmpUpdate As New UpdateClass(FIELD_MASK_SIZE_CORPSE)
                         WORLD_CORPSEOBJECTs(GUID).FillAllUpdateFlags(tmpUpdate, Character)
-                        tmpUpdate.AddToPacket(packet, ObjectUpdateType.UPDATETYPE_CREATE_OBJECT, CType(WORLD_CORPSEOBJECTs(GUID), CorpseObject), 0)
+                        tmpUpdate.AddToPacket(packet, ObjectUpdateType.UPDATETYPE_CREATE_OBJECT, WORLD_CORPSEOBJECTs(GUID), 0)
                         tmpUpdate.Dispose()
                         Character.Client.Send(packet)
                         packet.Dispose()
@@ -1038,7 +1037,7 @@ Module WS_CharMovement
         End With
     End Sub
 
-#End Region
+    #End Region
 
     Public Sub SendWeather(ByVal Type As Byte, ByVal Intensity As Single, ByRef Client As ClientClass)
         ' WEATHER_SOUND_NOSOUND                 0

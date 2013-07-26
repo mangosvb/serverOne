@@ -5,8 +5,9 @@
 '''
 Imports System.IO
 Imports System.Security.Cryptography
+
 Public Class SHA1Hash
-    Implements IHasher
+Implements IHasher
     Public Function hashOfFile(ByVal fileToHash As String) As String Implements IHasher.hashOfFile
         Dim rdr As FileStream
         Dim sha1 As New SHA1CryptoServiceProvider

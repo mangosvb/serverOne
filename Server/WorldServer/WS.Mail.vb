@@ -15,13 +15,12 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Threading
 Imports mangosVB.Common.BaseWriter
 
 Public Module WS_Mail
 
-#Region "WS.Mail.Constants"
+    #Region "WS.Mail.Constants"
 
     Public Const ITEM_MAILTEXT_ITEMID As Integer = 889
 
@@ -34,6 +33,7 @@ Public Module WS_Mail
         MAIL_MADE_PERMANENT = 5
 
     End Enum
+    
     Private Enum MailSentError
         NO_ERROR = 0
         BAG_FULL = 1
@@ -53,14 +53,15 @@ Public Module WS_Mail
         Auction = 4
         COD = 8
     End Enum
+    
     Private Enum MailTypeInfo As Byte
         NORMAL = 0
         GMMAIL = 1
         AUCTION = 2
     End Enum
 
-#End Region
-#Region "WS.Mail.Handlers"
+    #End Region
+    #Region "WS.Mail.Handlers"
 
     Public Sub On_CMSG_MAIL_RETURN_TO_SENDER(ByRef packet As PacketClass, ByRef Client As ClientClass)
         If (packet.Data.Length - 1) < 17 Then Exit Sub
@@ -536,6 +537,6 @@ Public Module WS_Mail
         client.Send(packet)
     End Sub
 
-#End Region
+    #End Region
 
 End Module

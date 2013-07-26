@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports mangosVB.Common.BaseWriter
 Imports System.Threading
 Imports System.Collections.Generic
@@ -75,7 +74,7 @@ Public Module WS_Base
     End Class
 
     Public Class BaseUnit
-        Inherits BaseObject
+    Inherits BaseObject
 
         Public Const CombatReach_Base As Single = 2.0F
 
@@ -148,7 +147,7 @@ Public Module WS_Base
         Public Sub SetAura(ByVal SpellID As Integer, ByVal Slot As Integer, ByVal Duration As Integer)
             If ActiveSpells(Slot) Is Nothing Then Exit Sub
             'DONE: Passive auras are not displayed
-            If SpellID <> 0 AndAlso SPELLs.ContainsKey(SpellID) AndAlso CType(SPELLs(SpellID), SpellInfo).IsPassive Then Exit Sub
+            If SpellID <> 0 AndAlso SPELLs.ContainsKey(SpellID) AndAlso SPELLs(SpellID).IsPassive Then Exit Sub
 
             'DONE: Calculating slots
             Dim AuraFlag_Slot As Integer = Slot \ 4
@@ -156,7 +155,7 @@ Public Module WS_Base
 
             'DONE: Check if the spell is negative
             Dim Positive As Boolean = True
-            If SpellID Then Positive = (Not CType(SPELLs(SpellID), SpellInfo).IsNegative)
+            If SpellID Then Positive = (Not SPELLs(SpellID).IsNegative)
             ActiveSpells(Slot).Flags = 0
             If SpellID Then
                 ActiveSpells(Slot).Flags = ActiveSpells(Slot).Flags Or AuraFlags.AFLAG_VISIBLE
@@ -254,8 +253,6 @@ Public Module WS_Base
             If Slot < MAX_AURA_EFFECTs_VISIBLE Then SetAura(0, Slot, 0)
         End Sub
 
-
-
         Public Sub RemoveAuraBySpell(ByVal SpellID As Integer)
             'DONE: Real aura removing
             For i As Integer = 0 To MAX_AURA_EFFECTs - 1
@@ -264,7 +261,7 @@ Public Module WS_Base
 
                     'DONE: Removing additional spell auras (Mind Vision)
                     If (TypeOf Me Is CharacterObject) AndAlso _
-                        (CType(Me, CharacterObject).DuelArbiter <> 0) AndAlso (CType(Me, CharacterObject).DuelPartner Is Nothing) Then
+                    (CType(Me, CharacterObject).DuelArbiter <> 0) AndAlso (CType(Me, CharacterObject).DuelPartner Is Nothing) Then
                         WORLD_CREATUREs(CType(Me, CharacterObject).DuelArbiter).RemoveAuraBySpell(SpellID)
                         CType(Me, CharacterObject).DuelArbiter = 0
                     End If
@@ -290,7 +287,7 @@ Public Module WS_Base
                         GoTo NextAura
                     End If
                 End If
-NextAura:
+                NextAura:
             Next
         End Sub
         Public Sub RemoveAurasByMechanic(ByVal Mechanic As Integer)
@@ -307,8 +304,8 @@ NextAura:
             Dim i As Integer
             For i = 0 To MAX_AURA_EFFECTs_VISIBLE - 1
                 If Not ActiveSpells(i) Is Nothing Then
-                    If SPELLs.ContainsKey(ActiveSpells(i).SpellID) AndAlso (CType(SPELLs(ActiveSpells(i).SpellID), SpellInfo).auraInterruptFlags And AuraInterruptFlag) Then
-                        If (CType(SPELLs(ActiveSpells(i).SpellID), SpellInfo).procFlags And SpellAuraProcFlags.AURA_PROC_REMOVEONUSE) = 0 Then
+                    If SPELLs.ContainsKey(ActiveSpells(i).SpellID) AndAlso (SPELLs(ActiveSpells(i).SpellID).auraInterruptFlags And AuraInterruptFlag) Then
+                        If (SPELLs(ActiveSpells(i).SpellID).procFlags And SpellAuraProcFlags.AURA_PROC_REMOVEONUSE) = 0 Then
                             RemoveAura(i, ActiveSpells(i).SpellCaster)
                         End If
                     End If
@@ -318,10 +315,10 @@ NextAura:
         Public Sub AddAura(ByVal SpellID As Integer, ByVal Duration As Integer, ByRef Caster As BaseUnit)
             Dim AuraStart As Integer = 0
             Dim AuraEnd As Integer = MAX_POSITIVE_AURA_EFFECTs - 1
-            If CType(SPELLs(SpellID), SpellInfo).IsPassive Then
+            If SPELLs(SpellID).IsPassive Then
                 AuraStart = MAX_AURA_EFFECTs_VISIBLE
                 AuraEnd = MAX_AURA_EFFECTs
-            ElseIf CType(SPELLs(SpellID), SpellInfo).IsNegative Then
+            ElseIf SPELLs(SpellID).IsNegative Then
                 AuraStart = MAX_POSITIVE_AURA_EFFECTs
                 AuraEnd = MAX_AURA_EFFECTs_VISIBLE - 1
             End If

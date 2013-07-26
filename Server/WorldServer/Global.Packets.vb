@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.IO
 Imports mangosVB.Common.BaseWriter
 
@@ -56,8 +55,9 @@ Public Module Packets
             Log.WriteLine(LogType.FAILED, "Error dumping packet: {0}{1}", vbNewLine, e.ToString)
         End Try
     End Sub
+    
     Public Class UpdateClass
-        Implements IDisposable
+    Implements IDisposable
 
         'Dim packet As New PacketClass(OPCODES.SMSG_UPDATE_OBJECT)
         'packet.AddInt32(OPERATIONS_COUNT)
@@ -71,11 +71,11 @@ Public Module Packets
 
         Public Sub SetUpdateFlag(ByVal pos As Integer, ByVal value As Integer)
             UpdateMask.Set(pos, True)
-            UpdateData(pos) = (CType(value, Integer))
+            UpdateData(pos) = value
         End Sub
         Public Sub SetUpdateFlag(ByVal pos As Integer, ByVal value As UInteger)
             UpdateMask.Set(pos, True)
-            UpdateData(pos) = (CType(value, UInteger))
+            UpdateData(pos) = value
         End Sub
         Public Sub SetUpdateFlag(ByVal pos As Integer, ByVal value As Long)
             UpdateMask.Set(pos, True)
@@ -91,7 +91,7 @@ Public Module Packets
         End Sub
         Public Sub SetUpdateFlag(ByVal pos As Integer, ByVal value As Single)
             UpdateMask.Set(pos, True)
-            UpdateData(pos) = (CType(value, Single))
+            UpdateData(pos) = value
         End Sub
 
         Public Sub AddToPacket(ByRef packet As PacketClass, ByVal updateType As ObjectUpdateType, ByRef updateObject As CreatureObject, Optional ByVal IsClientObject As Byte = 0)
@@ -229,7 +229,7 @@ Public Module Packets
             packet.AddPackGUID(updateObject.GUID)
 
             If updateType = ObjectUpdateType.UPDATETYPE_CREATE_OBJECT Then
-                If CType(ITEMDatabase(updateObject.ItemEntry), ItemInfo).ContainerSlots > 0 Then
+                If ITEMDatabase(updateObject.ItemEntry).ContainerSlots > 0 Then
                     packet.AddInt8(ObjectTypeID.TYPEID_CONTAINER)
                 Else
                     packet.AddInt8(ObjectTypeID.TYPEID_ITEM)
@@ -397,10 +397,10 @@ Public Module Packets
         End Sub
     End Class
 
-#Region "Packets.ArrayBased"
+    #Region "Packets.ArrayBased"
 
     Public Class PacketClass
-        Implements IDisposable
+    Implements IDisposable
 
         Public Data() As Byte
         Public Offset As Integer = 4
@@ -732,7 +732,7 @@ Public Module Packets
                 Offset += 1
             End If
 
-            Return CType(BitConverter.ToUInt64(GUID, 0), ULong)
+            Return BitConverter.ToUInt64(GUID, 0)
         End Function
         Public Function GetPackGUID(ByVal Offset As Integer) As ULong
             Dim flags As Byte = Data(Offset)
@@ -772,14 +772,15 @@ Public Module Packets
                 Offset += 1
             End If
 
-            Return CType(BitConverter.ToUInt64(GUID, 0), ULong)
+            Return BitConverter.ToUInt64(GUID, 0)
         End Function
 
         Public Sub Dispose() Implements System.IDisposable.Dispose
         End Sub
     End Class
+    
     Public Class UpdatePacketClass
-        Inherits PacketClass
+    Inherits PacketClass
 
         Public Property UpdatesCount() As Integer
             Get
@@ -803,11 +804,11 @@ Public Module Packets
         End Sub
     End Class
 
-#End Region
-#Region "Packets.MemoryStreamBased"
+    #End Region
+    #Region "Packets.MemoryStreamBased"
 
     Public Class PacketClassNew
-        Implements IDisposable
+    Implements IDisposable
 
         Public Offset As Integer = 4
         Public Length As Integer = 0
@@ -1062,7 +1063,7 @@ Public Module Packets
             If (flags And 64) = 64 Then GUID(6) = br.ReadByte
             If (flags And 128) = 128 Then GUID(7) = br.ReadByte
 
-            Return CType(BitConverter.ToUInt64(GUID, 0), ULong)
+            Return BitConverter.ToUInt64(GUID, 0)
         End Function
         Public Function GetPackGUID(ByVal Offset As Integer) As ULong
             ms.Seek(Offset, SeekOrigin.Begin)
@@ -1079,12 +1080,13 @@ Public Module Packets
             If (flags And 64) = 64 Then GUID(6) = br.ReadByte
             If (flags And 128) = 128 Then GUID(7) = br.ReadByte
 
-            Return CType(BitConverter.ToUInt64(GUID, 0), ULong)
+            Return BitConverter.ToUInt64(GUID, 0)
         End Function
 
     End Class
+    
     Public Class UpdatePacketClassNew
-        Inherits PacketClassNew
+    Inherits PacketClassNew
 
         Public Property UpdatesCount() As Integer
             Get
@@ -1107,6 +1109,6 @@ Public Module Packets
         End Sub
     End Class
 
-#End Region
+    #End Region
 
 End Module

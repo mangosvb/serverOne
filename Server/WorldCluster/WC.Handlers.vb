@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Threading
 Imports System.Net.Sockets
 Imports System.Xml.Serialization
@@ -152,11 +151,11 @@ Public Module WC_Handlers
     End Sub
 
     Public Sub OnUnhandledPacket(ByRef packet As PacketClass, ByRef Client As ClientClass)
-        Log.WriteLine(LogType.WARNING, "[{0}:{1}] {2} [Unhandled Packet]", Client.IP, Client.Port, CType(packet.OpCode, OPCODES))
+        Log.WriteLine(LogType.WARNING, "[{0}:{1}] {2} [Unhandled Packet]", Client.IP, Client.Port, packet.OpCode)
     End Sub
 
     Public Sub OnClusterPacket(ByRef packet As PacketClass, ByRef Client As ClientClass)
-        Log.WriteLine(LogType.WARNING, "[{0}:{1}] {2} [Redirected Packet]", Client.IP, Client.Port, CType(packet.OpCode, OPCODES))
+        Log.WriteLine(LogType.WARNING, "[{0}:{1}] {2} [Redirected Packet]", Client.IP, Client.Port, packet.OpCode)
 
         If Client.Character Is Nothing OrElse Client.Character.IsInWorld = False Then
             Log.WriteLine(LogType.WARNING, "[{0}:{1}] Unknown Opcode 0x{2:X} [{2}], DataLen={4}", Client.IP, Client.Port, packet.OpCode, vbNewLine, packet.Length)

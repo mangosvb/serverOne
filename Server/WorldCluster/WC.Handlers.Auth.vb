@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Threading
 Imports System.Net.Sockets
 Imports System.Xml.Serialization
@@ -294,7 +293,7 @@ Public Module WC_Handlers_Auth
                 'DONE: Get items
                 Dim GUID As Long = MySQLQuery.Rows(i).Item("char_guid")
                 Dim ItemsMySQLQuery As New DataTable
-'                CharacterDatabase.Query(String.Format("SELECT item_slot, displayid, inventorytype FROM characters_inventory, items WHERE item_bag = {0} AND item_slot <> 255 AND entry = item_id  ORDER BY item_slot;", GUID), ItemsMySQLQuery)
+                '                CharacterDatabase.Query(String.Format("SELECT item_slot, displayid, inventorytype FROM characters_inventory, items WHERE item_bag = {0} AND item_slot <> 255 AND entry = item_id  ORDER BY item_slot;", GUID), ItemsMySQLQuery)
                 CharacterDatabase.Query(String.Format("SELECT item_slot, item_id, displayid, inventorytype FROM characters_inventory, items WHERE item_bag = {0} AND item_slot <> 255 AND items.entry = characters_inventory.item_id ORDER BY item_slot;", GUID), ItemsMySQLQuery)
                 Dim e As IEnumerator = ItemsMySQLQuery.Rows.GetEnumerator
                 e.Reset()

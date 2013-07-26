@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Threading
 Imports System.Collections.Generic
 Imports mangosVB.Common.BaseWriter
@@ -23,8 +22,9 @@ Imports mangosVB.Common.BaseWriter
 Public Module WS_Group
 
     Public GROUPs As New Dictionary(Of Long, Group)
+    
     Public Class Group
-        Implements IDisposable
+    Implements IDisposable
 
         Public ID As Long
         Public Type As GroupType = GroupType.PARTY

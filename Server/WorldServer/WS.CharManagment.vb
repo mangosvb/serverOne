@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Threading
 Imports System.Reflection
 Imports System.Text.RegularExpressions
@@ -24,7 +23,7 @@ Imports mangosVB.Common
 
 Public Module WS_CharManagment
 
-#Region "WS.CharMangment.CharacterInitializators"
+    #Region "WS.CharMangment.CharacterInitializators"
     Enum ManaTypes As Integer
         TYPE_MANA = 0
         TYPE_RAGE = 1
@@ -59,7 +58,7 @@ Public Module WS_CharManagment
     End Function
     Private Function gainStat(ByVal level As Integer, ByVal a3 As Double, ByVal a2 As Double, ByVal a1 As Double, ByVal a0 As Double) As Integer
         Return CType(System.Math.Round(a3 * level * level * level + a2 * level * level + a1 * level + a0), Integer) - _
-                CType(System.Math.Round(a3 * (level - 1) * (level - 1) * (level - 1) + a2 * (level - 1) * (level - 1) + a1 * (level - 1) + a0), Integer)
+        CType(System.Math.Round(a3 * (level - 1) * (level - 1) * (level - 1) + a2 * (level - 1) * (level - 1) + a1 * (level - 1) + a0), Integer)
     End Function
     Public Sub CalculateOnLevelUP(ByRef c As CharacterObject)
         Dim baseInt As Integer = c.Intellect.Base
@@ -220,8 +219,8 @@ Public Module WS_CharManagment
         If c.Level > 9 Then c.TalentPoints += 1
 
         For Each Skill As KeyValuePair(Of Integer, TSkill) In c.Skills
-            If SkillLines(CType(Skill.Key, Integer)) = SKILL_LineCategory.WEAPON_SKILLS Then
-                CType(Skill.Value, TSkill).Base += 5
+            If SkillLines(Skill.Key) = SKILL_LineCategory.WEAPON_SKILLS Then
+                Skill.Value.Base += 5
             End If
         Next
     End Sub
@@ -261,8 +260,8 @@ Public Module WS_CharManagment
             Next
         Next
     End Sub
-#End Region
-#Region "WS.CharMangment.CharacterHelpingTypes"
+    #End Region
+    #Region "WS.CharMangment.CharacterHelpingTypes"
     Public Class TSkill
         Private _Current As Int16 = 0
         Public Bonus As Int16 = 0
@@ -294,10 +293,11 @@ Public Module WS_CharManagment
 
         Public ReadOnly Property GetSkill() As Integer
             Get
-                Return CType((_Current + (CType(Base + Bonus, Integer) << 16)), Integer)
+                Return (_Current + (CType(Base + Bonus, Integer) << 16))
             End Get
         End Property
     End Class
+    
     Public Class TStatBar
         Private _Current As Integer = 0
         Public Bonus As Integer = 0
@@ -330,6 +330,7 @@ Public Module WS_CharManagment
             End Set
         End Property
     End Class
+    
     Public Class TStat
         Public Base As Short = 0
         Public PositiveBonus As Short = 0
@@ -353,6 +354,7 @@ Public Module WS_CharManagment
             PositiveBonus = NegValue
         End Sub
     End Class
+    
     Public Class TDamageBonus
         Public PositiveBonus As Integer = 0
         Public NegativeBonus As Integer = 0
@@ -368,6 +370,7 @@ Public Module WS_CharManagment
             PositiveBonus = NegValue
         End Sub
     End Class
+    
     Public Class THonor
         Public HonorPounts As Short = 0                 '! MAX=1000 ?
         Public HonorRank As Byte = 0
@@ -415,12 +418,14 @@ Public Module WS_CharManagment
 
         End Sub
     End Class
+    
     Public Class TReputation
         '1:"AtWar" clickable but not checked
         '3:"AtWar" clickable and checked
         Public Flags As Integer = 0
         Public Value As Integer = 0
     End Class
+    
     Public Class TActionButton
         Public ActionType As Byte = 0
         Public ActionMisc As Byte = 0
@@ -431,8 +436,9 @@ Public Module WS_CharManagment
             Action = Action_
         End Sub
     End Class
+    
     Public Class TDrowningTimer
-        Implements IDisposable
+    Implements IDisposable
 
         Private DrowningTimer As Threading.Timer = Nothing
         Public DrowningValue As Integer = 70000
@@ -450,8 +456,9 @@ Public Module WS_CharManagment
             If CHARACTERs.ContainsKey(CharacterGUID) Then CHARACTERs(CharacterGUID).StopMirrorTimer(1)
         End Sub
     End Class
+    
     Public Class TRepopTimer
-        Implements IDisposable
+    Implements IDisposable
 
         Private RepopTimer As Threading.Timer = Nothing
         Public CharacterGUID As ULong = 0
@@ -470,8 +477,8 @@ Public Module WS_CharManagment
             RepopTimer = Nothing
         End Sub
     End Class
-#End Region
-#Region "WS.CharMangment.CharacterHelpingSubs"
+    #End Region
+    #Region "WS.CharMangment.CharacterHelpingSubs"
 
     Public Sub SendBindPointUpdate(ByRef Client As ClientClass, ByRef Character As CharacterObject)
         Dim SMSG_BINDPOINTUPDATE As New PacketClass(OPCODES.SMSG_BINDPOINTUPDATE)
@@ -554,14 +561,14 @@ Public Module WS_CharManagment
 
     Public Sub InitializeTalentSpells(ByVal c As CharacterObject)
         Dim t As New SpellTargets
-        t.SetTarget_SELF(CType(c, CharacterObject))
+        t.SetTarget_SELF(c)
 
         For Each SpellID As Integer In c.Spells
             If SPELLs.ContainsKey(SpellID) AndAlso (SPELLs(SpellID).IsPassive) Then
                 'DONE: Add passive spell we don't have
                 'DONE: Remove passive spells we can't have anymore
                 If c.HavePassiveAura(SpellID) = False AndAlso SPELLs(SpellID).CanCast(c, t) = SpellFailedReason.CAST_NO_ERROR Then
-                    SPELLs(SpellID).Apply(CType(c, CharacterObject), t)
+                    SPELLs(SpellID).Apply(c, t)
                 ElseIf c.HavePassiveAura(SpellID) AndAlso SPELLs(SpellID).CanCast(c, t) <> SpellFailedReason.CAST_NO_ERROR Then
                     c.RemoveAuraBySpell(SpellID)
                 End If
@@ -569,16 +576,16 @@ Public Module WS_CharManagment
         Next
     End Sub
 
-#End Region
+    #End Region
 
-#Region "WS.CharMangment.CharacterDataType"
+    #Region "WS.CharMangment.CharacterDataType"
 
     Public Const ITEM_SLOT_NULL As Byte = 255
     Public Const ITEM_BAG_NULL As Long = -1
 
     Public Class CharacterObject
-        Inherits BaseUnit
-        Implements IDisposable
+    Inherits BaseUnit
+    Implements IDisposable
 
         'Connection Information
         Public Client As ClientClass
@@ -821,8 +828,8 @@ Public Module WS_CharManagment
         Public HonorPointsYesterday As Short = 0
         Public Sub HonorLearnNewRank(ByVal RankTitle As PlayerHonorTitle)
             HonorTitle = RankTitle
-            If Not HaveFlags(HonorTitles, CType(1, Integer) << RankTitle) Then
-                HonorTitles = HonorTitles + (CType(1, Integer) << RankTitle)
+            If Not HaveFlags(HonorTitles, 1 << RankTitle) Then
+                HonorTitles = HonorTitles + (1 << RankTitle)
             End If
 
             SetUpdateFlag(EPlayerFields.PLAYER_CHOSEN_TITLE, HonorTitle)
@@ -1049,11 +1056,11 @@ Public Module WS_CharManagment
         Private UpdateData As New Hashtable
         Public Sub SetUpdateFlag(ByVal pos As Integer, ByVal value As Integer)
             UpdateMask.Set(pos, True)
-            UpdateData(pos) = (CType(value, Integer))
+            UpdateData(pos) = value
         End Sub
         Public Sub SetUpdateFlag(ByVal pos As Integer, ByVal value As UInteger)
             UpdateMask.Set(pos, True)
-            UpdateData(pos) = (CType(value, UInteger))
+            UpdateData(pos) = value
         End Sub
         Public Sub SetUpdateFlag(ByVal pos As Integer, ByVal value As Long)
             UpdateMask.Set(pos, True)
@@ -1069,7 +1076,7 @@ Public Module WS_CharManagment
         End Sub
         Public Sub SetUpdateFlag(ByVal pos As Integer, ByVal value As Single)
             UpdateMask.Set(pos, True)
-            UpdateData(pos) = (CType(value, Single))
+            UpdateData(pos) = value
         End Sub
 
         Public Sub SendOutOfRangeUpdate()
@@ -1107,7 +1114,7 @@ Public Module WS_CharManagment
             For Each tmpItem As KeyValuePair(Of Byte, ItemObject) In Items
                 Dim tmpUpdate As New UpdateClass(FIELD_MASK_SIZE_ITEM)
                 tmpItem.Value.FillAllUpdateFlags(tmpUpdate)
-                tmpUpdate.AddToPacket(packet, ObjectUpdateType.UPDATETYPE_CREATE_OBJECT, CType(tmpItem.Value, ItemObject), 0)
+                tmpUpdate.AddToPacket(packet, ObjectUpdateType.UPDATETYPE_CREATE_OBJECT, tmpItem.Value, 0)
                 tmpUpdate.Dispose()
 
                 'DONE: Update Items In bag
@@ -1175,7 +1182,7 @@ Public Module WS_CharManagment
 
             Dim tmpUpdate As New UpdateClass(FIELD_MASK_SIZE_ITEM)
             Item.FillAllUpdateFlags(tmpUpdate)
-            tmpUpdate.AddToPacket(packet, UPDATETYPE, CType(Item, ItemObject), 0)
+            tmpUpdate.AddToPacket(packet, UPDATETYPE, Item, 0)
 
             Dim i As Byte
             For i = EQUIPMENT_SLOT_START To KEYRING_SLOT_END - 1
@@ -1234,18 +1241,18 @@ Public Module WS_CharManagment
             packet.Dispose()
         End Sub                                      'Sends update for character to him and near players
         Public Sub FillStatsUpdateFlags()
-            SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXHEALTH, CType(Life.Maximum, Integer))
-            SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXPOWER1, CType(Mana.Maximum, Integer))
-            SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXPOWER2, CType(Rage.Maximum, Integer))
-            SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXPOWER4, CType(Energy.Maximum, Integer))
+            SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXHEALTH, Life.Maximum)
+            SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXPOWER1, Mana.Maximum)
+            SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXPOWER2, Rage.Maximum)
+            SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXPOWER4, Energy.Maximum)
 
             SetUpdateFlag(EPlayerFields.PLAYER_BLOCK_PERCENTAGE, combatBlock)
             SetUpdateFlag(EUnitFields.UNIT_FIELD_MINDAMAGE, Damage.Minimum)
-            SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXDAMAGE, CType(Damage.Maximum + BaseUnarmedDamage, Single))
+            SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXDAMAGE, Damage.Maximum + BaseUnarmedDamage)
             SetUpdateFlag(EUnitFields.UNIT_FIELD_MINOFFHANDDAMAGE, OffHandDamage.Minimum)
             SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXOFFHANDDAMAGE, OffHandDamage.Maximum)
             SetUpdateFlag(EUnitFields.UNIT_FIELD_MINRANGEDDAMAGE, RangedDamage.Minimum)
-            SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXRANGEDDAMAGE, CType(RangedDamage.Maximum + BaseRangedDamage, Single))
+            SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXRANGEDDAMAGE, RangedDamage.Maximum + BaseRangedDamage)
 
             SetUpdateFlag(EUnitFields.UNIT_FIELD_BASEATTACKTIME, AttackTime(0))
             SetUpdateFlag(EUnitFields.UNIT_FIELD_OFFHANDATTACKTIME, AttackTime(1))
@@ -1301,19 +1308,19 @@ Public Module WS_CharManagment
             Dim i As Byte
 
             SetUpdateFlag(EObjectFields.OBJECT_FIELD_GUID, GUID)
-            SetUpdateFlag(EObjectFields.OBJECT_FIELD_TYPE, CType(25, Integer))
+            SetUpdateFlag(EObjectFields.OBJECT_FIELD_TYPE, 25)
             SetUpdateFlag(EObjectFields.OBJECT_FIELD_SCALE_X, Size)
 
-            SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, CType(Life.Current, Integer))
-            SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER1, CType(Mana.Current, Integer))
-            SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER2, CType(Rage.Current, Integer))
-            SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER4, CType(Energy.Current, Integer))
-            SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXHEALTH, CType(Life.Maximum, Integer))
-            SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXPOWER1, CType(Mana.Maximum, Integer))
-            SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXPOWER2, CType(Rage.Maximum, Integer))
-            SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXPOWER4, CType(Energy.Maximum, Integer))
-            SetUpdateFlag(EUnitFields.UNIT_FIELD_BASE_HEALTH, CType(Life.Base, Integer))
-            SetUpdateFlag(EUnitFields.UNIT_FIELD_BASE_MANA, CType(Mana.Base, Integer))
+            SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, Life.Current)
+            SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER1, Mana.Current)
+            SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER2, Rage.Current)
+            SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER4, Energy.Current)
+            SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXHEALTH, Life.Maximum)
+            SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXPOWER1, Mana.Maximum)
+            SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXPOWER2, Rage.Maximum)
+            SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXPOWER4, Energy.Maximum)
+            SetUpdateFlag(EUnitFields.UNIT_FIELD_BASE_HEALTH, Life.Base)
+            SetUpdateFlag(EUnitFields.UNIT_FIELD_BASE_MANA, Mana.Base)
             SetUpdateFlag(EUnitFields.UNIT_FIELD_LEVEL, CType(Level, Integer))
             SetUpdateFlag(EUnitFields.UNIT_FIELD_FACTIONTEMPLATE, CType(Faction, Integer))
             'SetUpdateFlag(EUnitFields.UNIT_FIELD_FACTIONTEMPLATE, CType(4, Integer))
@@ -1337,7 +1344,7 @@ Public Module WS_CharManagment
             SetUpdateFlag(EUnitFields.UNIT_FIELD_NEGSTAT2, CType(Stamina.NegativeBonus, Integer))
             SetUpdateFlag(EUnitFields.UNIT_FIELD_NEGSTAT3, CType(Intellect.NegativeBonus, Integer))
             SetUpdateFlag(EUnitFields.UNIT_FIELD_NEGSTAT4, CType(Spirit.NegativeBonus, Integer))
-            SetUpdateFlag(EUnitFields.UNIT_FIELD_BYTES_0, CType(CType(Race, Integer) + (CType(Classe, Integer) << 8) + (CType(Gender, Integer) << 16) + (CType(ManaType, Integer) << 24), Integer))
+            SetUpdateFlag(EUnitFields.UNIT_FIELD_BYTES_0, CType(Race, Integer) + (CType(Classe, Integer) << 8) + (CType(Gender, Integer) << 16) + (CType(ManaType, Integer) << 24))
             'SetUpdateFlag(EUnitFields.UNIT_FIELD_BYTES_2, &HEEEEEE00)
             SetUpdateFlag(EUnitFields.UNIT_FIELD_DISPLAYID, Model)
             SetUpdateFlag(EUnitFields.UNIT_FIELD_NATIVEDISPLAYID, Model_Native)
@@ -1370,7 +1377,7 @@ Public Module WS_CharManagment
             SetUpdateFlag(EPlayerFields.PLAYER_GUILDRANK, GuildRank)
 
             SetUpdateFlag(EUnitFields.UNIT_FIELD_MINDAMAGE, Damage.Minimum)
-            SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXDAMAGE, CType(Damage.Maximum + BaseUnarmedDamage, Single))
+            SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXDAMAGE, Damage.Maximum + BaseUnarmedDamage)
             SetUpdateFlag(EUnitFields.UNIT_FIELD_BASEATTACKTIME, AttackTime(0))
             SetUpdateFlag(EUnitFields.UNIT_MOD_CAST_SPEED, 1.0F)
             SetUpdateFlag(EUnitFields.UNIT_FIELD_ATTACK_POWER, AttackPower)
@@ -1417,8 +1424,8 @@ Public Module WS_CharManagment
 
             For Each Skill As KeyValuePair(Of Integer, TSkill) In Skills
                 SetUpdateFlag(EPlayerFields.PLAYER_SKILL_INFO_1_1 + SkillsPositions(Skill.Key) * 3, Skill.Key)                                    'skill1.Id
-                SetUpdateFlag(EPlayerFields.PLAYER_SKILL_INFO_1_1 + SkillsPositions(Skill.Key) * 3 + 1, CType(Skill.Value, TSkill).GetSkill)      'CType((skill1.CurrentVal(Me) + (skill1.Cap(Me) << 16)), Integer)
-                SetUpdateFlag(EPlayerFields.PLAYER_SKILL_INFO_1_1 + SkillsPositions(Skill.Key) * 3 + 2, CType(Skill.Value, TSkill).Bonus)         'skill1.Bonus
+                SetUpdateFlag(EPlayerFields.PLAYER_SKILL_INFO_1_1 + SkillsPositions(Skill.Key) * 3 + 1, Skill.Value.GetSkill)      'CType((skill1.CurrentVal(Me) + (skill1.Cap(Me) << 16)), Integer)
+                SetUpdateFlag(EPlayerFields.PLAYER_SKILL_INFO_1_1 + SkillsPositions(Skill.Key) * 3 + 2, Skill.Value.Bonus)         'skill1.Bonus
             Next
 
             For i = 0 To 2
@@ -1463,7 +1470,7 @@ Public Module WS_CharManagment
             SetUpdateFlag(EUnitFields.UNIT_FIELD_ATTACK_POWER_MODS, AttackPowerMods)
             SetUpdateFlag(EUnitFields.UNIT_FIELD_RANGED_ATTACK_POWER_MODS, AttackPowerModsRanged)
             SetUpdateFlag(EUnitFields.UNIT_FIELD_MINRANGEDDAMAGE, RangedDamage.Minimum)
-            SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXRANGEDDAMAGE, CType(RangedDamage.Maximum + BaseRangedDamage, Single))
+            SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXRANGEDDAMAGE, RangedDamage.Maximum + BaseRangedDamage)
             SetUpdateFlag(EUnitFields.UNIT_FIELD_ATTACK_POWER_MULTIPLIER, 1.0F)
             SetUpdateFlag(EUnitFields.UNIT_FIELD_RANGED_ATTACK_POWER_MULTIPLIER, 1.0F)
             SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXHEALTHMODIFIER, 1.0F)
@@ -1511,10 +1518,10 @@ Public Module WS_CharManagment
                         SetUpdateFlag(EPlayerFields.PLAYER_VISIBLE_ITEM_1_0 + (i * PLAYER_VISIBLE_ITEM_SIZE), CType(Items(i).ItemEntry, Long))
 
                         'DONE: Include enchantment info
-                        For j As Integer = 0 To CType(Items(i), ItemObject).Enchantments.Length - 1
-                            If Not CType(Items(i), ItemObject).Enchantments(j) Is Nothing Then SetUpdateFlag(EPlayerFields.PLAYER_VISIBLE_ITEM_1_1 + j + i * PLAYER_VISIBLE_ITEM_SIZE, CType(Items(i), ItemObject).Enchantments(j).SpellID)
+                        For j As Integer = 0 To Items(i).Enchantments.Length - 1
+                            If Not Items(i).Enchantments(j) Is Nothing Then SetUpdateFlag(EPlayerFields.PLAYER_VISIBLE_ITEM_1_1 + j + i * PLAYER_VISIBLE_ITEM_SIZE, Items(i).Enchantments(j).SpellID)
                         Next
-                        SetUpdateFlag(EPlayerFields.PLAYER_VISIBLE_ITEM_1_PROPERTIES + i * PLAYER_VISIBLE_ITEM_SIZE, CType(Items(i), ItemObject).RandomProperties)
+                        SetUpdateFlag(EPlayerFields.PLAYER_VISIBLE_ITEM_1_PROPERTIES + i * PLAYER_VISIBLE_ITEM_SIZE, Items(i).RandomProperties)
                     End If
                     SetUpdateFlag(EPlayerFields.PLAYER_FIELD_INV_SLOT_HEAD + i * 2, CType(Items(i).GUID, Long))
                 Else
@@ -1532,24 +1539,24 @@ Public Module WS_CharManagment
 
             Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_GUID, GUID)
             Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_SCALE_X, Size)
-            Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_TYPE, CType(25, Integer))
+            Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_TYPE, 25)
 
             'If Summon <> 0 Then
             '   Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_SUMMON, Summon.GUID)
             'End If
-            Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, CType(Life.Current, Integer))
-            Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER1, CType(Mana.Current, Integer))
-            Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER2, CType(Rage.Current, Integer))
-            Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER4, CType(Energy.Current, Integer))
-            Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXHEALTH, CType(Life.Maximum, Integer))
-            Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXPOWER1, CType(Mana.Maximum, Integer))
-            Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXPOWER2, CType(Rage.Maximum, Integer))
-            Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXPOWER4, CType(Energy.Maximum, Integer))
+            Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, Life.Current)
+            Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER1, Mana.Current)
+            Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER2, Rage.Current)
+            Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER4, Energy.Current)
+            Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXHEALTH, Life.Maximum)
+            Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXPOWER1, Mana.Maximum)
+            Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXPOWER2, Rage.Maximum)
+            Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXPOWER4, Energy.Maximum)
             Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_FLAGS, cUnitFlags)
             Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_LEVEL, CType(Level, Integer))
             Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_FACTIONTEMPLATE, CType(Faction, Integer))
 
-            Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_BYTES_0, CType(CType(Race, Integer) + (CType(Classe, Integer) << 8) + (CType(Gender, Integer) << 16) + (CType(ManaType, Integer) << 24), Integer))
+            Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_BYTES_0, CType(Race, Integer) + (CType(Classe, Integer) << 8) + (CType(Gender, Integer) << 16) + (CType(ManaType, Integer) << 24))
             'StandState, PetLoyalty << 8, ShapeShift << 16, UnkFlag << 24, InvisibilityFlag << 25
             Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_BYTES_1, CType(StandState, Integer) + CType(Invisibility > InvisibilityLevel.VISIBLE, Integer) * 2 << 24)
             'Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_BYTES_1, cBytes1)
@@ -1615,10 +1622,10 @@ Public Module WS_CharManagment
                         Update.SetUpdateFlag(EPlayerFields.PLAYER_VISIBLE_ITEM_1_0 + (i * PLAYER_VISIBLE_ITEM_SIZE), Items(i).ItemEntry)
 
                         'DONE: Include enchantment info
-                        For j As Integer = 0 To CType(Items(i), ItemObject).Enchantments.Length - 1
-                            If Not CType(Items(i), ItemObject).Enchantments(j) Is Nothing Then Update.SetUpdateFlag(EPlayerFields.PLAYER_VISIBLE_ITEM_1_1 + j + i * PLAYER_VISIBLE_ITEM_SIZE, CType(Items(i), ItemObject).Enchantments(j).SpellID)
+                        For j As Integer = 0 To Items(i).Enchantments.Length - 1
+                            If Not Items(i).Enchantments(j) Is Nothing Then Update.SetUpdateFlag(EPlayerFields.PLAYER_VISIBLE_ITEM_1_1 + j + i * PLAYER_VISIBLE_ITEM_SIZE, Items(i).Enchantments(j).SpellID)
                         Next
-                        Update.SetUpdateFlag(EPlayerFields.PLAYER_VISIBLE_ITEM_1_PROPERTIES + i * PLAYER_VISIBLE_ITEM_SIZE, CType(Items(i), ItemObject).RandomProperties)
+                        Update.SetUpdateFlag(EPlayerFields.PLAYER_VISIBLE_ITEM_1_PROPERTIES + i * PLAYER_VISIBLE_ITEM_SIZE, Items(i).RandomProperties)
                     End If
                     Update.SetUpdateFlag(EPlayerFields.PLAYER_FIELD_INV_SLOT_HEAD + i * 2, CType(Items(i).GUID, Long))
                 Else
@@ -1814,8 +1821,8 @@ Public Module WS_CharManagment
             If Skills.ContainsKey(SkillID) Then
 
                 'DONE: Already know this skill, just increase value
-                CType(Skills(SkillID), TSkill).Base = Maximum
-                If Current <> 1 Then CType(Skills(SkillID), TSkill).Current = Current
+                Skills(SkillID).Base = Maximum
+                If Current <> 1 Then Skills(SkillID).Current = Current
 
             Else
 
@@ -1841,17 +1848,17 @@ Public Module WS_CharManagment
         End Sub
         Public Function HaveSkill(ByVal SkillID As Integer, Optional ByVal SkillValue As Integer = 0) As Boolean
             If Skills.ContainsKey(SkillID) Then
-                Return CType(Skills(SkillID), TSkill).Current >= SkillValue
+                Return Skills(SkillID).Current >= SkillValue
             Else
                 Return False
             End If
         End Function
         Public Sub UpdateSkill(ByVal SkillID As Integer, Optional ByVal SpeedMod As Single = 0)
             If SkillID = 0 Then Exit Sub
-            If CType(Skills(SkillID), TSkill).Current >= CType(Skills(SkillID), TSkill).Maximum Then Exit Sub
+            If Skills(SkillID).Current >= Skills(SkillID).Maximum Then Exit Sub
 
-            If ((CType(Skills(SkillID), TSkill).Current / CType(Skills(SkillID), TSkill).Maximum) - SpeedMod) < Rnd.NextDouble Then
-                CType(Skills(SkillID), TSkill).Increment()
+            If ((Skills(SkillID).Current / Skills(SkillID).Maximum) - SpeedMod) < Rnd.NextDouble Then
+                Skills(SkillID).Increment()
                 SetUpdateFlag(EPlayerFields.PLAYER_SKILL_INFO_1_1 + SkillsPositions(SkillID) * 3 + 1, Skills(SkillID).GetSkill)
                 SendCharacterUpdate()
             End If
@@ -1867,7 +1874,7 @@ Public Module WS_CharManagment
                 XP = XP + Ammount
                 If LogIt Then LogXPGain(Ammount, 0, 0, VictimGUID)
 
-CheckXPAgain:
+                CheckXPAgain:
                 If XP >= XPTable(Level) Then
                     XP -= XPTable(Level)
                     Level = Level + 1
@@ -1911,10 +1918,10 @@ CheckXPAgain:
                     SetUpdateFlag(EUnitFields.UNIT_FIELD_STAMINA, CType(Stamina.Base, Integer))
                     SetUpdateFlag(EUnitFields.UNIT_FIELD_SPIRIT, CType(Spirit.Base, Integer))
                     SetUpdateFlag(EUnitFields.UNIT_FIELD_INTELLECT, CType(Intellect.Base, Integer))
-                    SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, CType(Life.Current, Integer))
-                    SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER1, CType(Mana.Current, Integer))
-                    SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXHEALTH, CType(Life.Maximum, Integer))
-                    SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXPOWER1, CType(Mana.Maximum, Integer))
+                    SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, Life.Current)
+                    SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER1, Mana.Current)
+                    SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXHEALTH, Life.Maximum)
+                    SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXPOWER1, Mana.Maximum)
                     SetUpdateFlag(EUnitFields.UNIT_FIELD_ATTACK_POWER, AttackPower)
                     SetUpdateFlag(EUnitFields.UNIT_FIELD_ATTACK_POWER_MODS, AttackPowerMods)
                     SetUpdateFlag(EUnitFields.UNIT_FIELD_RANGED_ATTACK_POWER, AttackPowerRanged)
@@ -1925,7 +1932,7 @@ CheckXPAgain:
                     SetUpdateFlag(EUnitFields.UNIT_FIELD_MINOFFHANDDAMAGE, OffHandDamage.Minimum)
                     SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXOFFHANDDAMAGE, OffHandDamage.Maximum)
                     SetUpdateFlag(EUnitFields.UNIT_FIELD_MINRANGEDDAMAGE, RangedDamage.Minimum)
-                    SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXRANGEDDAMAGE, CType(RangedDamage.Maximum + BaseRangedDamage, Single))
+                    SetUpdateFlag(EUnitFields.UNIT_FIELD_MAXRANGEDDAMAGE, RangedDamage.Maximum + BaseRangedDamage)
 
                     For Each Skill As KeyValuePair(Of Integer, TSkill) In Skills
                         SetUpdateFlag(EPlayerFields.PLAYER_SKILL_INFO_1_1 + SkillsPositions(Skill.Key) * 3 + 1, Skill.Value.GetSkill)       'CType((skill1.CurrentVal(Me) + (skill1.Cap(Me) << 16)), Integer)
@@ -1968,13 +1975,13 @@ CheckXPAgain:
                 SetUpdateFlag(EPlayerFields.PLAYER_FIELD_INV_SLOT_HEAD + srcSlot * 2, 0)
 
                 CharacterDatabase.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", ITEM_SLOT_NULL, ITEM_BAG_NULL, Items(srcSlot).GUID - GUID_ITEM))
-                If Destroy Then CType(Items(srcSlot), ItemObject).Delete()
+                If Destroy Then Items(srcSlot).Delete()
                 Items.Remove(srcSlot)
                 If Update Then SendCharacterUpdate()
             Else
                 CharacterDatabase.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", ITEM_SLOT_NULL, ITEM_BAG_NULL, Items(srcBag).Items(srcSlot).GUID - GUID_ITEM))
-                If Destroy Then CType(Items(srcBag).Items(srcSlot), ItemObject).Delete()
-                CType(Items(srcBag), ItemObject).Items.Remove(srcSlot)
+                If Destroy Then Items(srcBag).Items(srcSlot).Delete()
+                Items(srcBag).Items.Remove(srcSlot)
                 If Update Then SendItemUpdate(Items(srcBag))
             End If
         End Sub
@@ -2094,19 +2101,19 @@ CheckXPAgain:
                     If Items.ContainsKey(j) Then
 
                         For Each i As KeyValuePair(Of Byte, ItemObject) In Items(j).Items
-                            If CType(i.Value, ItemObject).ItemEntry = Item.ItemEntry AndAlso CType(i.Value, ItemObject).StackCount < CType(i.Value, ItemObject).ItemInfo.Stackable Then
-                                Dim stacked As Byte = CType(i.Value, ItemObject).ItemInfo.Stackable - CType(i.Value, ItemObject).StackCount
+                            If i.Value.ItemEntry = Item.ItemEntry AndAlso i.Value.StackCount < i.Value.ItemInfo.Stackable Then
+                                Dim stacked As Byte = i.Value.ItemInfo.Stackable - i.Value.StackCount
                                 If stacked >= Item.StackCount Then
-                                    CType(i.Value, ItemObject).StackCount += Item.StackCount
+                                    i.Value.StackCount += Item.StackCount
                                     Item.Delete()
 
-                                    SendItemUpdate(CType(i.Value, ItemObject))
+                                    SendItemUpdate(i.Value)
                                     Return True
                                 Else
-                                    CType(i.Value, ItemObject).StackCount += stacked
+                                    i.Value.StackCount += stacked
                                     Item.StackCount -= stacked
-                                    CType(i.Value, ItemObject).Save()
-                                    SendItemUpdate(CType(i.Value, ItemObject))
+                                    i.Value.Save()
+                                    SendItemUpdate(i.Value)
                                     Return ItemADD_AutoSlot(Item)
                                 End If
                             End If
@@ -2125,14 +2132,14 @@ CheckXPAgain:
             ElseIf Item.ItemInfo.BagFamily <> 0 Then
                 'DONE: Insert in free special bag
                 For j As Byte = INVENTORY_SLOT_BAG_START To INVENTORY_SLOT_BAG_END - 1
-                    If Items.ContainsKey(j) AndAlso CType(Items(j), ItemObject).ItemInfo.SubClass <> ITEM_SUBCLASS.ITEM_SUBCLASS_BAG Then
-                        If (CType(Items(j), ItemObject).ItemInfo.SubClass = ITEM_SUBCLASS.ITEM_SUBCLASS_SOUL_BAG AndAlso Item.ItemInfo.BagFamily = ITEM_BAG.SOUL_SHARD) OrElse _
-                        (CType(Items(j), ItemObject).ItemInfo.SubClass = ITEM_SUBCLASS.ITEM_SUBCLASS_HERB_BAG AndAlso Item.ItemInfo.BagFamily = ITEM_BAG.HERB) OrElse _
-                        (CType(Items(j), ItemObject).ItemInfo.SubClass = ITEM_SUBCLASS.ITEM_SUBCLASS_ENCHANTING_BAG AndAlso Item.ItemInfo.BagFamily = ITEM_BAG.ENCHANTING) OrElse _
-                        (CType(Items(j), ItemObject).ItemInfo.SubClass = ITEM_SUBCLASS.ITEM_SUBCLASS_ENGINEERING_BAG AndAlso Item.ItemInfo.BagFamily = ITEM_BAG.ENGINEERING) OrElse _
-                        (CType(Items(j), ItemObject).ItemInfo.SubClass = ITEM_SUBCLASS.ITEM_SUBCLASS_MINNING_BAG AndAlso Item.ItemInfo.BagFamily = ITEM_BAG.MINNING) OrElse _
-                        (CType(Items(j), ItemObject).ItemInfo.SubClass = ITEM_SUBCLASS.ITEM_SUBCLASS_GEM_BAG AndAlso Item.ItemInfo.BagFamily = ITEM_BAG.JEWELCRAFTING) Then
-                            For i As Byte = 0 To CType(Items(i), ItemObject).ItemInfo.ContainerSlots - 1
+                    If Items.ContainsKey(j) AndAlso Items(j).ItemInfo.SubClass <> ITEM_SUBCLASS.ITEM_SUBCLASS_BAG Then
+                        If (Items(j).ItemInfo.SubClass = ITEM_SUBCLASS.ITEM_SUBCLASS_SOUL_BAG AndAlso Item.ItemInfo.BagFamily = ITEM_BAG.SOUL_SHARD) OrElse _
+                        (Items(j).ItemInfo.SubClass = ITEM_SUBCLASS.ITEM_SUBCLASS_HERB_BAG AndAlso Item.ItemInfo.BagFamily = ITEM_BAG.HERB) OrElse _
+                        (Items(j).ItemInfo.SubClass = ITEM_SUBCLASS.ITEM_SUBCLASS_ENCHANTING_BAG AndAlso Item.ItemInfo.BagFamily = ITEM_BAG.ENCHANTING) OrElse _
+                        (Items(j).ItemInfo.SubClass = ITEM_SUBCLASS.ITEM_SUBCLASS_ENGINEERING_BAG AndAlso Item.ItemInfo.BagFamily = ITEM_BAG.ENGINEERING) OrElse _
+                        (Items(j).ItemInfo.SubClass = ITEM_SUBCLASS.ITEM_SUBCLASS_MINNING_BAG AndAlso Item.ItemInfo.BagFamily = ITEM_BAG.MINNING) OrElse _
+                        (Items(j).ItemInfo.SubClass = ITEM_SUBCLASS.ITEM_SUBCLASS_GEM_BAG AndAlso Item.ItemInfo.BagFamily = ITEM_BAG.JEWELCRAFTING) Then
+                            For i As Byte = 0 To Items(i).ItemInfo.ContainerSlots - 1
                                 If Not Items(j).Items.ContainsKey(i) Then
                                     Return ItemSETSLOT(Item, j, i)
                                 End If
@@ -2150,8 +2157,8 @@ CheckXPAgain:
             Next
             'DONE: Insert as new item in bag
             For j As Byte = INVENTORY_SLOT_BAG_START To INVENTORY_SLOT_BAG_END - 1
-                If Items.ContainsKey(j) AndAlso CType(Items(j), ItemObject).ItemInfo.SubClass = ITEM_SUBCLASS.ITEM_SUBCLASS_BAG Then
-                    For i As Byte = 0 To CType(Items(j), ItemObject).ItemInfo.ContainerSlots - 1
+                If Items.ContainsKey(j) AndAlso Items(j).ItemInfo.SubClass = ITEM_SUBCLASS.ITEM_SUBCLASS_BAG Then
+                    For i As Byte = 0 To Items(j).ItemInfo.ContainerSlots - 1
                         If (Not Items(j).Items.ContainsKey(i)) AndAlso ItemCANEQUIP(Item, j, i) = WS_Items.InventoryChangeFailure.EQUIP_ERR_OK Then
                             Return ItemSETSLOT(Item, j, i)
                         End If
@@ -2209,8 +2216,8 @@ CheckXPAgain:
                     If Item.ItemInfo.Stackable > 1 Then
                         'DONE: Search for stackable in bag
                         For Each i As KeyValuePair(Of Byte, ItemObject) In Items(dstBag).Items
-                            If CType(i.Value, ItemObject).ItemEntry = Item.ItemEntry AndAlso CType(i.Value, ItemObject).StackCount < CType(i.Value, ItemObject).ItemInfo.Stackable Then
-                                Dim stacked As Byte = CType(i.Value, ItemObject).ItemInfo.Stackable - CType(i.Value, ItemObject).StackCount
+                            If i.Value.ItemEntry = Item.ItemEntry AndAlso i.Value.StackCount < i.Value.ItemInfo.Stackable Then
+                                Dim stacked As Byte = i.Value.ItemInfo.Stackable - i.Value.StackCount
                                 If stacked >= Item.StackCount Then
                                     Item.Delete()
                                     Return True
@@ -2218,14 +2225,14 @@ CheckXPAgain:
                                     Item.StackCount -= stacked
                                 End If
 
-                                CType(i.Value, ItemObject).Save()
-                                SendItemUpdate(CType(i.Value, ItemObject))
+                                i.Value.Save()
+                                SendItemUpdate(i.Value)
                             End If
                         Next
                     End If
                     'DONE: Insert as new item in bag
-                    If CType(Items(dstBag), ItemObject).ItemInfo.SubClass = ITEM_SUBCLASS.ITEM_SUBCLASS_BAG Then
-                        For slot As Byte = 0 To CType(Items(dstBag), ItemObject).ItemInfo.ContainerSlots - 1
+                    If Items(dstBag).ItemInfo.SubClass = ITEM_SUBCLASS.ITEM_SUBCLASS_BAG Then
+                        For slot As Byte = 0 To Items(dstBag).ItemInfo.ContainerSlots - 1
                             If (Not Items(dstBag).Items.ContainsKey(slot)) AndAlso ItemCANEQUIP(Item, dstBag, slot) = InventoryChangeFailure.EQUIP_ERR_OK Then
                                 Return ItemSETSLOT(Item, dstBag, slot)
                             End If
@@ -2266,7 +2273,7 @@ CheckXPAgain:
                 End If
             Else
                 'DONE: Put in bag
-                CType(Items(dstBag), ItemObject).Items(dstSlot) = Item
+                Items(dstBag).Items(dstSlot) = Item
                 CharacterDatabase.Update(String.Format("UPDATE characters_inventory SET item_slot = {0}, item_bag = {1} WHERE item_guid = {2};", dstSlot, Items(dstBag).GUID, Item.GUID - GUID_ITEM))
 
                 If Not Client Is Nothing Then SendItemUpdate(Items(dstBag))
@@ -2448,17 +2455,17 @@ CheckXPAgain:
                             End If
 
                             If ItemInfo.GetReqSkill <> 0 Then
-                                If Not Skills.ContainsKey(CType(ItemInfo.GetReqSkill, Integer)) Then Return InventoryChangeFailure.EQUIP_ERR_NO_REQUIRED_PROFICIENCY
+                                If Not Skills.ContainsKey(ItemInfo.GetReqSkill) Then Return InventoryChangeFailure.EQUIP_ERR_NO_REQUIRED_PROFICIENCY
                             End If
                             If ItemInfo.GetReqSpell <> 0 Then
                                 If Not Spells.Contains(CType(ItemInfo.GetReqSpell, Integer)) Then Return InventoryChangeFailure.EQUIP_ERR_NO_REQUIRED_PROFICIENCY
                             End If
                             If ItemInfo.ReqSkill <> 0 Then
-                                If Not Skills.ContainsKey(CType(ItemInfo.ReqSkill, Integer)) Then Return InventoryChangeFailure.EQUIP_ERR_NO_REQUIRED_PROFICIENCY
-                                If Skills(CType(ItemInfo.ReqSkill, Integer)).GetSkill < ItemInfo.ReqSkillRank Then Return InventoryChangeFailure.EQUIP_ERR_ERR_CANT_EQUIP_SKILL
+                                If Not Skills.ContainsKey(ItemInfo.ReqSkill) Then Return InventoryChangeFailure.EQUIP_ERR_NO_REQUIRED_PROFICIENCY
+                                If Skills(ItemInfo.ReqSkill).GetSkill < ItemInfo.ReqSkillRank Then Return InventoryChangeFailure.EQUIP_ERR_ERR_CANT_EQUIP_SKILL
                             End If
                             If ItemInfo.ReqSpell <> 0 Then
-                                If Not Spells.Contains(CType(ItemInfo.ReqSpell, Integer)) Then Return InventoryChangeFailure.EQUIP_ERR_NO_REQUIRED_PROFICIENCY
+                                If Not Spells.Contains(ItemInfo.ReqSpell) Then Return InventoryChangeFailure.EQUIP_ERR_NO_REQUIRED_PROFICIENCY
                             End If
                             'NOTE: Not used anymore in new honor system
                             'If ITEMDatabase(ItemID).ReqHonorRank <> 0 Then
@@ -2660,8 +2667,8 @@ CheckXPAgain:
                 Dim SMSG_UPDATE_OBJECT As New UpdatePacketClass
                 Dim tmpUpdate As New UpdateClass(FIELD_MASK_SIZE_ITEM)
                 tmpItem.FillAllUpdateFlags(tmpUpdate)
-                tmpUpdate.AddToPacket(CType(SMSG_UPDATE_OBJECT, UpdatePacketClass), ObjectUpdateType.UPDATETYPE_CREATE_OBJECT, tmpItem, 0)
-                Client.Send(CType(SMSG_UPDATE_OBJECT, UpdatePacketClass))
+                tmpUpdate.AddToPacket(SMSG_UPDATE_OBJECT, ObjectUpdateType.UPDATETYPE_CREATE_OBJECT, tmpItem, 0)
+                Client.Send(SMSG_UPDATE_OBJECT)
                 SMSG_UPDATE_OBJECT.Dispose()
                 tmpUpdate.Dispose()
 
@@ -2995,7 +3002,7 @@ CheckXPAgain:
             Next
 
             For i = DamageTypes.DMG_PHYSICAL To DamageTypes.DMG_ARCANE
-                Resistances(i).Base += CType(Item.ItemInfo, ItemInfo).Resistances(i)
+                Resistances(i).Base += Item.ItemInfo.Resistances(i)
             Next
 
             combatBlockValue += Item.ItemInfo.Block
@@ -3009,10 +3016,10 @@ CheckXPAgain:
             'DONE: Add the equip spells to the character
             Dim j As Byte
             For i = 0 To 4
-                If CType(Item.ItemInfo, ItemInfo).Spells(i).SpellID > 0 Then
-                    If WS_Spells.SPELLs.ContainsKey(CType(Item.ItemInfo, ItemInfo).Spells(i).SpellID) Then
-                        Dim SpellInfo As SpellInfo = WS_Spells.SPELLs(CType(Item.ItemInfo, ItemInfo).Spells(i).SpellID)
-                        If CType(Item.ItemInfo, ItemInfo).Spells(i).SpellTrigger = ITEM_SPELLTRIGGER_TYPE.ON_EQUIP Then
+                If Item.ItemInfo.Spells(i).SpellID > 0 Then
+                    If WS_Spells.SPELLs.ContainsKey(Item.ItemInfo.Spells(i).SpellID) Then
+                        Dim SpellInfo As SpellInfo = WS_Spells.SPELLs(Item.ItemInfo.Spells(i).SpellID)
+                        If Item.ItemInfo.Spells(i).SpellTrigger = ITEM_SPELLTRIGGER_TYPE.ON_EQUIP Then
                             For j = 0 To 2
                                 If Not (SpellInfo.SpellEffects(j) Is Nothing) Then
                                     Select Case SpellInfo.SpellEffects(j).ID
@@ -3021,7 +3028,7 @@ CheckXPAgain:
                                     End Select
                                 End If
                             Next j
-                        ElseIf CType(Item.ItemInfo, ItemInfo).Spells(i).SpellTrigger = ITEM_SPELLTRIGGER_TYPE.USE Then
+                        ElseIf Item.ItemInfo.Spells(i).SpellTrigger = ITEM_SPELLTRIGGER_TYPE.USE Then
                             'DONE: Show item cooldown when equipped
                             Dim cooldown As New PacketClass(OPCODES.SMSG_ITEM_COOLDOWN)
                             cooldown.AddUInt64(Item.GUID)
@@ -3041,7 +3048,7 @@ CheckXPAgain:
                 spellCastState = spellCastState.SPELL_STATE_IDLE
                 Dim tmpCaster As WS_Base.BaseObject
                 tmpCaster = Me
-                CType(WS_Spells.SPELLs(spellCasted), SpellInfo).SendInterrupted(0, tmpCaster)
+                WS_Spells.SPELLs(spellCasted).SendInterrupted(0, tmpCaster)
                 SendCastResult(SpellFailedReason.CAST_FAIL_INTERRUPTED, Client, spellCasted, 0)
                 spellCasted = 0
             End If
@@ -3057,7 +3064,7 @@ CheckXPAgain:
             'TODO: Add the other item stat types here also
             Dim i As Byte
             For i = 0 To 9
-                Select Case CType(Item.ItemInfo, ItemInfo).ItemBonusStatType(i)
+                Select Case Item.ItemInfo.ItemBonusStatType(i)
                     Case ITEM_STAT_TYPE.HEALTH
                         Life.Bonus -= Item.ItemInfo.ItemBonusStatValue(i)
                     Case ITEM_STAT_TYPE.AGILITY
@@ -3084,7 +3091,7 @@ CheckXPAgain:
             Next
 
             For i = DamageTypes.DMG_PHYSICAL To DamageTypes.DMG_ARCANE
-                Resistances(i).Base -= CType(Item.ItemInfo, ItemInfo).Resistances(i)
+                Resistances(i).Base -= Item.ItemInfo.Resistances(i)
             Next
 
             combatBlockValue -= Item.ItemInfo.Block
@@ -3098,10 +3105,10 @@ CheckXPAgain:
             'DONE: Remove the equip spells to the character
             Dim j As Byte
             For i = 0 To 4
-                If CType(Item.ItemInfo, ItemInfo).Spells(i).SpellID > 0 Then
-                    If WS_Spells.SPELLs.ContainsKey(CType(Item.ItemInfo, ItemInfo).Spells(i).SpellID) Then
-                        Dim SpellInfo As SpellInfo = WS_Spells.SPELLs(CType(Item.ItemInfo, ItemInfo).Spells(i).SpellID)
-                        If CType(Item.ItemInfo, ItemInfo).Spells(i).SpellTrigger = ITEM_SPELLTRIGGER_TYPE.ON_EQUIP Then
+                If Item.ItemInfo.Spells(i).SpellID > 0 Then
+                    If WS_Spells.SPELLs.ContainsKey(Item.ItemInfo.Spells(i).SpellID) Then
+                        Dim SpellInfo As SpellInfo = WS_Spells.SPELLs(Item.ItemInfo.Spells(i).SpellID)
+                        If Item.ItemInfo.Spells(i).SpellTrigger = ITEM_SPELLTRIGGER_TYPE.ON_EQUIP Then
                             For j = 0 To 2
                                 If Not (SpellInfo.SpellEffects(j) Is Nothing) Then
                                     Select Case SpellInfo.SpellEffects(j).ID
@@ -3342,6 +3349,7 @@ CheckXPAgain:
                 End If
             End If
         End Sub
+        
         Public Enum ChangeSpeedType As Byte
             RUN
             RUNBACK
@@ -3709,14 +3717,14 @@ CheckXPAgain:
                     Me.DealDamage(Damage, Attacker)
                     Return
                 Case Else
-                    'TODO: Magical resists here
+            'TODO: Magical resists here
             End Select
 
             If Life.Current = 0 Then
                 Me.Die(Attacker)
                 Exit Sub
             Else
-                SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, CType(Life.Current, Integer))
+                SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, Life.Current)
                 SendCharacterUpdate(True)
             End If
         End Sub
@@ -3736,7 +3744,7 @@ CheckXPAgain:
             If Life.Current = 0 Then
                 Me.Die(Attacker)
             Else
-                SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, CType(Life.Current, Integer))
+                SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, Life.Current)
                 SendCharacterUpdate()
             End If
         End Sub
@@ -3744,7 +3752,7 @@ CheckXPAgain:
             If DEAD Then Exit Sub
 
             Life.Current += Damage
-            SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, CType(Life.Current, Integer))
+            SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, Life.Current)
             SendCharacterUpdate()
         End Sub
         Public Overrides Sub Energize(ByVal Damage As Integer, ByVal Power As ManaTypes, Optional ByRef Attacker As BaseUnit = Nothing)
@@ -3754,15 +3762,15 @@ CheckXPAgain:
                 Case ManaTypes.TYPE_MANA
                     If Mana.Current = Mana.Maximum Then Exit Sub
                     Mana.Current += Damage
-                    SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER1, CType(Mana.Current, Integer))
+                    SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER1, Mana.Current)
                 Case ManaTypes.TYPE_RAGE
                     If Rage.Current = Rage.Maximum Then Exit Sub
                     Rage.Current += Damage
-                    SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER2, CType(Rage.Current, Integer))
+                    SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER2, Rage.Current)
                 Case ManaTypes.TYPE_ENERGY
                     If Energy.Current = Energy.Maximum Then Exit Sub
                     Energy.Current += Damage
-                    SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER4, CType(Energy.Current, Integer))
+                    SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER4, Energy.Current)
                 Case Else
                     Exit Sub
             End Select
@@ -3772,7 +3780,7 @@ CheckXPAgain:
         'System
         Public Sub Logout(Optional ByVal StateObj As Object = Nothing)
             Try
-                CType(LogoutTimer, Threading.Timer).Dispose()
+                LogoutTimer.Dispose()
                 LogoutTimer = Nothing
             Catch
             End Try
@@ -3929,7 +3937,7 @@ CheckXPAgain:
             Next
 
             If Not Client Is Nothing Then Client.Character = Nothing
-            If Not LogoutTimer Is Nothing Then CType(LogoutTimer, Threading.Timer).Dispose()
+            If Not LogoutTimer Is Nothing Then LogoutTimer.Dispose()
             LogoutTimer = Nothing
 
             GC.Collect()
@@ -3987,7 +3995,7 @@ CheckXPAgain:
             End If
 
             If CharRaces.ContainsKey(CType(MySQLQuery.Rows(0).Item("char_race"), Byte)) = True Then
-                Faction = CType(CharRaces(CType(MySQLQuery.Rows(0).Item("char_race"), Byte)), TCharRace).FactionID
+                Faction = CharRaces(CType(MySQLQuery.Rows(0).Item("char_race"), Byte)).FactionID
             End If
 
             'DONE: Get BindPoint Coords
@@ -4410,7 +4418,7 @@ CheckXPAgain:
             'char_skillList
             temp.Clear()
             For Each Skill As KeyValuePair(Of Integer, TSkill) In Skills
-                temp.Add(String.Format("{0}:{1}:{2}", Skill.Key, CType(Skill.Value, TSkill).Current, CType(Skill.Value, TSkill).Maximum))
+                temp.Add(String.Format("{0}:{1}:{2}", Skill.Key, Skill.Value.Current, Skill.Value.Maximum))
             Next
             tmp = tmp & ", char_skillList=""" & Join(temp.ToArray, " ") & """"
 
@@ -4768,15 +4776,15 @@ CheckXPAgain:
         FATIGUE = 0
     End Enum
 
-#End Region
+    #End Region
 
-#Region "WS.CharMangment.Handlers"
+    #Region "WS.CharMangment.Handlers"
 
     Public Sub On_CMSG_LFM_SET_AUTOFILL(ByRef packet As PacketClass, ByRef Client As ClientClass)
-        'Unsure how this works
+    'Unsure how this works
     End Sub
     Public Sub On_CMSG_LFG_SET_AUTOJOIN(ByRef packet As PacketClass, ByRef Client As ClientClass)
-        'Unsure how this works
+    'Unsure how this works
     End Sub
 
     Public Sub On_CMSG_SET_ACTION_BUTTON(ByRef packet As PacketClass, ByRef Client As ClientClass)
@@ -4827,7 +4835,7 @@ CheckXPAgain:
             UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_BYTES_1, Client.Character.cBytes1)
 
             'DONE: Send packet
-            UpdateData.AddToPacket(SMSG_UPDATE_OBJECT, ObjectUpdateType.UPDATETYPE_VALUES, CType(Client.Character, CharacterObject), 1)
+            UpdateData.AddToPacket(SMSG_UPDATE_OBJECT, ObjectUpdateType.UPDATETYPE_VALUES, Client.Character, 1)
             Client.SendMultiplyPackets(SMSG_UPDATE_OBJECT)
             Client.Character.SendToNearPlayers(SMSG_UPDATE_OBJECT)
             SMSG_UPDATE_OBJECT.Dispose()
@@ -4877,7 +4885,7 @@ CheckXPAgain:
             UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_BYTES_1, Client.Character.cBytes1)
 
             'DONE: Send packet
-            UpdateData.AddToPacket(SMSG_UPDATE_OBJECT, ObjectUpdateType.UPDATETYPE_VALUES, CType(Client.Character, CharacterObject), 1)
+            UpdateData.AddToPacket(SMSG_UPDATE_OBJECT, ObjectUpdateType.UPDATETYPE_VALUES, Client.Character, 1)
             Client.Send(SMSG_UPDATE_OBJECT)
             SMSG_UPDATE_OBJECT.Dispose()
 
@@ -5026,9 +5034,9 @@ CheckXPAgain:
         Client.Character.SendCharacterUpdate(False)
     End Sub
 
-#End Region
+    #End Region
 
-#Region "WS.CharMangment.CreateCharacter"
+    #Region "WS.CharMangment.CreateCharacter"
 
     Public Function CreateCharacter(ByVal Account As String, ByVal Name As String, ByVal Race As Byte, ByVal Classe As Byte, ByVal Gender As Byte, ByVal Skin As Byte, ByVal Face As Byte, ByVal HairStyle As Byte, ByVal HairColor As Byte, ByVal FacialHair As Byte, ByVal OutfitID As Byte) As Integer
         Dim Character As New CharacterObject
@@ -5288,6 +5296,6 @@ CheckXPAgain:
 
     End Sub
 
-#End Region
+    #End Region
 
 End Module

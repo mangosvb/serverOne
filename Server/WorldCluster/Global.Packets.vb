@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.IO
 Imports mangosVB.Common.BaseWriter
 
@@ -119,7 +118,7 @@ Public Module Packets
     End Function
 
     Public Class PacketClass
-        Implements IDisposable
+    Implements IDisposable
 
         Public Data() As Byte
         Public Offset As Integer = 4
@@ -450,7 +449,7 @@ Public Module Packets
                 Offset += 1
             End If
 
-            Return CType(BitConverter.ToUInt64(GUID, 0), ULong)
+            Return BitConverter.ToUInt64(GUID, 0)
         End Function
         Public Function GetPackGUID(ByVal Offset As Integer) As ULong
             Dim flags As Byte = Data(Offset)
@@ -490,7 +489,7 @@ Public Module Packets
                 Offset += 1
             End If
 
-            Return CType(BitConverter.ToUInt64(GUID, 0), ULong)
+            Return BitConverter.ToUInt64(GUID, 0)
         End Function
 
         Public Sub Dispose() Implements System.IDisposable.Dispose

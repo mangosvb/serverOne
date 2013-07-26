@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Threading
 Imports System.Collections.Generic
 Imports mangosVB.Common.BaseWriter
@@ -48,17 +47,17 @@ Public Module WS_Handlers_Instance
         End If
     End Function
     Public Sub InstanceMapExpire(ByVal Map As UInteger, ByVal Instance As UInteger)
-        'TODO: Respawn the instance if there are players
-        'TODO: Delete the instance if there are no players
+    'TODO: Respawn the instance if there are players
+    'TODO: Delete the instance if there are no players
     End Sub
 
     Public Sub InstanceMapEnter(ByVal c As CharacterObject)
         If Maps(c.MapID).Type = MapTypes.MAP_COMMON Then
             c.instance = 0
 
-#If DEBUG Then
+            #If DEBUG Then
             c.SystemMessage(SetColor("You are not in instance.", 0, 0, 255))
-#End If
+            #End If
         Else
             'DONE: Instances expire check
             InstanceMapUpdate()
@@ -70,9 +69,9 @@ Public Module WS_Handlers_Instance
             If q.Rows.Count > 0 Then
                 'Character is saved to instance
                 c.instance = q.Rows(0).Item("instance")
-#If DEBUG Then
+                #If DEBUG Then
                 c.SystemMessage(SetColor(String.Format("You are in instance #{0}, map {1}", c.instance, c.MapID), 0, 0, 255))
-#End If
+                #End If
                 SendInstanceMessage(c.Client, c.MapID, q.Rows(0).Item("expire") - GetTimestamp(Now))
                 Exit Sub
             End If
@@ -84,9 +83,9 @@ Public Module WS_Handlers_Instance
                 If q.Rows.Count > 0 Then
                     'Group is saved to instance
                     c.instance = q.Rows(0).Item("instance")
-#If DEBUG Then
+                    #If DEBUG Then
                     c.SystemMessage(SetColor(String.Format("You are in instance #{0}, map {1}", c.instance, c.MapID), 0, 0, 255))
-#End If
+                    #End If
                     SendInstanceMessage(c.Client, c.MapID, q.Rows(0).Item("expire") - GetTimestamp(Now))
                     Exit Sub
                 End If
@@ -107,14 +106,14 @@ Public Module WS_Handlers_Instance
                 CharacterDatabase.Update(String.Format("INSERT INTO characters_instances_group (group_id, map, instance, expire) VALUES ({0}, {1}, {2}, {3});", c.Group.ID, c.MapID, instanceNewID, instanceNewResetTime))
             End If
 
-#If DEBUG Then
+            #If DEBUG Then
             c.SystemMessage(SetColor(String.Format("You are in instance #{0}, map {1}", c.instance, c.MapID), 0, 0, 255))
-#End If
+            #End If
             SendInstanceMessage(c.Client, c.MapID, GetTimestamp(Now) - instanceNewResetTime)
         End If
     End Sub
     Public Sub InstanceMapLeave(ByVal c As CharacterObject)
-        'TODO: Start teleport timer
+    'TODO: Start teleport timer
     End Sub
 
     'SMSG_INSTANCE_DIFFICULTY

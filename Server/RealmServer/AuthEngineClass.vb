@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Runtime.InteropServices
 Imports System.Text
 Imports System.Security.Cryptography
@@ -23,10 +22,10 @@ Imports mangosVB.Common.BaseWriter
 Imports mangosVB.Common
 
 Public Class AuthEngineClass
-    Implements IDisposable
+Implements IDisposable
     Public Log As New BaseWriter
 
-#Region "AuthEngine.Constructive"
+    #Region "AuthEngine.Constructive"
     Shared Sub New()
         Dim buffer1 As Byte() = New Byte(16 - 1) {}
         AuthEngineClass.unk3 = buffer1
@@ -42,46 +41,46 @@ Public Class AuthEngineClass
         Me.b = New Byte(20 - 1) {}
     End Sub
     <DllImport("LIBEAY32.dll", SetLastError:=True, CharSet:=CharSet.Auto, CallingConvention:=CallingConvention.Cdecl)> _
-    Public Shared Function BN_add(ByVal r As IntPtr, ByVal a As IntPtr, ByVal b As IntPtr) As Integer
+    Private Shared Function BN_add(ByVal r As IntPtr, ByVal a As IntPtr, ByVal b As IntPtr) As Integer
     End Function
 
     <DllImport("LIBEAY32.dll", SetLastError:=True, CharSet:=CharSet.Auto, CallingConvention:=CallingConvention.Cdecl)> _
-    Public Shared Function BN_bin2bn(ByVal ByteArrayIn As Byte(), ByVal length As Integer, ByVal [to] As IntPtr) As IntPtr
+    Private Shared Function BN_bin2bn(ByVal ByteArrayIn As Byte(), ByVal length As Integer, ByVal [to] As IntPtr) As IntPtr
     End Function
 
     <DllImport("LIBEAY32.dll", SetLastError:=True, CharSet:=CharSet.Auto, CallingConvention:=CallingConvention.Cdecl)> _
-    Public Shared Function BN_bn2bin(ByVal a As IntPtr, ByVal [to] As Byte()) As Integer
+    Private Shared Function BN_bn2bin(ByVal a As IntPtr, ByVal [to] As Byte()) As Integer
     End Function
 
     <DllImport("LIBEAY32.dll", SetLastError:=True, CharSet:=CharSet.Auto, CallingConvention:=CallingConvention.Cdecl)> _
-    Public Shared Function BN_CTX_free(ByVal a As IntPtr) As Integer
+    Private Shared Function BN_CTX_free(ByVal a As IntPtr) As Integer
     End Function
 
     <DllImport("LIBEAY32.dll", SetLastError:=True, CharSet:=CharSet.Auto, CallingConvention:=CallingConvention.Cdecl)> _
-    Public Shared Function BN_CTX_new() As IntPtr
+    Private Shared Function BN_CTX_new() As IntPtr
     End Function
 
     <DllImport("LIBEAY32.dll", SetLastError:=True, CharSet:=CharSet.Auto, CallingConvention:=CallingConvention.Cdecl)> _
-    Public Shared Function BN_mod(ByVal r As IntPtr, ByVal a As IntPtr, ByVal b As IntPtr, ByVal ctx As IntPtr) As Integer
+    Private Shared Function BN_mod(ByVal r As IntPtr, ByVal a As IntPtr, ByVal b As IntPtr, ByVal ctx As IntPtr) As Integer
     End Function
 
     <DllImport("LIBEAY32.dll", SetLastError:=True, CharSet:=CharSet.Auto, CallingConvention:=CallingConvention.Cdecl)> _
-    Public Shared Function BN_mod_exp(ByVal res As IntPtr, ByVal a As IntPtr, ByVal p As IntPtr, ByVal m As IntPtr, ByVal ctx As IntPtr) As IntPtr
+    Private Shared Function BN_mod_exp(ByVal res As IntPtr, ByVal a As IntPtr, ByVal p As IntPtr, ByVal m As IntPtr, ByVal ctx As IntPtr) As IntPtr
     End Function
 
     <DllImport("LIBEAY32.dll", SetLastError:=True, CharSet:=CharSet.Auto, CallingConvention:=CallingConvention.Cdecl)> _
-    Public Shared Function BN_mul(ByVal r As IntPtr, ByVal a As IntPtr, ByVal b As IntPtr, ByVal ctx As IntPtr) As Integer
+    Private Shared Function BN_mul(ByVal r As IntPtr, ByVal a As IntPtr, ByVal b As IntPtr, ByVal ctx As IntPtr) As Integer
     End Function
 
     <DllImport("LIBEAY32.dll", SetLastError:=True, CharSet:=CharSet.Auto, CallingConvention:=CallingConvention.Cdecl)> _
-    Public Shared Function BN_new() As IntPtr
+    Private Shared Function BN_new() As IntPtr
     End Function
 
     Public Sub Dispose() Implements System.IDisposable.Dispose
     End Sub
-#End Region
+    #End Region
 
-#Region "AuthEngine.Calculations"
+    #Region "AuthEngine.Calculations"
     Private Sub CalculateB()
         Dim encoding1 As New UTF7Encoding
         AuthEngineClass.RAND_bytes(Me.b, 20)
@@ -196,7 +195,7 @@ Public Class AuthEngineClass
         G_Hash = algorithm1.ComputeHash(g)
         User_Hash = algorithm1.ComputeHash(Username)
         For i = 0 To 19
-            NG_Hash(i) = CType(N_Hash(i) Xor G_Hash(i), Byte)
+            NG_Hash(i) = N_Hash(i) Xor G_Hash(i)
         Next i
 
         Dim temp As Byte() = AuthEngineClass.Concat(NG_Hash, User_Hash)
@@ -238,7 +237,7 @@ Public Class AuthEngineClass
         Dim NG_Hash As Byte() = New Byte(20 - 1) {}
         i = 0
         Do While (i < 20)
-            NG_Hash(i) = CType((N_Hash(i) Xor G_Hash(i)), Byte)
+            NG_Hash(i) = (N_Hash(i) Xor G_Hash(i))
             i += 1
         Loop
 
@@ -280,9 +279,9 @@ Public Class AuthEngineClass
         buffer1 = AuthEngineClass.Concat(opad, buffer2)
         SS_Hash = sha1.ComputeHash(buffer1)
     End Sub
-#End Region
+    #End Region
 
-#Region "AuthEngine.Functions"
+    #Region "AuthEngine.Functions"
     Private Shared Function Combine(ByVal Bytes1 As Byte(), ByVal Bytes2 As Byte()) As Byte()
         If (Bytes1.Length <> Bytes2.Length) Then Return Nothing
 
@@ -355,9 +354,9 @@ Public Class AuthEngineClass
 
         Return ReturnList
     End Function
-#End Region
+    #End Region
 
-#Region "AuthEngine.Variables"
+    #Region "AuthEngine.Variables"
 
     Private A As Byte()
     Private b As Byte()
@@ -376,9 +375,9 @@ Public Class AuthEngineClass
 
     Public M1 As Byte()
     Public SS_Hash As Byte()
-#End Region
+    #End Region
 
-#Region "AuthEngine.BigIntegers"
+    #Region "AuthEngine.BigIntegers"
     Private BNA As IntPtr
     Private BNb As IntPtr
     Private BNPublicB As IntPtr
@@ -389,6 +388,6 @@ Public Class AuthEngineClass
     Private BNU As IntPtr
     Private BNv As IntPtr
     Private BNx As IntPtr
-#End Region
+    #End Region
 
 End Class

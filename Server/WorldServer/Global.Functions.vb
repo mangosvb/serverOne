@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Threading
 Imports System.Reflection
 Imports System.Text.RegularExpressions
@@ -23,7 +22,7 @@ Imports mangosVB.Common.BaseWriter
 
 Public Module Functions
 
-#Region "System"
+    #Region "System"
 
     Public Function ToInteger(ByVal Value As Boolean) As Integer
         If Value Then
@@ -71,17 +70,17 @@ Public Module Functions
         Return startDate.Add(timeSpan)
     End Function
 
-#If LINUX Then
+    #If LINUX Then
     Public Function timeGetTime() As Integer
-        Return System.Environment.TickCount()
+    Return System.Environment.TickCount()
     End Function
     Public Function timeBeginPeriod(ByVal uPeriod As Integer) As Integer
-        Return 0
+    Return 0
     End Function
-#Else
+    #Else
     Public Declare Function timeGetTime Lib "winmm.dll" () As Integer
     Public Declare Function timeBeginPeriod Lib "winmm.dll" (ByVal uPeriod As Integer) As Integer
-#End If
+    #End If
 
     Public Function EscapeString(ByVal s As String) As String
         Return s.Replace("""", "").Replace("'", "")
@@ -107,8 +106,8 @@ Public Module Functions
         Return Regex_Guild.IsMatch(strName)
     End Function
 
-#End Region
-#Region "Database"
+    #End Region
+    #Region "Database"
 
     Public Sub Ban_Account(ByVal Name As String, ByVal Reason As String)
         AccountDatabase.Update("UPDATE accounts SET banned = 1 WHERE account = """ & Name & """;")
@@ -116,8 +115,8 @@ Public Module Functions
         Log.WriteLine(LogType.INFORMATION, "Account [{0}] banned by server. Reason: [{1}].", Name, Reason)
     End Sub
 
-#End Region
-#Region "Game"
+    #End Region
+    #Region "Game"
 
     Public Function GetClassName(ByRef Classe As Integer) As String
         Select Case Classe
@@ -217,8 +216,8 @@ Public Module Functions
         Return False
     End Function
 
-#End Region
-#Region "Packets"
+    #End Region
+    #Region "Packets"
 
     Public Sub SendMessageMOTD(ByRef Client As ClientClass, ByVal Message As String)
         Dim packet As New PacketClass(OPCODES.SMSG_MOTD)
@@ -299,12 +298,12 @@ Public Module Functions
         Dim Year As Integer = time.Year - 2000
         Dim Month As Integer = time.Month - 1
         Dim Day As Integer = time.Day - 1
-        Dim DayOfWeek As Integer = CType(time.DayOfWeek, Integer)
+        Dim DayOfWeek As Integer = time.DayOfWeek
         Dim Hour As Integer = time.Hour
         Dim Minute As Integer = time.Minute
 
         'SMSG_LOGIN_SETTIMESPEED.AddInt32(CType((((((Minute + (Hour << 6)) + (DayOfWeek << 11)) + (Day << 14)) + (Year << 18)) + (Month << 20)), Integer))
-        SMSG_LOGIN_SETTIMESPEED.AddInt32(CType((((((Minute + (Hour << 6)) + (DayOfWeek << 11)) + (Day << 14)) + (Month << 20)) + (Year << 24)), Integer))
+        SMSG_LOGIN_SETTIMESPEED.AddInt32((((((Minute + (Hour << 6)) + (DayOfWeek << 11)) + (Day << 14)) + (Month << 20)) + (Year << 24)))
         SMSG_LOGIN_SETTIMESPEED.AddSingle(0.017F)
 
         Client.Send(SMSG_LOGIN_SETTIMESPEED)
@@ -372,6 +371,7 @@ Public Module Functions
         STATUS_OFFLINE_PVP = 2
         STATUS_ONLINE_PVP = 3
     End Enum
+    
     Public Enum PartyMemberStatsBits As Byte
         FIELD_STATUS = 0
         FIELD_LIFE_CURRENT = 1
@@ -383,6 +383,7 @@ Public Module Functions
         FIELD_ZONEID = 7
         FIELD_POSXPOSY = 8
     End Enum
+    
     Public Enum PartyMemberStatsFlag As Integer
         GROUP_UPDATE_FLAG_NONE = &H0 'nothing
         GROUP_UPDATE_FLAG_STATUS = &H1 'uint16, flags
@@ -417,6 +418,6 @@ Public Module Functions
         Return packet
     End Function
 
-#End Region
+    #End Region
 
 End Module

@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Runtime.InteropServices
 Imports System.IO
 Imports System.Reflection
@@ -32,7 +31,7 @@ Imports mangosVB.Common.BaseWriter
 '   creature.Move()
 
 Public Class ScriptedObject
-    Implements IDisposable
+Implements IDisposable
 
     Public ass As [Assembly]
 
@@ -69,11 +68,11 @@ Public Class ScriptedObject
             cParameters.ReferencedAssemblies.Add(AppDomain.CurrentDomain.FriendlyName)
             cParameters.GenerateExecutable = False
             cParameters.GenerateInMemory = False
-#If DEBUG Then
+            #If DEBUG Then
             cParameters.IncludeDebugInformation = True
-#Else
+            #Else
             cParameters.IncludeDebugInformation = false
-#End If
+            #End If
 
             cResults = VBcp.CompileAssemblyFromFile(cParameters, AssemblySources)
 
@@ -112,11 +111,11 @@ Public Class ScriptedObject
             cParameters.ReferencedAssemblies.Add(AppDomain.CurrentDomain.FriendlyName)
             cParameters.GenerateExecutable = False     ' result is a .DLL
             cParameters.GenerateInMemory = InMemory
-#If DEBUG Then
+            #If DEBUG Then
             cParameters.IncludeDebugInformation = True
-#Else
+            #Else
             cParameters.IncludeDebugInformation = false
-#End If
+            #End If
 
             If AssemblySourceFile.IndexOf(".cs") <> -1 Then
                 cResults = CScp.CompileAssemblyFromFile(cParameters, System.AppDomain.CurrentDomain.BaseDirectory() & AssemblySourceFile)

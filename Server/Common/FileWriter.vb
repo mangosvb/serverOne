@@ -20,8 +20,9 @@ Imports System.IO
 
 'Using this logging type, all logs are saved in files numbered by date.
 'Writting commands is done trought console.
+
 Public Class FileWriter
-    Inherits BaseWriter
+Inherits BaseWriter
 
     Protected Output As IO.StreamWriter
     Protected LastDate As Date = #1/1/2007#

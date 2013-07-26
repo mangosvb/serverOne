@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System
 Imports System.IO
 Imports mangosVB.Common
@@ -24,7 +23,7 @@ Imports mangosVB.WorldServer
 
 Public Module WS_DBCLoad
 
-#Region "MapContinents"
+    #Region "MapContinents"
     Public Sub InitializeWorldMapContinent()
         Try
             Dim tmpDBC As DBC.BufferedDBC = New DBC.BufferedDBC("dbc\WorldMapContinent.dbc")
@@ -81,8 +80,8 @@ Public Module WS_DBCLoad
         End Try
     End Sub
 
-#End Region
-#Region "Spells"
+    #End Region
+    #Region "Spells"
     Public Sub InitializeSpellRadius()
         Try
             Dim tmpDBC As DBC.BufferedDBC = New DBC.BufferedDBC("dbc\SpellRadius.dbc")
@@ -448,8 +447,8 @@ Public Module WS_DBCLoad
             Console.ForegroundColor = System.ConsoleColor.Gray
         End Try
     End Sub
-#End Region
-#Region "Taxi"
+    #End Region
+    #Region "Taxi"
     Public Sub InitializeTaxiNodes()
         Try
             Dim tmpDBC As DBC.BufferedDBC = New DBC.BufferedDBC("dbc\TaxiNodes.dbc")
@@ -558,8 +557,8 @@ Public Module WS_DBCLoad
             Console.ForegroundColor = System.ConsoleColor.Gray
         End Try
     End Sub
-#End Region
-#Region "GraveYards"
+    #End Region
+    #Region "GraveYards"
     Public Sub InitializeGraveyards()
         Try
             Dim tmpDBC As DBC.BufferedDBC = New DBC.BufferedDBC("dbc\WorldSafeLocs.dbc")
@@ -591,8 +590,8 @@ Public Module WS_DBCLoad
             Console.ForegroundColor = System.ConsoleColor.Gray
         End Try
     End Sub
-#End Region
-#Region "Skills"
+    #End Region
+    #Region "Skills"
     Public Sub InitializeSkillLines()
         Try
             Dim tmpDBC As DBC.BufferedDBC = New DBC.BufferedDBC("dbc\SkillLine.dbc")
@@ -620,8 +619,8 @@ Public Module WS_DBCLoad
             Console.ForegroundColor = System.ConsoleColor.Gray
         End Try
     End Sub
-#End Region
-#Region "Locks"
+    #End Region
+    #Region "Locks"
     Public Sub InitializeLocks()
         Try
             Dim tmpDBC As DBC.BufferedDBC = New DBC.BufferedDBC("dbc\Lock.dbc")
@@ -659,8 +658,8 @@ Public Module WS_DBCLoad
             Console.ForegroundColor = System.ConsoleColor.Gray
         End Try
     End Sub
-#End Region
-#Region "AreaTable"
+    #End Region
+    #Region "AreaTable"
     Public Sub InitializeAreaTable()
         Try
             Dim tmpDBC As DBC.BufferedDBC = New DBC.BufferedDBC("dbc\AreaTable.dbc")
@@ -707,8 +706,8 @@ Public Module WS_DBCLoad
             Console.ForegroundColor = System.ConsoleColor.Gray
         End Try
     End Sub
-#End Region
-#Region "Emotes"
+    #End Region
+    #Region "Emotes"
     Public Sub InitializeEmotesText()
         Try
             Dim tmpDBC As DBC.BufferedDBC = New DBC.BufferedDBC("dbc\EmotesText.dbc")
@@ -741,8 +740,8 @@ Public Module WS_DBCLoad
             Console.ForegroundColor = System.ConsoleColor.Gray
         End Try
     End Sub
-#End Region
-#Region "Factions"
+    #End Region
+    #Region "Factions"
     Public Sub InitializeFactions()
         Try
             Dim tmpDBC As DBC.BufferedDBC = New DBC.BufferedDBC("dbc\Faction.dbc")
@@ -775,9 +774,9 @@ Public Module WS_DBCLoad
                 factionName = tmpDBC.Item(i, 19) ' May be needed in the future
 
                 FactionInfo(factionID) = New WS_DBCDatabase.TFaction(factionID, factionFlag, _
-                   Flags(0), Flags(1), Flags(2), Flags(3), _
-                   ReputationStats(0), ReputationStats(1), ReputationStats(2), ReputationStats(3), _
-                   ReputationFlags(0), ReputationFlags(1), ReputationFlags(2), ReputationFlags(3))
+                                                                     Flags(0), Flags(1), Flags(2), Flags(3), _
+                                                                     ReputationStats(0), ReputationStats(1), ReputationStats(2), ReputationStats(3), _
+                                                                     ReputationFlags(0), ReputationFlags(1), ReputationFlags(2), ReputationFlags(3))
             Next i
 
             tmpDBC.Dispose()
@@ -857,8 +856,8 @@ Public Module WS_DBCLoad
             Console.ForegroundColor = System.ConsoleColor.Gray
         End Try
     End Sub
-#End Region
-#Region "DurabilityCosts"
+    #End Region
+    #Region "DurabilityCosts"
     Public Sub InitializeDurabilityCosts()
         Try
             Dim tmpDBC As DBC.BufferedDBC = New DBC.BufferedDBC("dbc\DurabilityCosts.dbc")
@@ -886,8 +885,8 @@ Public Module WS_DBCLoad
             Console.ForegroundColor = System.ConsoleColor.Gray
         End Try
     End Sub
-#End Region
-#Region "BankBagSlots"
+    #End Region
+    #Region "BankBagSlots"
     Public Sub InitializeBankBagSlotPrices()
         Try
             Dim tmpDBC As DBC.BufferedDBC = New DBC.BufferedDBC("dbc\BankBagSlotPrices.dbc")
@@ -912,8 +911,8 @@ Public Module WS_DBCLoad
         End Try
     End Sub
 
-#End Region
-#Region "Talents"
+    #End Region
+    #Region "Talents"
     Public Sub LoadTalentDBC()
         Try
             Dim DBC As DBC.BufferedDBC = New DBC.BufferedDBC("dbc\Talent.dbc")
@@ -978,8 +977,8 @@ Public Module WS_DBCLoad
             Console.ForegroundColor = System.ConsoleColor.Gray
         End Try
     End Sub
-#End Region
-#Region "AuctionHouse"
+    #End Region
+    #Region "AuctionHouse"
     Public Sub LoadAuctionHouseDBC()
         Try
             Dim DBC As DBC.BufferedDBC = New DBC.BufferedDBC("dbc\AuctionHouse.dbc")
@@ -1010,8 +1009,8 @@ Public Module WS_DBCLoad
         End Try
     End Sub
 
-#End Region
-#Region "Regen"
+    #End Region
+    #Region "Regen"
     Public Const GT_MAX_LEVEL As Integer = 100
     Public Sub LoadOCTLifeRegenDBC()
         Try
@@ -1093,8 +1092,8 @@ Public Module WS_DBCLoad
             Console.ForegroundColor = System.ConsoleColor.Gray
         End Try
     End Sub
-#End Region
-#Region "Items"
+    #End Region
+    #Region "Items"
     Public Sub LoadItemExtendedCost()
         Try
             Dim DBC As DBC.BufferedDBC = New DBC.BufferedDBC("dbc\ItemExtendedCost.dbc")
@@ -1128,6 +1127,6 @@ Public Module WS_DBCLoad
             Console.ForegroundColor = System.ConsoleColor.Gray
         End Try
     End Sub
-#End Region
+    #End Region
 
 End Module

@@ -14,15 +14,14 @@
 ' You should have received a copy of the GNU General Public License
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 Public Module WC_Battlegrounds
 
-#Region "WC.Battlegrounds.Constants"
+    #Region "WC.Battlegrounds.Constants"
 
-#End Region
-#Region "WC.Battlegrounds.Handlers"
+    #End Region
+    #Region "WC.Battlegrounds.Handlers"
     Public Sub On_CMSG_BATTLEMASTER_JOIN(ByRef packet As PacketClass, ByRef Client As ClientClass)
-        'TODO: Join battleground
+    'TODO: Join battleground
     End Sub
 
     Public Sub On_CMSG_BATTLEMASTER_JOIN_ARENA(ByRef packet As PacketClass, ByRef Client As ClientClass)
@@ -67,9 +66,9 @@ Public Module WC_Battlegrounds
         Client.Send(response)
         response.Dispose()
     End Sub
-#End Region
-#Region "WC.Battlegrounds.Functions"
+    #End Region
+    #Region "WC.Battlegrounds.Functions"
 
-#End Region
+    #End Region
 
 End Module

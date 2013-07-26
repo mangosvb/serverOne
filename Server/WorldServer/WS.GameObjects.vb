@@ -15,18 +15,17 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Threading
 Imports System.Runtime.CompilerServices
 Imports mangosVB.Common.BaseWriter
 
 Public Module WS_GameObjects
 
-#Region "WS.GameObjects.TypeDef"
+    #Region "WS.GameObjects.TypeDef"
 
     'WARNING: Use only with GAMEOBJECTSDatabase()
     Public Class GameObjectInfo
-        Implements IDisposable
+    Implements IDisposable
 
         Public ID As Integer = 0
         Public Model As Integer = 0
@@ -85,9 +84,10 @@ Public Module WS_GameObjects
         End Sub
     End Class
     'WARNING: Use only with WORLD_GAMEOBJECTs()
+    
     Public Class GameObjectObject
-        Inherits BaseObject
-        Implements IDisposable
+    Inherits BaseObject
+    Implements IDisposable
 
         Public ID As Integer = 0
         Public Flags As Integer = 0
@@ -156,8 +156,8 @@ Public Module WS_GameObjects
 
         Public Sub FillAllUpdateFlags(ByRef Update As UpdateClass, ByRef Character As CharacterObject)
             Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_GUID, GUID)
-            Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_TYPE, CType(ObjectType.TYPE_GAMEOBJECT + ObjectType.TYPE_OBJECT, Integer))
-            Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_ENTRY, CType(ID, Integer))
+            Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_TYPE, ObjectType.TYPE_GAMEOBJECT + ObjectType.TYPE_OBJECT)
+            Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_ENTRY, ID)
             Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_SCALE_X, Size)
 
             If Owner Then Update.SetUpdateFlag(EGameObjectFields.OBJECT_FIELD_CREATED_BY, Owner)
@@ -265,7 +265,7 @@ Public Module WS_GameObjects
 
             'If there's a loottable open for this gameobject already then hook it to the gameobject
             If LootTable.ContainsKey(GUID) Then
-                Loot = CType(LootTable(GUID), LootObject)
+                Loot = LootTable(GUID)
             End If
         End Sub
 
@@ -432,14 +432,15 @@ Public Module WS_GameObjects
         LOOT_LOOTED = 2
     End Enum
 
-#End Region
-#Region "WS.GameObjects.HelperSubs"
+    #End Region
+    #Region "WS.GameObjects.HelperSubs"
 
     <MethodImplAttribute(MethodImplOptions.Synchronized)> _
     Private Function GetNewGUID() As ULong
         GameObjectsGUIDCounter += 1
         GetNewGUID = GameObjectsGUIDCounter
     End Function
+    
     Public Enum GameObjectType As Byte
         GAMEOBJECT_TYPE_DOOR = 0
         GAMEOBJECT_TYPE_BUTTON = 1
@@ -494,7 +495,7 @@ Public Module WS_GameObjects
                 Exit Sub
             Else
                 GameObject = GAMEOBJECTSDatabase(GameObjectID)
-                'Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_GAMEOBJECT_QUERY [GameObjectID={2} GameObjectGUID={3:X}]", Client.IP, Client.Port, GameObjectID, GameObjectGUID - GUID_GAMEOBJECT)
+            'Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_GAMEOBJECT_QUERY [GameObjectID={2} GameObjectGUID={3:X}]", Client.IP, Client.Port, GameObjectID, GameObjectGUID - GUID_GAMEOBJECT)
             End If
 
             response.AddInt32(GameObject.ID)
@@ -529,7 +530,7 @@ Public Module WS_GameObjects
 
             Case GameObjectType.GAMEOBJECT_TYPE_DOOR
                 'DONE: Doors opening
-                CType(WORLD_GAMEOBJECTs(GameObjectGUID), GameObjectObject).State = GameObjectLootState.DOOR_OPEN
+                WORLD_GAMEOBJECTs(GameObjectGUID).State = GameObjectLootState.DOOR_OPEN
 
                 Dim response As New PacketClass(OPCODES.SMSG_UPDATE_OBJECT)
                 response.AddInt32(1)
@@ -537,21 +538,21 @@ Public Module WS_GameObjects
                 Dim UpdateData As New UpdateClass
                 UpdateData.SetUpdateFlag(EGameObjectFields.GAMEOBJECT_STATE, WORLD_GAMEOBJECTs(GameObjectGUID).State)
                 UpdateData.SetUpdateFlag(EGameObjectFields.GAMEOBJECT_FLAGS, WORLD_GAMEOBJECTs(GameObjectGUID).Flags)
-                UpdateData.AddToPacket(response, ObjectUpdateType.UPDATETYPE_VALUES, CType(WORLD_GAMEOBJECTs(GameObjectGUID), GameObjectObject), 1)
+                UpdateData.AddToPacket(response, ObjectUpdateType.UPDATETYPE_VALUES, WORLD_GAMEOBJECTs(GameObjectGUID), 1)
                 WORLD_GAMEOBJECTs(GameObjectGUID).SendToNearPlayers(response)
                 UpdateData.Dispose()
                 response.Dispose()
 
-                ThreadPool.RegisterWaitForSingleObject(New AutoResetEvent(False), New WaitOrTimerCallback(AddressOf CType(WORLD_GAMEOBJECTs(GameObjectGUID), GameObjectObject).Respawn), Nothing, 6000, True)
+                ThreadPool.RegisterWaitForSingleObject(New AutoResetEvent(False), New WaitOrTimerCallback(AddressOf WORLD_GAMEOBJECTs(GameObjectGUID).Respawn), Nothing, 6000, True)
 
             Case GameObjectType.GAMEOBJECT_TYPE_CHAIR
                 'DONE: Chair sitting
-                Client.Character.Teleport(CType(WORLD_GAMEOBJECTs(GameObjectGUID), GameObjectObject).positionX, CType(WORLD_GAMEOBJECTs(GameObjectGUID), GameObjectObject).positionY, CType(WORLD_GAMEOBJECTs(GameObjectGUID), GameObjectObject).positionZ, CType(WORLD_GAMEOBJECTs(GameObjectGUID), GameObjectObject).orientation, CType(WORLD_GAMEOBJECTs(GameObjectGUID), GameObjectObject).MapID)
+                Client.Character.Teleport(WORLD_GAMEOBJECTs(GameObjectGUID).positionX, WORLD_GAMEOBJECTs(GameObjectGUID).positionY, WORLD_GAMEOBJECTs(GameObjectGUID).positionZ, WORLD_GAMEOBJECTs(GameObjectGUID).orientation, WORLD_GAMEOBJECTs(GameObjectGUID).MapID)
 
                 'STATE_SITTINGCHAIRLOW = 4
                 'STATE_SITTINGCHAIRMEDIUM = 5
                 'STATE_SITTINGCHAIRHIGH = 6
-                Client.Character.StandState = (3 + CType(WORLD_GAMEOBJECTs(GameObjectGUID), GameObjectObject).Sound(1))
+                Client.Character.StandState = (3 + WORLD_GAMEOBJECTs(GameObjectGUID).Sound(1))
 
             Case GameObjectType.GAMEOBJECT_TYPE_QUESTGIVER
                 Dim qm As QuestMenu = GetQuestMenuGO(Client.Character, GameObjectGUID)
@@ -606,6 +607,6 @@ Public Module WS_GameObjects
         End Select
     End Sub
 
-#End Region
+    #End Region
 
 End Module

@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Threading
 Imports System.IO
 Imports System.Runtime.InteropServices
@@ -24,8 +23,9 @@ Imports mangosVB.Common.BaseWriter
 Imports mangosVB.Common
 
 Public Module WS_Maps
-#Region "Zones"
+    #Region "Zones"
     Public AreaTable As New Dictionary(Of Integer, TArea)
+    
     Public Class TArea
         Public ID As Integer
         Public Level As Byte
@@ -33,11 +33,13 @@ Public Module WS_Maps
         Public ZoneType As Integer
         Public Team As AreaTeam
         Public Name As String
+        
         Public Enum AreaTeam As Integer
             AREATEAM_NONE = 0
             AREATEAM_ALLY = 2
             AREATEAM_HORDE = 4
         End Enum
+        
         Public Enum AreaFlag As Integer
             AREA_FLAG_SNOW = &H1                ' snow (only Dun Morogh, Naxxramas, Razorfen Downs and Winterspring)
             AREA_FLAG_UNK1 = &H2                ' unknown, (only Naxxramas and Razorfen Downs)
@@ -78,12 +80,12 @@ Public Module WS_Maps
             Return (ZoneType And AreaFlag.AREA_FLAG_ARENA)
         End Function
     End Class
-#End Region
+    #End Region
 
-#Region "Continents"
+    #Region "Continents"
 
     Public Class TMapTile
-        Implements IDisposable
+    Implements IDisposable
 
         Public Const SIZE As Single = 533.3333F
         Public Const RESOLUTION_ZMAP As Integer = 64 - 1
@@ -97,7 +99,7 @@ Public Module WS_Maps
         Public WaterLevel(RESOLUTION_WATER, RESOLUTION_WATER) As Single
         Public ZCoord(RESOLUTION_ZMAP, RESOLUTION_ZMAP) As Single
 
-#If ENABLE_PPOINTS Then
+        #If ENABLE_PPOINTS Then
         Public ZCoord_PP(RESOLUTION_ZMAP, RESOLUTION_ZMAP) As Single
         Public ZCoord_PP_ModTimes As Integer = 0
 
@@ -119,7 +121,7 @@ Public Module WS_Maps
             w.Close()
             f.Close()
         End Sub
-#End If
+        #End If
 
         Public PlayersHere As New List(Of ULong)
         Public CreaturesHere As New List(Of ULong)
@@ -177,7 +179,7 @@ Public Module WS_Maps
                 f.Close()
             End If
 
-#If ENABLE_PPOINTS Then
+            #If ENABLE_PPOINTS Then
             'DONE: Initializing PPoints to unused values
             For x = 0 To RESOLUTION_ZMAP
                 For y = 0 To RESOLUTION_ZMAP
@@ -206,7 +208,7 @@ Public Module WS_Maps
                 f.Close()
             End If
 
-#End If
+            #End If
 
         End Sub
         Public Sub Dispose() Implements System.IDisposable.Dispose
@@ -214,8 +216,9 @@ Public Module WS_Maps
             UnloadSpawns(CellX, CellY, CellMap)
         End Sub
     End Class
+    
     Public Class TMap
-        Implements IDisposable
+    Implements IDisposable
 
         Public ID As Integer
         Public Type As MapTypes = MapTypes.MAP_COMMON
@@ -434,7 +437,7 @@ Public Module WS_Maps
         'Return False
     End Function
 
-#If ENABLE_PPOINTS Then
+    #If ENABLE_PPOINTS Then
     Public Const PPOINT_BAD As Single = Single.MinValue
     Public Const PPOINT_LIMIT As Single = 5.0F
     Public Const PPOINT_SAVE As Integer = 5
@@ -502,22 +505,22 @@ Public Module WS_Maps
             Return z
         End Try
     End Function
-#Else
+    #Else
     Public Function GetZCoord(ByVal x As Single, ByVal y As Single, ByVal z As Single, ByVal Map As Integer) As Single
-        Try
-            Dim MapTileX As Byte = Fix(32 - (x / TMapTile.SIZE))
-            Dim MapTileY As Byte = Fix(32 - (y / TMapTile.SIZE))
-            Dim MapTile_LocalX As Byte = CType(TMapTile.RESOLUTION_ZMAP * (32 - (x / TMapTile.SIZE) - MapTileX), Byte)
-            Dim MapTile_LocalY As Byte = CType(TMapTile.RESOLUTION_ZMAP * (32 - (y / TMapTile.SIZE) - MapTileY), Byte)
+    Try
+    Dim MapTileX As Byte = Fix(32 - (x / TMapTile.SIZE))
+    Dim MapTileY As Byte = Fix(32 - (y / TMapTile.SIZE))
+    Dim MapTile_LocalX As Byte = CType(TMapTile.RESOLUTION_ZMAP * (32 - (x / TMapTile.SIZE) - MapTileX), Byte)
+    Dim MapTile_LocalY As Byte = CType(TMapTile.RESOLUTION_ZMAP * (32 - (y / TMapTile.SIZE) - MapTileY), Byte)
 
-            If Maps(Map).Tiles(MapTileX, MapTileY) Is Nothing Then Return 0
-            Return Maps(Map).Tiles(MapTileX, MapTileY).ZCoord(MapTile_LocalX, MapTile_LocalY)
-        Catch ex As Exception
-            Log.WriteLine(LogType.FAILED, ex.ToString)
-            Return z
-        End Try
+    If Maps(Map).Tiles(MapTileX, MapTileY) Is Nothing Then Return 0
+    Return Maps(Map).Tiles(MapTileX, MapTileY).ZCoord(MapTile_LocalX, MapTile_LocalY)
+    Catch ex As Exception
+    Log.WriteLine(LogType.FAILED, ex.ToString)
+    Return z
+    End Try
     End Function
-#End If
+    #End If
 
     Public Sub LoadSpawns(ByVal TileX As Byte, ByVal TileY As Byte, ByVal TileMap As Integer)
         'Caluclate (x1, y1) and (x2, y2)
@@ -585,8 +588,8 @@ Public Module WS_Maps
         Try
             WORLD_CREATUREs_Lock.AcquireReaderLock(DEFAULT_LOCK_TIMEOUT)
             For Each Creature As KeyValuePair(Of ULong, CreatureObject) In WORLD_CREATUREs
-                If CType(Creature.Value, CreatureObject).MapID = TileMap AndAlso CType(Creature.Value, CreatureObject).SpawnX >= MinX AndAlso CType(Creature.Value, CreatureObject).SpawnX <= MaxX AndAlso CType(Creature.Value, CreatureObject).SpawnY >= MinY AndAlso CType(Creature.Value, CreatureObject).SpawnY <= MaxY Then
-                    CType(Creature.Value, CreatureObject).Destroy()
+                If Creature.Value.MapID = TileMap AndAlso Creature.Value.SpawnX >= MinX AndAlso Creature.Value.SpawnX <= MaxX AndAlso Creature.Value.SpawnY >= MinY AndAlso Creature.Value.SpawnY <= MaxY Then
+                    Creature.Value.Destroy()
                 End If
             Next
         Catch ex As Exception
@@ -596,21 +599,21 @@ Public Module WS_Maps
         End Try
 
         For Each Gameobject As KeyValuePair(Of ULong, GameObjectObject) In WORLD_GAMEOBJECTs
-            If CType(Gameobject.Value, GameObjectObject).MapID = TileMap AndAlso CType(Gameobject.Value, GameObjectObject).positionX >= MinX AndAlso CType(Gameobject.Value, GameObjectObject).positionX <= MaxX AndAlso CType(Gameobject.Value, GameObjectObject).positionY >= MinY AndAlso CType(Gameobject.Value, GameObjectObject).positionY <= MaxY Then
-                CType(Gameobject.Value, GameObjectObject).Destroy()
+            If Gameobject.Value.MapID = TileMap AndAlso Gameobject.Value.positionX >= MinX AndAlso Gameobject.Value.positionX <= MaxX AndAlso Gameobject.Value.positionY >= MinY AndAlso Gameobject.Value.positionY <= MaxY Then
+                Gameobject.Value.Destroy()
             End If
         Next
 
         For Each Corpseobject As KeyValuePair(Of ULong, CorpseObject) In WORLD_CORPSEOBJECTs
-            If CType(Corpseobject.Value, CorpseObject).MapID = TileMap AndAlso CType(Corpseobject.Value, CorpseObject).positionX >= MinX AndAlso CType(Corpseobject.Value, CorpseObject).positionX <= MaxX AndAlso CType(Corpseobject.Value, CorpseObject).positionY >= MinY AndAlso CType(Corpseobject.Value, CorpseObject).positionY <= MaxY Then
-                CType(Corpseobject.Value, CorpseObject).Destroy()
+            If Corpseobject.Value.MapID = TileMap AndAlso Corpseobject.Value.positionX >= MinX AndAlso Corpseobject.Value.positionX <= MaxX AndAlso Corpseobject.Value.positionY >= MinY AndAlso Corpseobject.Value.positionY <= MaxY Then
+                Corpseobject.Value.Destroy()
             End If
         Next
 
     End Sub
 
-#End Region
-#Region "Instances"
+    #End Region
+    #Region "Instances"
 
     Public Enum TransferAbortReason As Short
         TRANSFER_ABORT_MAX_PLAYERS = &H1                ' Transfer Aborted: instance is full
@@ -632,10 +635,11 @@ Public Module WS_Maps
         p.Dispose()
     End Sub
 
-#End Region
+    #End Region
 
-#Region "Graveyards"
+    #Region "Graveyards"
     Public Graveyards As New List(Of TGraveyard)
+    
     Public Class TGraveyard
         Public x As Single
         Public y As Single
@@ -688,6 +692,6 @@ Public Module WS_Maps
         End If
     End Sub
 
-#End Region
+    #End Region
 
 End Module

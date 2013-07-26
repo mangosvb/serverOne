@@ -14,7 +14,6 @@
 ' You should have received a copy of the GNU General Public License
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 Public Module WS_DynamicObjects
     Private Function GetNewGUID() As ULong
         DynamicObjectsGUIDCounter += 1
@@ -22,8 +21,8 @@ Public Module WS_DynamicObjects
     End Function
 
     Public Class DynamicObjectObject
-        Inherits BaseObject
-        Implements IDisposable
+    Inherits BaseObject
+    Implements IDisposable
 
         Public SpellID As Integer = 0
         Public Effects As New List(Of SpellEffect)
@@ -57,7 +56,7 @@ Public Module WS_DynamicObjects
 
         Public Sub FillAllUpdateFlags(ByRef Update As UpdateClass)
             Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_GUID, GUID)
-            Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_TYPE, CType(ObjectType.TYPE_DYNAMICOBJECT + ObjectType.TYPE_OBJECT, Integer))
+            Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_TYPE, ObjectType.TYPE_DYNAMICOBJECT + ObjectType.TYPE_OBJECT)
             Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_SCALE_X, 0.5F * Radius)
 
             Update.SetUpdateFlag(EDynamicObjectFields.DYNAMICOBJECT_CASTER, Caster.GUID)

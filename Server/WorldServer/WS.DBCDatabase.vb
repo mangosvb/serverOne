@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Threading
 Imports System.IO
 Imports System.Runtime.InteropServices
@@ -23,8 +22,9 @@ Imports mangosVB.Common.BaseWriter
 
 Public Module WS_DBCDatabase
 
-#Region "WorldMap"
+    #Region "WorldMap"
     Public WorldMapContinent As New Dictionary(Of Integer, WorldMapContinentDimension)
+    
     Public Class WorldMapContinentDimension
         Public X_Minimum As Single
         Public Y_Minimum As Single
@@ -33,6 +33,7 @@ Public Module WS_DBCDatabase
     End Class
 
     Public WorldMapTransforms As New List(Of WorldMapTransformsDimension)
+    
     Public Class WorldMapTransformsDimension
         Public Map As UInteger
         Public X_Minimum As Single
@@ -45,9 +46,10 @@ Public Module WS_DBCDatabase
         Public Dest_Y As Single
     End Class
 
-#End Region
-#Region "EmotesText"
+    #End Region
+    #Region "EmotesText"
     Public EmotesText As New Dictionary(Of Integer, Integer)
+    
     Public Enum Emotes As Integer
         'Auto generated from Emotes.dbc
         STATE_WORK_NOSHEATHE_MINING = 233
@@ -127,6 +129,7 @@ Public Module WS_DBCDatabase
         STATE_SPELLKNEELSTART = 353
         ONESHOT_SUBMERGE = 374
     End Enum
+    
     Public Enum EmoteStates As Integer
         ANIM_STAND = &H0
         ANIM_DEATH = &H1
@@ -264,8 +267,8 @@ Public Module WS_DBCDatabase
         ANIM_FISHINGCAST = &H85
         ANIM_FISHINGLOOP = &H86
     End Enum
-#End Region
-#Region "SkillLines"
+    #End Region
+    #Region "SkillLines"
     Public Enum SKILL_LineCategory
         ATTRIBUTES = 5
         WEAPON_SKILLS = 6
@@ -276,6 +279,7 @@ Public Module WS_DBCDatabase
         PROFESSIONS = 11
         NOT_DISPLAYED = 12
     End Enum
+    
     Public Enum SKILL_IDs As Integer
         SKILL_NONE = 0
         SKILL_FROST = 6
@@ -417,11 +421,12 @@ Public Module WS_DBCDatabase
         SKILL_INTERNAL = 769
     End Enum
     Public SkillLines As New Dictionary(Of Integer, Integer)
-#End Region
-#Region "Taxi"
+    #End Region
+    #Region "Taxi"
     Public TaxiNodes As New Dictionary(Of Integer, TTaxiNode)
     Public TaxiPaths As New Dictionary(Of Integer, TTaxiPath)
     Public TaxiPathNodes As New Dictionary(Of Integer, TTaxiPathNode)
+    
     Public Class TTaxiNode
         Public x As Single
         Public y As Single
@@ -489,10 +494,11 @@ Public Module WS_DBCDatabase
         Next
         Return selectedTaxiNode
     End Function
-#End Region
-#Region "Talents"
+    #End Region
+    #Region "Talents"
     Public TalentsTab As New Dictionary(Of Integer, Integer)(30)
     Public Talents As New Dictionary(Of Integer, TalentInfo)(500)
+    
     Public Class TalentInfo
         Public TalentID As Integer
         Public TalentTab As Integer
@@ -502,9 +508,10 @@ Public Module WS_DBCDatabase
         Public RequiredTalent(2) As Integer
         Public RequiredPoints(2) As Integer
     End Class
-#End Region
-#Region "Factions"
+    #End Region
+    #Region "Factions"
     Public Const FACTION_TEMPLATES_COUNT As Integer = 2074
+    
     Enum FactionTemplates
         ' Fields
         None = 0
@@ -1113,12 +1120,14 @@ Public Module WS_DBCDatabase
         MonsterPredator_2 = 2029
         CavernsOfTimeDurnholde_2 = 2074
     End Enum                    'FactionTemplate.dbc       'Used in CREATUREs Database as Faction
+    
     Public Enum TReaction As Byte
         HOSTILE = 0
         NEUTRAL = 1
         FRIENDLY = 2
         FIGHT_SUPPORT = 3
     End Enum
+    
     Enum Factions
         None = 0
         PLAYERHuman = 1
@@ -1393,6 +1402,7 @@ Public Module WS_DBCDatabase
         ObjectForceReaction = 1081
         HolidayMonster = 1087
     End Enum        'Faction.dbc
+    
     Public Enum FactionMasks
         FACTION_MASK_PLAYER = 1     'any player
         FACTION_MASK_ALLIANCE = 2   'player or creature from alliance team
@@ -1401,6 +1411,7 @@ Public Module WS_DBCDatabase
     End Enum
 
     Public CharRaces As New Dictionary(Of Integer, TCharRace)
+    
     Public Class TCharRace
         Public FactionID As Short
         Public ModelMale As Integer
@@ -1418,6 +1429,7 @@ Public Module WS_DBCDatabase
     End Class
 
     Public FactionInfo As New Dictionary(Of Integer, TFaction)
+    
     Public Class TFaction
         Public ID As Short
         Public VisibleID As Short
@@ -1444,6 +1456,7 @@ Public Module WS_DBCDatabase
     End Class
 
     Public FactionTemplatesInfo As New Dictionary(Of Integer, TFactionTemplate)
+    
     Public Class TFactionTemplate
         Public FactionID As Integer
         Public ourMask As UInteger
@@ -1458,9 +1471,10 @@ Public Module WS_DBCDatabase
         Public friendFaction3 As Integer
         Public friendFaction4 As Integer
     End Class
-#End Region
-#Region "Spells"
+    #End Region
+    #Region "Spells"
     Public SpellShapeShiftForm As New List(Of TSpellShapeshiftForm)
+    
     Public Class TSpellShapeshiftForm
         Public ID As Integer = 0
         Public Flags1 As Integer = 0
@@ -1489,12 +1503,13 @@ Public Module WS_DBCDatabase
     Public gtOCTRegenMP As New List(Of Single)
     Public gtRegenHPPerSpt As New List(Of Single)
     Public gtRegenMPPerSpt As New List(Of Single)
-#End Region
-#Region "Items"
+    #End Region
+    #Region "Items"
     Public Const DurabilityCosts_MAX As Integer = 300
     Public DurabilityCosts(DurabilityCosts_MAX, 28) As Short
 
     Public ItemExtendedCosts As New Dictionary(Of Integer, TItemExtendedCost)
+    
     Public Class TItemExtendedCost
         Public HonorPoints As Integer
         Public ArenaPoints As Integer
@@ -1516,8 +1531,8 @@ Public Module WS_DBCDatabase
             ItemCount(4) = Count5
         End Sub
     End Class
-#End Region
-#Region "XPTable"
+    #End Region
+    #Region "XPTable"
     'This might need some work, xp table might not be correct for tbc.
     Public Sub InitializeXPTable()
         WS_CharManagment.XPTable(0) = 0
@@ -1592,8 +1607,8 @@ Public Module WS_DBCDatabase
         WS_CharManagment.XPTable(69) = 779700
         Log.WriteLine(LogType.INFORMATION, "Initalizing: XPTable initialized.")
     End Sub
-#End Region
-#Region "Battlemasters"
+    #End Region
+    #Region "Battlemasters"
     Public Battlemasters As New Dictionary(Of Integer, Byte)
     Public Sub InitializeBattlemasters()
         Dim MySQLQuery As New DataTable
@@ -1654,8 +1669,8 @@ Public Module WS_DBCDatabase
         Public HordeStartO As Single
         Public IsActive As Byte
     End Class
-#End Region
-#Region "TeleportCoords"
+    #End Region
+    #Region "TeleportCoords"
     Public TeleportCoords As New Dictionary(Of Integer, TTeleportCoords)
     Public Sub InitializeTeleportCoords()
         Dim SpellID As Integer
@@ -1684,8 +1699,8 @@ Public Module WS_DBCDatabase
         Public PosY As Single
         Public PosZ As Single
     End Class
-#End Region
-#Region "MonterSayCombat"
+    #End Region
+    #Region "MonterSayCombat"
     Public Sub InitializeMonsterSayCombat()
         ' Load the MonsterSayCombat Hashtable.
         Dim Entry As Integer = 0
@@ -1755,9 +1770,9 @@ Public Module WS_DBCDatabase
         Log.WriteLine(LogType.INFORMATION, "World: {0} Monster Say(s) Loaded.", Count)
 
     End Sub
-#End Region
+    #End Region
 
-#Region "Other"
+    #Region "Other"
     Public Sub InitializeInternalDatabase()
 
         InitializeLoadDBCs()
@@ -1870,5 +1885,5 @@ Public Module WS_DBCDatabase
         Log.WriteLine(LogType.INFORMATION, "Scripting: AI initialized.")
     End Sub
 
-#End Region
+    #End Region
 End Module

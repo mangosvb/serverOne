@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Threading
 Imports System.Net.Sockets
 Imports System.Xml.Serialization
@@ -29,14 +28,14 @@ Imports mangosVB.Common
 Public Module WC_Handlers
 
     Public Sub IntializePacketHandlers()
-        'NOTE: These opcodes are not used in any way
-        '   none
+    'NOTE: These opcodes are not used in any way
+    '   none
 
-        'NOTE: These opcodes below are handled by Voice Server
-        '   none
+    'NOTE: These opcodes below are handled by Voice Server
+    '   none
 
-        'NOTE: TODO Opcodes
-        '   none
+    'NOTE: TODO Opcodes
+    '   none
 
     End Sub
 

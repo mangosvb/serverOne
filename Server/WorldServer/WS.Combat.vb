@@ -15,14 +15,13 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Threading
 Imports System.Runtime.CompilerServices
 Imports mangosVB.Common.BaseWriter
 
 Public Module WS_Combat
 
-#Region "WS.Combat.Constants"
+    #Region "WS.Combat.Constants"
 
     Public Enum ProcFlags
         PROC_FLAG_NONE = &H0                            ' None
@@ -66,8 +65,8 @@ Public Module WS_Combat
         RANGED_ATTACK = 2
     End Enum
 
-#End Region
-#Region "WS.Combat.Calculations"
+    #End Region
+    #Region "WS.Combat.Calculations"
 
     Public Sub DoEmote(ByVal AnimationID As Integer, ByRef Unit As BaseObject)
         'EMOTE_ONESHOT_WOUNDCRITICAL
@@ -268,12 +267,12 @@ Public Module WS_Combat
                 'DONE: Dodge attack
                 result.Damage = 0
                 result.victimState = AttackVictimState.VICTIMSTATE_DODGE
-                DoEmote(Emotes.ONESHOT_PARRYUNARMED, CType(Victim, BaseUnit))
+                DoEmote(Emotes.ONESHOT_PARRYUNARMED, Victim)
             Case Is < chanceToMiss + chanceToDodge + chanceToParry
                 'DONE: Parry attack
                 result.Damage = 0
                 result.victimState = AttackVictimState.VICTIMSTATE_PARRY
-                DoEmote(Emotes.ONESHOT_PARRYUNARMED, CType(Victim, BaseUnit))
+                DoEmote(Emotes.ONESHOT_PARRYUNARMED, Victim)
             Case Is < chanceToMiss + chanceToDodge + chanceToParry + chanceToGlancingBlow
                 'DONE: Glancing Blow
                 result.Damage -= CInt(Fix(skillDiference * 0.03F * result.Damage))
@@ -285,9 +284,9 @@ Public Module WS_Combat
                     result.Damage -= result.Blocked
                     If result.Damage < 0 Then result.Damage = 0 '... attacks. You block
                     If CType(Victim, CharacterObject).combatBlockValue <> 0 Then
-                        DoEmote(Emotes.ONESHOT_PARRYSHIELD, CType(Victim, BaseUnit))
+                        DoEmote(Emotes.ONESHOT_PARRYSHIELD, Victim)
                     Else
-                        DoEmote(Emotes.ONESHOT_PARRYUNARMED, CType(Victim, BaseUnit))
+                        DoEmote(Emotes.ONESHOT_PARRYUNARMED, Victim)
                     End If
                     result.victimState = AttackVictimState.VICTIMSTATE_BLOCKS
                 End If
@@ -295,20 +294,20 @@ Public Module WS_Combat
                 'DONE: Critical hit attack
                 result.Damage *= 2
                 result.HitInfo += AttackHitState.HITINFO_CRITICALHIT
-                DoEmote(Emotes.ONESHOT_WOUNDCRITICAL, CType(Victim, BaseUnit))
+                DoEmote(Emotes.ONESHOT_WOUNDCRITICAL, Victim)
             Case Is < chanceToMiss + chanceToDodge + chanceToParry + chanceToGlancingBlow + chanceToBlock + chanceToCrit + chanceToCrushingBlow
                 'DONE: Crushing Blow
                 result.Damage *= 2
                 result.HitInfo = AttackHitState.HIT_CRUSHING_BLOW
             Case Else
-                'DONE: Normal hit
+        'DONE: Normal hit
         End Select
 
         'TODO: Absorb
         'TODO: Resist
         'TODO: Procs
 
-#If DEBUG Then
+        #If DEBUG Then
         Log.WriteLine(LogType.INFORMATION, "skillDiference = {0}", skillDiference)
         Log.WriteLine(LogType.INFORMATION, "chanceToMiss = {0}", chanceToMiss)
         Log.WriteLine(LogType.INFORMATION, "chanceToCrit = {0}", chanceToCrit)
@@ -319,7 +318,7 @@ Public Module WS_Combat
         Log.WriteLine(LogType.INFORMATION, "result.Blocked = {0}", result.Blocked)
         Log.WriteLine(LogType.INFORMATION, "result.HitInfo = {0}", result.HitInfo)
         Log.WriteLine(LogType.INFORMATION, "result.victimState = {0}", result.victimState)
-#End If
+        #End If
 
         Return result
     End Function
@@ -385,8 +384,8 @@ Public Module WS_Combat
                     'NOTE: Character is with selected hand weapons
                     If .Items.ContainsKey(EQUIPMENT_SLOT_OFFHAND) Then
                         'NOTE: Character is with equiped offhand item, checking if it is weapon
-                        If CType(.Items(EQUIPMENT_SLOT_OFFHAND), ItemObject).ItemInfo.InventoryType = INVENTORY_TYPES.INVTYPE_WEAPONOFFHAND Or _
-                        CType(.Items(EQUIPMENT_SLOT_OFFHAND), ItemObject).ItemInfo.InventoryType = INVENTORY_TYPES.INVTYPE_WEAPON Then
+                        If .Items(EQUIPMENT_SLOT_OFFHAND).ItemInfo.InventoryType = INVENTORY_TYPES.INVTYPE_WEAPONOFFHAND Or _
+                        .Items(EQUIPMENT_SLOT_OFFHAND).ItemInfo.InventoryType = INVENTORY_TYPES.INVTYPE_WEAPON Then
                             'DualWield Miss chance
                             If skillDiference > 10 Then
                                 Return 19 + 5 - skillDiference * 0.1F
@@ -526,9 +525,9 @@ Public Module WS_Combat
 
                 If tmpSkill = 0 Then
                     Return CInt(c.Level) * 5
-                Else
+                    Else
                     .UpdateSkill(tmpSkill, 0.01)
-                    Return CType(.Skills(tmpSkill), TSkill).Current
+                    Return .Skills(tmpSkill).Current
                 End If
 
             End With
@@ -539,7 +538,7 @@ Public Module WS_Combat
     Public Function GetSkillDefence(ByRef c As BaseUnit) As Integer
         If TypeOf c Is CharacterObject Then
             CType(c, CharacterObject).UpdateSkill(SKILL_IDs.SKILL_DEFENSE, 0.01)
-            Return CType(CType(c, CharacterObject).Skills(CType(SKILL_IDs.SKILL_DEFENSE, Integer)), TSkill).Current()
+            Return CType(c, CharacterObject).Skills(CType(SKILL_IDs.SKILL_DEFENSE, Integer)).Current()
         End If
         Return CInt(c.Level) * 5
     End Function
@@ -582,13 +581,13 @@ Public Module WS_Combat
         Else
             With CType(c, CreatureObject)
                 result.DamageType = DamageTypes.DMG_PHYSICAL
-                result.Damage = Rnd.Next(CType(CREATURESDatabase(.ID), CreatureInfo).Damage.Minimum, CType(CREATURESDatabase(.ID), CreatureInfo).Damage.Maximum + 1) ' + (CType(CREATURESDatabase(.ID), CreatureInfo).AtackPower / 14 * (CType(CREATURESDatabase(.ID), CreatureInfo).BaseAttackTime / 1000))
+                result.Damage = Rnd.Next(CREATURESDatabase(.ID).Damage.Minimum, CREATURESDatabase(.ID).Damage.Maximum + 1) ' + (CType(CREATURESDatabase(.ID), CreatureInfo).AtackPower / 14 * (CType(CREATURESDatabase(.ID), CreatureInfo).BaseAttackTime / 1000))
             End With
         End If
     End Sub
 
-#End Region
-#Region "WS.Combat.Framework"
+    #End Region
+    #Region "WS.Combat.Framework"
 
     Public Enum AttackVictimState As Integer
         'ATTACK_HIT = 1
@@ -609,6 +608,7 @@ Public Module WS_Combat
         VICTIMSTATE_IS_IMMUNE = 7
         VICTIMSTATE_DEFLECTS = 8
     End Enum
+    
     Public Enum AttackHitState As Integer
 
         HIT_UNARMED = HITINFO_NORMALSWING
@@ -635,6 +635,7 @@ Public Module WS_Combat
         HITINFO_NOACTION = &H10000
         HITINFO_SWINGNOHITSOUND = &H80000
     End Enum
+    
     Structure DamageInfo
         Public Damage As Integer
         Public DamageType As DamageMasks
@@ -652,7 +653,7 @@ Public Module WS_Combat
     End Structure
 
     Public Class TAttackTimer
-        Implements IDisposable
+    Implements IDisposable
 
         'Internal
         Private NextAttackTimer As Timer = Nothing
@@ -661,6 +662,8 @@ Public Module WS_Combat
         Public combatReach As Single
         Public combatDualWield As Boolean = False
         Public Sub Dispose() Implements System.IDisposable.Dispose
+            combatNextAttack.Dispose()
+            combatNextAttack = Nothing
             NextAttackTimer.Dispose()
             NextAttackTimer = Nothing
         End Sub
@@ -696,7 +699,7 @@ Public Module WS_Combat
 
                 DoMeleeAttack(Nothing)
             ElseIf Victim.GUID = Victim_.GUID Then
-                'DONE: Nooo, no diablo
+            'DONE: Nooo, no diablo
             Else
                 SendAttackStop(Character.GUID, Victim.GUID, Character.Client)
                 Victim = Victim_
@@ -769,7 +772,7 @@ Public Module WS_Combat
                     tmpPosZ = GetZCoord(tmpPosX, tmpPosY, CType(Victim, CreatureObject).MapID)
                 End If
 
-                If GetDistance(Character, tmpPosX, tmpPosY, tmpPosZ) > (combatReach * CType(Victim, BaseUnit).Size + BaseUnit.CombatReach_Base) Then
+                If GetDistance(Character, tmpPosX, tmpPosY, tmpPosZ) > (combatReach * Victim.Size + BaseUnit.CombatReach_Base) Then
                     NextAttackTimer.Change(2000, Timeout.Infinite)
                     Dim SMSG_ATTACKSWING_NOTINRANGE As New PacketClass(OPCODES.SMSG_ATTACKSWING_NOTINRANGE)
                     Character.Client.Send(SMSG_ATTACKSWING_NOTINRANGE)
@@ -879,7 +882,7 @@ Public Module WS_Combat
         'Spells
         Public Sub DoMeleeDamageBySpell(ByRef Character As CharacterObject, ByRef Victim2 As BaseObject, ByVal BonusDamage As Integer, ByVal SpellID As Integer)
 
-            Dim damageInfo As DamageInfo = CalculateDamage(CType(Character, CharacterObject), Victim2, False)
+            Dim damageInfo As DamageInfo = CalculateDamage(Character, Victim2, False)
             Dim IsCrit As Boolean = False
 
             If damageInfo.Damage > 0 Then damageInfo.Damage += BonusDamage
@@ -888,10 +891,10 @@ Public Module WS_Combat
                 IsCrit = True
             End If
 
-            SendNonMeleeDamageLog(CType(Character, CharacterObject), Victim2, SpellID, damageInfo.Damage, 0, damageInfo.Absorbed, IsCrit)
+            SendNonMeleeDamageLog(Character, Victim2, SpellID, damageInfo.Damage, 0, damageInfo.Absorbed, IsCrit)
 
             If TypeOf Victim2 Is CreatureObject Then
-                CType(Victim2, CreatureObject).DealDamage(damageInfo.GetDamage, CType(Character, CharacterObject))
+                CType(Victim2, CreatureObject).DealDamage(damageInfo.GetDamage, Character)
                 If Victim2 Is Victim AndAlso CType(Victim, CreatureObject).aiScript.State = TBaseAI.AIState.AI_DEAD Then
                     AttackStop()
                 End If
@@ -931,8 +934,8 @@ Public Module WS_Combat
         c.SendCharacterUpdate(False)
     End Sub
 
-#End Region
-#Region "WS.Combat.Handlers"
+    #End Region
+    #Region "WS.Combat.Handlers"
 
     Public Sub On_CMSG_SET_SELECTION(ByRef packet As PacketClass, ByRef Client As ClientClass)
         If (packet.Data.Length - 1) < 13 Then Exit Sub
@@ -958,7 +961,7 @@ Public Module WS_Combat
 
         If GuidIsCreature(GUID) Then
             Client.Character.attackState.AttackStart(WORLD_CREATUREs(GUID))
-            CType(WORLD_CREATUREs(GUID), CreatureObject).aiScript.OnAttack(CType(Client.Character, BaseUnit))
+            WORLD_CREATUREs(GUID).aiScript.OnAttack(CType(Client.Character, BaseUnit))
         ElseIf GuidIsPlayer(GUID) Then
             Client.Character.attackState.AttackStart(CHARACTERs(GUID))
         Else
@@ -1035,6 +1038,6 @@ Public Module WS_Combat
         packet.Dispose()
     End Sub
 
-#End Region
+    #End Region
 
 End Module

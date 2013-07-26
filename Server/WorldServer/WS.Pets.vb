@@ -15,13 +15,12 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Threading
 Imports mangosVB.Common
 
 Public Module WS_Pets
 
-#Region "WS.Pets.Framework"
+    #Region "WS.Pets.Framework"
 
     Public Const CREATURE_MAX_SPELLS As Integer = 4
     Public Const MAX_OWNER_DIS As Integer = 100
@@ -127,11 +126,11 @@ Public Module WS_Pets
         PET_TALK_ATTACK = 1
     End Enum
 
-#End Region
-#Region "WS.Pets.TypeDef"
+    #End Region
+    #Region "WS.Pets.TypeDef"
 
     Public Class PetObject
-        Inherits CreatureObject
+    Inherits CreatureObject
 
         Public Command As Byte = 7
         Public State As Byte = 6
@@ -145,8 +144,8 @@ Public Module WS_Pets
 
     End Class
 
-#End Region
-#Region "WS.Pets.Handlers"
+    #End Region
+    #Region "WS.Pets.Handlers"
 
     Public Sub on_CMSG_PET_NAME_QUERY(ByRef packet As PacketClass, ByRef Client As ClientClass)
         packet.GetInt16()
@@ -167,9 +166,9 @@ Public Module WS_Pets
 
     End Sub
 
-#End Region
-#Region "WS.Pets.AI"
+    #End Region
+    #Region "WS.Pets.AI"
 
-#End Region
+    #End Region
 
 End Module

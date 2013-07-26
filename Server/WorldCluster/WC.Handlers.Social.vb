@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Threading
 Imports System.Net.Sockets
 Imports System.Xml.Serialization
@@ -28,7 +27,7 @@ Imports mangosVB.Common
 
 Public Module WC_Handlers_Social
 
-#Region "Framework"
+    #Region "Framework"
 
     Public Sub LoadIgnoreList(ByRef c As CharacterObject)
         'DONE: Query DB
@@ -48,6 +47,7 @@ Public Module WC_Handlers_Social
         FRIEND_STATUS_UNK3 = 3
         FRIEND_STATUS_DND = 4
     End Enum
+    
     Public Enum FriendResult As Byte
         FRIEND_DB_ERROR = &H0
         FRIEND_LIST_FULL = &H1
@@ -67,6 +67,7 @@ Public Module WC_Handlers_Social
         FRIEND_IGNORE_ADDED = &HF
         FRIEND_IGNORE_REMOVED = &H10
     End Enum
+    
     Public Enum SocialFlag As Byte
         SOCIAL_FLAG_FRIEND = &H1
         SOCIAL_FLAG_IGNORED = &H2
@@ -97,9 +98,9 @@ Public Module WC_Handlers_Social
                         'Else
                         SMSG_FRIEND_LIST.AddInt8(FriendStatus.FRIEND_STATUS_ONLINE)
                         'End If
-                        SMSG_FRIEND_LIST.AddInt32(CType(CHARACTERs(GUID), CharacterObject).Zone)    'Area
-                        SMSG_FRIEND_LIST.AddInt32(CType(CHARACTERs(GUID), CharacterObject).Level)   'Level
-                        SMSG_FRIEND_LIST.AddInt32(CType(CHARACTERs(GUID), CharacterObject).Classe)  'Class
+                        SMSG_FRIEND_LIST.AddInt32(CHARACTERs(GUID).Zone)    'Area
+                        SMSG_FRIEND_LIST.AddInt32(CHARACTERs(GUID).Level)   'Level
+                        SMSG_FRIEND_LIST.AddInt32(CHARACTERs(GUID).Classe)  'Class
                     Else
                         SMSG_FRIEND_LIST.AddInt8(FriendStatus.FRIEND_STATUS_OFFLINE)
                     End If
@@ -131,8 +132,8 @@ Public Module WC_Handlers_Social
         friendpacket.Dispose()
     End Sub
 
-#End Region
-#Region "Handlers"
+    #End Region
+    #Region "Handlers"
 
     Public Sub On_CMSG_WHO(ByRef packet As PacketClass, ByRef Client As ClientClass)
         Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_WHO", Client.IP, Client.Port)
@@ -241,9 +242,9 @@ Public Module WC_Handlers_Social
                 'Else
                 response.AddInt8(FriendStatus.FRIEND_STATUS_ONLINE)
                 'End If
-                response.AddInt32(CType(CHARACTERs(GUID), CharacterObject).Zone)
-                response.AddInt32(CType(CHARACTERs(GUID), CharacterObject).Level)
-                response.AddInt32(CType(CHARACTERs(GUID), CharacterObject).Classe)
+                response.AddInt32(CHARACTERs(GUID).Zone)
+                response.AddInt32(CHARACTERs(GUID).Level)
+                response.AddInt32(CHARACTERs(GUID).Classe)
                 CharacterDatabase.Update(String.Format("INSERT INTO characters_social (char_guid, guid, note, flags) VALUES ({0}, {1}, ""{2}"", {3});", Client.Character.GUID, GUID, note, CType(SocialFlag.SOCIAL_FLAG_FRIEND, Byte)))
             Else
                 response.AddInt8(FriendResult.FRIEND_ADDED_OFFLINE)
@@ -386,6 +387,6 @@ Public Module WC_Handlers_Social
         SendContactList(Client, Client.Character)
     End Sub
 
-#End Region
+    #End Region
 
 End Module

@@ -19,7 +19,7 @@ Imports Meebey.SmartIrc4net
 Imports System.Threading
 
 Public Class IrcWriter
-    Inherits BaseWriter
+Inherits BaseWriter
 
     Dim conn As IrcClient
     Dim message As String = Nothing
@@ -33,9 +33,9 @@ Public Class IrcWriter
 
         AddHandler conn.OnError, AddressOf OnErrorMessage
         AddHandler conn.OnQueryMessage, AddressOf OnQueryMessage
-#If DEBUG Then
+        #If DEBUG Then
         AddHandler conn.OnRawMessage, AddressOf OnRawMessage
-#End If
+        #End If
 
         conn.CtcpVersion = "MaNGOSvb Log Bot"
         conn.Connect(server, port)

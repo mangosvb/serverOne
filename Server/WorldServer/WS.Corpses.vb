@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Threading
 Imports System.Runtime.CompilerServices
 Imports mangosVB.Common.BaseWriter
@@ -23,8 +22,8 @@ Imports mangosVB.Common.BaseWriter
 Public Module WS_Corpses
     'WARNING: Use only with WORLD_GAMEOBJECTs()
     Public Class CorpseObject
-        Inherits BaseObject
-        Implements IDisposable
+    Inherits BaseObject
+    Implements IDisposable
 
         Public DynFlags As Integer = 0
         Public Flags As Integer = 0
@@ -37,7 +36,7 @@ Public Module WS_Corpses
 
         Public Sub FillAllUpdateFlags(ByRef Update As UpdateClass, ByRef Character As CharacterObject)
             Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_GUID, GUID)
-            Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_TYPE, CType(ObjectType.TYPE_CORPSE + ObjectType.TYPE_OBJECT, Integer))
+            Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_TYPE, ObjectType.TYPE_CORPSE + ObjectType.TYPE_OBJECT)
             Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_ENTRY, 0)
             Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_SCALE_X, 1.0F)
 

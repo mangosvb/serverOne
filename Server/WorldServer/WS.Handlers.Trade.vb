@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Threading
 Imports System.Net.Sockets
 Imports System.Xml.Serialization
@@ -29,7 +28,7 @@ Imports mangosVB.Common
 Public Module WS_Handlers_Trade
 
     Public Class TTradeInfo
-        Implements IDisposable
+    Implements IDisposable
 
         Public ID As Integer = 0
         Public Trader As CharacterObject = Nothing
@@ -273,6 +272,7 @@ Public Module WS_Handlers_Trade
             End Try
         End Sub
     End Class
+    
     Private Enum TradeStatus
         TRADE_TARGET_UNAVIABLE = 0              '"[NAME] is busy"
         TRADE_STATUS_OK = 1                     'BEGIN TRADE
@@ -411,7 +411,7 @@ Public Module WS_Handlers_Trade
             Exit Sub
         End If
 
-        If Not CType(CHARACTERs(targetGUID), CharacterObject).tradeInfo Is Nothing Then
+        If Not CHARACTERs(targetGUID).tradeInfo Is Nothing Then
             Dim response As New PacketClass(OPCODES.SMSG_TRADE_STATUS)
             response.AddInt32(TradeStatus.TRADE_TARGET_UNAVIABLE2)
             Client.Send(response)
@@ -419,7 +419,7 @@ Public Module WS_Handlers_Trade
             Exit Sub
         End If
 
-        If CType(CHARACTERs(targetGUID), CharacterObject).Side <> Client.Character.Side Then
+        If CHARACTERs(targetGUID).Side <> Client.Character.Side Then
             Dim response As New PacketClass(OPCODES.SMSG_TRADE_STATUS)
             response.AddInt32(TradeStatus.TRADE_TARGET_DIFF_FACTION)
             Client.Send(response)
@@ -427,7 +427,7 @@ Public Module WS_Handlers_Trade
             Exit Sub
         End If
 
-        If GetDistance(CType(Client.Character, CharacterObject), CHARACTERs(targetGUID)) > 30.0F Then
+        If GetDistance(Client.Character, CHARACTERs(targetGUID)) > 30.0F Then
             Dim response As New PacketClass(OPCODES.SMSG_TRADE_STATUS)
             response.AddInt32(TradeStatus.TRADE_TARGET_TOO_FAR)
             Client.Send(response)

@@ -15,13 +15,11 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 'TODO:
 '       MpqHuffman
 '       MpqWavCompression
 '       PKDecompress
 '
-
 Imports System.Runtime.InteropServices
 Imports System.Collections
 Imports System.IO
@@ -33,7 +31,7 @@ Imports ICSharpCode.SharpZipLib.Zip.Compression.Streams
 Namespace MPQ
 
     Public Class MPQArchive
-        Implements IDisposable
+    Implements IDisposable
 
         Public Const UINT32_MAX As Integer = &HFFFFFFFF
         Public Const UINT32_MIN As Integer = 0
@@ -164,7 +162,7 @@ Namespace MPQ
             For Each c As Char In Input
                 Dim val As Long = Asc(Char.ToUpper(c))
 
-                seed1 = Convert.ToInt64(BitConverter.ToUInt32(BitConverter.GetBytes((sStormBuffer(Offset + val) Xor CType((seed1 + seed2) And &HFFFFFFFF, Long))), 0))
+                seed1 = Convert.ToInt64(BitConverter.ToUInt32(BitConverter.GetBytes((sStormBuffer(Offset + val) Xor (seed1 + seed2) And &HFFFFFFFF)), 0))
                 seed2 = Convert.ToInt64(BitConverter.ToUInt32(BitConverter.GetBytes((val + seed1 + seed2 + (seed2 << 5) + 3)), 0))
             Next
             Return seed1
@@ -182,7 +180,7 @@ Namespace MPQ
                 Dim result As Long = Convert.ToInt64(BitConverter.ToUInt32(Data, i))
                 result = Convert.ToInt64(BitConverter.ToUInt32(BitConverter.GetBytes(result Xor (Seed1 + seed2)), 0))
 
-                Seed1 = Convert.ToInt64(BitConverter.ToUInt32(BitConverter.GetBytes(((CType(Not Seed1, Long) << 21) + &H11111111) Or (Seed1 >> 11)), 0))
+                Seed1 = Convert.ToInt64(BitConverter.ToUInt32(BitConverter.GetBytes(((Not Seed1 << 21) + &H11111111) Or (Seed1 >> 11)), 0))
                 seed2 = Convert.ToInt64(BitConverter.ToUInt32(BitConverter.GetBytes(((result + seed2) + (seed2 << 5)) + 3), 0))
                 If BitConverter.IsLittleEndian Then
                     Data(i) = CByte(result And &HFF)
@@ -270,7 +268,7 @@ Namespace MPQ
             Return result
         End Function
 
-#Region "FileInfoSupport"
+        #Region "FileInfoSupport"
         Public Class FileInfo
             Public CompressedSize As Long
             <CLSCompliant(False)> Public Flags As MpqFileFlags
@@ -337,7 +335,7 @@ Namespace MPQ
             End Get
         End Property
         <CLSCompliant(False)> Protected _Files As FileInfo()
-#End Region
+        #End Region
 
         Private mBlocks() As MpqBlock
         Private mBlockSize As Integer
@@ -376,6 +374,7 @@ Namespace MPQ
         Public Flags As MpqFileFlags
         Public Const Size As Long = 16
     End Structure
+    
     <StructLayout(LayoutKind.Sequential)> _
     Friend Structure MpqHash
         Public Sub New(ByVal br As BinaryReader)
@@ -397,6 +396,7 @@ Namespace MPQ
         Public Name2 As Long
         Public Const Size As Long = 16
     End Structure
+    
     <StructLayout(LayoutKind.Sequential)> _
     Friend Structure MpqHeader
 
@@ -426,8 +426,9 @@ Namespace MPQ
     End Structure
 
     'A Stream based class for reading a file from an MPQ file
+    
     Public Class MpqStream
-        Inherits Stream
+    Inherits Stream
 
         Friend Sub New(ByVal File As MPQArchive, ByVal Block As MpqBlock)
             mCurrentBlockIndex = -1
@@ -487,28 +488,28 @@ Namespace MPQ
             End If
 
             If ((comptype And 1) <> 0) Then
-                'Dim result As Byte() = MpqHuffman.Decompress(sinput)
-                'comptype = CByte((comptype And 254))
-                'If (comptype = 0) Then
-                '    Return result
-                'End If
-                'sinput = New MemoryStream(result)
+            'Dim result As Byte() = MpqHuffman.Decompress(sinput)
+            'comptype = CByte((comptype And 254))
+            'If (comptype = 0) Then
+            '    Return result
+            'End If
+            'sinput = New MemoryStream(result)
             End If
             If ((comptype And 128) <> 0) Then
-                'Dim result As Byte() = MpqWavCompression.Decompress(sinput, 2)
-                'comptype = CByte((comptype And 127))
-                'If (comptype = 0) Then
-                '    Return result
-                'End If
-                'sinput = New MemoryStream(result)
+            'Dim result As Byte() = MpqWavCompression.Decompress(sinput, 2)
+            'comptype = CByte((comptype And 127))
+            'If (comptype = 0) Then
+            '    Return result
+            'End If
+            'sinput = New MemoryStream(result)
             End If
             If ((comptype And 64) <> 0) Then
-                'Dim result As Byte() = MpqWavCompression.Decompress(sinput, 1)
-                'comptype = CByte((comptype And 191))
-                'If (comptype = 0) Then
-                '    Return result
-                'End If
-                'sinput = New MemoryStream(result)
+            'Dim result As Byte() = MpqWavCompression.Decompress(sinput, 1)
+            'comptype = CByte((comptype And 191))
+            'If (comptype = 0) Then
+            '    Return result
+            'End If
+            'sinput = New MemoryStream(result)
             End If
 
             Throw New Exception(String.Format("Unhandled compression flags: 0x{0:X}", comptype))
@@ -565,7 +566,7 @@ Namespace MPQ
                 Loop
             End SyncLock
 
-            Dim blockpossize As Long = CType((blockposcount * 4), Long)
+            Dim blockpossize As Long = (blockposcount * 4)
             If (((mBlock.Flags And MpqFileFlags.MPQ_FileHasMetadata) = CType(0, MpqFileFlags)) AndAlso (mBlockPositions(0) <> blockpossize)) Then
                 mBlock.Flags = (mBlock.Flags Or MpqFileFlags.MPQ_Encrypted)
             End If

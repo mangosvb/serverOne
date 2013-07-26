@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Public Module Constants
     Public Function GuidIsCreature(ByVal GUID As ULong) As Boolean
         If GuidHIGH(GUID) = GUID_UNIT Then Return True
@@ -220,6 +219,7 @@ Public Module Constants
     Public Const KEYRING_SLOT_START As Byte = 86
     Public Const KEYRING_SLOT_END As Byte = 118
 End Module
+
 Public Enum OPCODES18
     'Realm Login
     SMSG_AUTH_CHALLENGE = &H1EC         '492
@@ -1508,6 +1508,7 @@ Enum AuthLoginCodes
     CHAR_LOGIN_LOCKED_FOR_TRANSFER = 6
     CHAR_LOGIN_LOCKED_BY_BILLING = 7
 End Enum
+
 Enum AuthResponseCodes
     RESPONSE_SUCCESS = &H0                      'Success
     RESPONSE_FAILURE = &H1                      'Failure
@@ -1625,6 +1626,7 @@ Public Enum Classes As Byte
     CLASS_WARLOCK = 9
     CLASS_DRUID = 11
 End Enum
+
 Public Enum Races As Byte
     RACE_HUMAN = 1
     RACE_ORC = 2
@@ -1638,6 +1640,7 @@ Public Enum Races As Byte
     RACE_BLOOD_ELF = 10
     RACE_DRAENEI = 11
 End Enum
+
 Public Enum PlayerFlag As Byte
     'WARNING: For use with SetFlag
     PLAYER_FLAG_GROUP_LEADER = 0
@@ -1654,6 +1657,7 @@ Public Enum PlayerFlag As Byte
     PLAYER_FLAG_LONG_TIME = 11                 'played long time
     PLAYER_FLAG_LONG_TIME2 = 12                'played too long time
 End Enum
+
 Public Enum PlayerFlags As Integer
     PLAYER_FLAG_GROUP_LEADER = &H1
     PLAYER_FLAG_AFK = &H2
@@ -1669,6 +1673,7 @@ Public Enum PlayerFlags As Integer
     PLAYER_FLAG_LONG_TIME = &H1000                 'played long time
     PLAYER_FLAG_LONG_TIME2 = &H2000                'played too long time
 End Enum
+
 Public Enum PlayerHonorTitle As Byte
     'WARNING: For use with SetFlag
     RANK_NONE = 0
@@ -1701,6 +1706,7 @@ Public Enum PlayerHonorTitle As Byte
     RANK_A_GRAND_MARSHAL = 14
     RANK_H_HIGH_WARLORD = 14
 End Enum
+
 Public Enum PlayerHonorTitles As Integer
     'WARNING: For use as BitMask
     RANK_NONE = 1
@@ -1743,6 +1749,7 @@ Public Enum DamageTypes As Byte
     DMG_SHADOW = 5
     DMG_ARCANE = 6
 End Enum
+
 Public Enum DamageMasks As Integer
     DMG_PHYSICAL = &H1
     DMG_HOLY = &H2
@@ -1752,6 +1759,7 @@ Public Enum DamageMasks As Integer
     DMG_SHADOW = &H20
     DMG_ARCANE = &H40
 End Enum
+
 Public Enum StandStates As Byte
     STANDSTATE_STAND = 0
     STANDSTATE_SIT = 1
@@ -1763,6 +1771,7 @@ Public Enum StandStates As Byte
     STANDSTATE_DEAD = 7
     STANDSTATE_KNEEL = 8
 End Enum
+
 Public Enum HonorRank As Byte
     NoRank = 0
     Pariah = 1
@@ -1785,10 +1794,12 @@ Public Enum HonorRank As Byte
     GrandMarshal = 18
     Leader = 19
 End Enum
+
 Public Enum XPSTATE As Byte
     Normal = 2
     Rested = 1
 End Enum
+
 Public Enum ReputationRank As Byte
     Hated = 0
     Hostile = 1
@@ -1799,6 +1810,7 @@ Public Enum ReputationRank As Byte
     Revered = 6
     Exalted = 7
 End Enum
+
 Public Enum ReputationPoints
     MIN = Integer.MinValue
     Hated = -42000
@@ -1873,10 +1885,12 @@ Public Enum GroupFlags As Byte
     MAIN_TANK = 2
     MAIN_ASSIST = 4
 End Enum
+
 Public Enum GroupType As Byte
     PARTY = 0
     RAID = 1
 End Enum
+
 <Flags()> _
 Public Enum GroupMemberOnlineStatus
     MEMBER_STATUS_OFFLINE = &H0
@@ -1889,10 +1903,12 @@ Public Enum GroupMemberOnlineStatus
     MEMBER_STATUS_UNK4 = &H40           ' appears with dead and ghost flags
     MEMBER_STATUS_UNK5 = &H80           ' never seen
 End Enum
+
 Public Enum GroupDungeonDifficulty As Byte
     DIFFICULTY_NORMAL = 0
     DIFFICULTY_HEROIC = 1
 End Enum
+
 Public Enum GroupLootMethod As Byte
     LOOT_FREE_FOR_ALL = 0
     LOOT_ROUND_ROBIN = 1
@@ -1900,6 +1916,7 @@ Public Enum GroupLootMethod As Byte
     LOOT_GROUP = 3
     LOOT_NEED_BEFORE_GREED = 4
 End Enum
+
 Public Enum GroupLootThreshold As Byte
     Uncommon = 2
     Rare = 3
@@ -1921,6 +1938,7 @@ Enum DynamicFlags   'Dynamic flags for units
     'Unit falls on the ground and shows like dead
     UNIT_DYNFLAG_DEAD = &H20
 End Enum
+
 Enum UnitFlags   'Flags for units
     UNIT_FLAG_NONE = &H0
     UNIT_FLAG_UNK1 = &H1
@@ -1972,6 +1990,7 @@ Public Enum ObjectType
     TYPE_AIGROUP = 256
     TYPE_AREATRIGGER = 512
 End Enum
+
 Public Enum ObjectTypeID
     TYPEID_OBJECT = 0
     TYPEID_ITEM = 1
@@ -1984,6 +2003,7 @@ Public Enum ObjectTypeID
     TYPEID_AIGROUP = 8
     TYPEID_AREATRIGGER = 9
 End Enum
+
 Public Enum ObjectUpdateType
     UPDATETYPE_VALUES = 0
     '  1 byte  - MASK
@@ -2021,6 +2041,7 @@ Public Enum EObjectFields
     OBJECT_FIELD_PADDING = &H5    '  1  UINT32
     OBJECT_END = &H6              '  0  INTERNALMARKER
 End Enum
+
 Public Enum EItemFields
     ITEM_FIELD_OWNER = EObjectFields.OBJECT_END + &H0       '  2  UINT64
     ITEM_FIELD_OWNER_EXTRA = EObjectFields.OBJECT_END + &H1
@@ -2081,6 +2102,7 @@ Public Enum EItemFields
     'ITEM_FIELD_SOCKET_CONTENT3 = 66         '
     ITEM_END = EObjectFields.OBJECT_END + &H36                          '  0  INTERNALMARKER
 End Enum
+
 Public Enum EContainerFields
     CONTAINER_FIELD_NUM_SLOTS = EItemFields.ITEM_END + &H0          '  1  UINT32
     CONTAINER_ALIGN_PAD = EItemFields.ITEM_END + &H1                '  1  UINT32
@@ -2159,6 +2181,7 @@ Public Enum EContainerFields
 
     CONTAINER_END = EItemFields.ITEM_END + &H4A                     '  0  INTERNALMARKER
 End Enum
+
 Public Enum EUnitFields
     UNIT_FIELD_CHARM = &H0 + EObjectFields.OBJECT_END                             '  2  UINT64
     UNIT_FIELD_CHARM_X = &H1 + EObjectFields.OBJECT_END
@@ -2398,6 +2421,7 @@ Public Enum EUnitFields
     UNIT_FIELD_INTELLECT = UNIT_FIELD_STAT3
     UNIT_FIELD_ARMOR = UNIT_FIELD_RESISTANCES
 End Enum
+
 Public Enum EPlayerFields
     PLAYER_DUEL_ARBITER = &H0 + EUnitFields.UNIT_END                                                          '  1  UINT64
     PLAYER_DUEL_ARBITER_X = &H1 + EUnitFields.UNIT_END
@@ -3695,6 +3719,7 @@ Public Enum EPlayerFields
     'PLAYER_FIELD_DAILY_QUESTS_25 = &H50D + EUnitFields.UNIT_END
     PLAYER_END = &H54E + EUnitFields.UNIT_END
 End Enum
+
 Public Enum EGameObjectFields
     OBJECT_FIELD_CREATED_BY = EObjectFields.OBJECT_END + &H0
     OBJECT_FIELD_CREATED_BY_X = EObjectFields.OBJECT_END + &H1
@@ -3721,6 +3746,7 @@ Public Enum EGameObjectFields
     'NOTE: Removed in 1.12
     'GAMEOBJECT_TIMESTAMP = 15           '  1  UINT32
 End Enum
+
 Public Enum EDynamicObjectFields
     DYNAMICOBJECT_CASTER = EObjectFields.OBJECT_END + &H0
     DYNAMICOBJECT_CASTER_X = EObjectFields.OBJECT_END + &H1
@@ -3734,6 +3760,7 @@ Public Enum EDynamicObjectFields
     DYNAMICOBJECT_CASTTIME = EObjectFields.OBJECT_END + &H9
     DYNAMICOBJECT_END = EObjectFields.OBJECT_END + &HA
 End Enum
+
 Public Enum ECorpseFields
     CORPSE_FIELD_OWNER = EObjectFields.OBJECT_END + &H0
     CORPSE_FIELD_OWNER_EXTRA = EObjectFields.OBJECT_END + &H1
@@ -3787,6 +3814,7 @@ Enum UNIT_TYPE
     MECHANICAL = 9
     MOUNT = 10
 End Enum
+
 Enum NPCFlags
     UNIT_NPC_FLAG_NONE = 0                          ' None
     UNIT_NPC_FLAG_GOSSIP = 1                        ' Gossip/Talk (CMSG_GOSSIP_HELLO ?)
@@ -3814,6 +3842,7 @@ Enum NPCFlags
     UNIT_NPC_FLAG_STABLE = 4194304                      ' Stable Master
     UNIT_NPC_FLAG_GUILD_BANK = 8388608
 End Enum
+
 Enum CREATURE_FAMILY As Integer
     NONE = 0
     WOLF = 1
@@ -3839,6 +3868,7 @@ Enum CREATURE_FAMILY As Integer
     OWL = 26
     WIND_SERPENT = 27
 End Enum
+
 Enum CREATURE_ELITE As Integer
     NORMAL = 0
     ELITE = 1
@@ -3873,6 +3903,7 @@ Public Enum LANGUAGES As Integer
     LANG_DRAENEI = 35
     LANG_ADDON = &HFFFFFFFF
 End Enum
+
 Public Enum ChatMsg As Integer
     CHAT_MSG_ADDON = &HFFFFFFFF
     CHAT_MSG_SYSTEM = &H0
@@ -3995,6 +4026,7 @@ Enum InvalidReason
     ReadyHaveThatQuest = 13
     ReadyHaveTimedQuest = 12
 End Enum
+
 Enum Attributes
     Agility = 3
     Health = 1
@@ -4004,6 +4036,7 @@ Enum Attributes
     Stamina = 7
     Strenght = 4
 End Enum
+
 Enum Slots
     ' Fields
     Back = 14
@@ -4042,6 +4075,7 @@ Enum Slots
     Waist = 5
     Wrists = 8
 End Enum
+
 Enum EnviromentalDamage
     DAMAGE_EXHAUSTED = 0
     DAMAGE_DROWNING = 1

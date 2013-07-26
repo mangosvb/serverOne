@@ -15,14 +15,13 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Threading
 Imports System.Runtime.CompilerServices
 Imports mangosVB.Common.BaseWriter
 
 Public Module WS_Items
 
-#Region "WS.Items.Constants"
+    #Region "WS.Items.Constants"
     Enum InventoryChangeFailure As Byte
         EQUIP_ERR_OK = 0
         EQUIP_ERR_CANT_EQUIP_LEVEL_I = 1
@@ -115,6 +114,7 @@ Public Module WS_Items
         SHADOW_DAMAGE = 5
         ARCANE_DAMAGE = 6
     End Enum
+    
     Public Enum ITEM_QUALITY_NAMES As Byte
         ITEM_QUALITY_POOR_GREY = 0
         ITEM_QUALITY_NORMAL_WHITE = 1
@@ -124,6 +124,7 @@ Public Module WS_Items
         ITEM_QUALITY_LEGENDARY_ORANGE = 5
         ITEM_QUALITY_ARTIFACT_LIGHT_YELLOW = 6
     End Enum
+    
     Public Enum ITEM_STAT_TYPE As Byte
         HEALTH = 1
         UNKNOWN = 2
@@ -158,6 +159,7 @@ Public Module WS_Items
         RESILIENCE = 35
         HITHASTERATING = 36
     End Enum
+    
     Public Enum ITEM_SPELLTRIGGER_TYPE As Byte
         USE = 0
         ON_EQUIP = 1
@@ -166,6 +168,7 @@ Public Module WS_Items
         NO_DELAY_USE = 5
         LEARN_SPELL = 6
     End Enum
+    
     Public Enum ITEM_BONDING_TYPE As Byte
         NO_BIND = 0
         BIND_WHEN_PICKED_UP = 1
@@ -174,6 +177,7 @@ Public Module WS_Items
         BIND_UNK_QUESTITEM1 = 4
         BIND_UNK_QUESTITEM2 = 5
     End Enum
+    
     Public Enum SHEATHE_TYPE As Byte
         SHEATHETYPE_NONE = 0
         SHEATHETYPE_MAINHAND = 1
@@ -184,11 +188,13 @@ Public Module WS_Items
         SHEATHETYPE_HIPWEAPONRIGHT = 6
         SHEATHETYPE_SHIELD = 7
     End Enum
+    
     Public Enum SHEATHE_SLOT As Byte
         SHEATHE_NONE = 0
         SHEATHE_WEAPON = 1
         SHEATHE_RANGED = 2
     End Enum
+    
     Public Enum INVENTORY_TYPES As Byte
         INVTYPE_NON_EQUIP = &H0
         INVTYPE_HEAD = &H1
@@ -223,6 +229,7 @@ Public Module WS_Items
     End Enum
 
     'Got them from ItemSubClass.dbc
+    
     Public Enum ITEM_CLASS As Byte
         ITEM_CLASS_CONSUMABLE = 0
         ITEM_CLASS_CONTAINER = 1
@@ -241,6 +248,7 @@ Public Module WS_Items
         ITEM_CLASS_PERMANENT = 14
         ITEM_CLASS_JUNK = 15
     End Enum
+    
     Public Enum ITEM_SUBCLASS As Byte
         ' Consumable
         ITEM_SUBCLASS_CONSUMABLE = 0
@@ -362,9 +370,11 @@ Public Module WS_Items
         ITEM_SUBCLASS_OTHER = 4
         ITEM_SUBCLASS_MOUNT = 5
     End Enum
+    
     Public Enum ITEM_FLAGS As Byte
         ITEM_FLAGS_BINDED = 1
     End Enum
+    
     Public Enum ITEM_BAG As Integer
         NONE = 0
         ARROW = 1
@@ -377,6 +387,7 @@ Public Module WS_Items
         JEWELCRAFTING = 10
         MINNING = 11
     End Enum
+    
     Public Enum ITEM_GEMS As Byte
         COLOR_META = 1
         COLOR_RED = 2
@@ -385,28 +396,28 @@ Public Module WS_Items
     End Enum
 
     Public item_weapon_skills() As Integer = New Integer() {SKILL_IDs.SKILL_AXES, _
-                                                            SKILL_IDs.SKILL_TWO_HANDED_AXES, _
-                                                            SKILL_IDs.SKILL_BOWS, _
-                                                            SKILL_IDs.SKILL_GUNS, _
-                                                            SKILL_IDs.SKILL_MACES, _
-                                                            SKILL_IDs.SKILL_TWO_HANDED_MACES, _
-                                                            SKILL_IDs.SKILL_POLEARMS, _
-                                                            SKILL_IDs.SKILL_SWORDS, _
-                                                            SKILL_IDs.SKILL_TWO_HANDED_SWORDS, 0, _
-                                                            SKILL_IDs.SKILL_STAVES, 0, 0, 0, 0, _
-                                                            SKILL_IDs.SKILL_DAGGERS, _
-                                                            SKILL_IDs.SKILL_THROWN, _
-                                                            SKILL_IDs.SKILL_SPEARS, _
-                                                            SKILL_IDs.SKILL_CROSSBOWS, _
-                                                            SKILL_IDs.SKILL_WANDS, _
-                                                            SKILL_IDs.SKILL_FISHING}
+        SKILL_IDs.SKILL_TWO_HANDED_AXES, _
+        SKILL_IDs.SKILL_BOWS, _
+        SKILL_IDs.SKILL_GUNS, _
+        SKILL_IDs.SKILL_MACES, _
+        SKILL_IDs.SKILL_TWO_HANDED_MACES, _
+        SKILL_IDs.SKILL_POLEARMS, _
+        SKILL_IDs.SKILL_SWORDS, _
+        SKILL_IDs.SKILL_TWO_HANDED_SWORDS, 0, _
+        SKILL_IDs.SKILL_STAVES, 0, 0, 0, 0, _
+        SKILL_IDs.SKILL_DAGGERS, _
+        SKILL_IDs.SKILL_THROWN, _
+        SKILL_IDs.SKILL_SPEARS, _
+        SKILL_IDs.SKILL_CROSSBOWS, _
+        SKILL_IDs.SKILL_WANDS, _
+        SKILL_IDs.SKILL_FISHING}
     Public item_armor_skills() As Integer = New Integer() {0, SKILL_IDs.SKILL_CLOTH, SKILL_IDs.SKILL_LEATHER, SKILL_IDs.SKILL_MAIL, SKILL_IDs.SKILL_PLATE_MAIL, 0, SKILL_IDs.SKILL_SHIELD, 0, 0, 0}
-#End Region
-#Region "WS.Items.TypeDef"
+    #End Region
+    #Region "WS.Items.TypeDef"
 
     'WARNING: Use only with ITEMDatabase()
     Public Class ItemInfo
-        Implements IDisposable
+    Implements IDisposable
         Private found_ As Boolean = False
         Public Sub New()
             Damage(0) = New TDamage
@@ -832,8 +843,9 @@ Public Module WS_Items
     End Class
 
     'WARNING: Use only with ITEMs()
+    
     Public Class ItemObject
-        Implements IDisposable
+    Implements IDisposable
 
         Public ReadOnly Property ItemInfo() As ItemInfo
             Get
@@ -862,7 +874,7 @@ Public Module WS_Items
         Public Sub FillAllUpdateFlags(ByRef Update As UpdateClass)
             If ItemInfo.ContainerSlots > 0 Then
                 Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_GUID, GUID)
-                Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_TYPE, CType(ObjectType.TYPE_CONTAINER + ObjectType.TYPE_OBJECT, Integer))
+                Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_TYPE, ObjectType.TYPE_CONTAINER + ObjectType.TYPE_OBJECT)
                 Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_ENTRY, ItemEntry)
                 Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_SCALE_X, 1.0F)
 
@@ -887,7 +899,7 @@ Public Module WS_Items
                 Next
             Else
                 Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_GUID, GUID)
-                Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_TYPE, CType(ObjectType.TYPE_ITEM + ObjectType.TYPE_OBJECT, Integer))
+                Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_TYPE, ObjectType.TYPE_ITEM + ObjectType.TYPE_OBJECT)
                 Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_ENTRY, ItemEntry)
                 Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_SCALE_X, 1.0F)
 
@@ -927,7 +939,7 @@ Public Module WS_Items
             For Each Item As KeyValuePair(Of Byte, ItemObject) In Items
                 Dim tmpUpdate As New UpdateClass(FIELD_MASK_SIZE_ITEM)
                 Item.Value.FillAllUpdateFlags(tmpUpdate)
-                tmpUpdate.AddToPacket(packet, UPDATETYPE, CType(Item.Value, ItemObject), 0)
+                tmpUpdate.AddToPacket(packet, UPDATETYPE, Item.Value, 0)
                 tmpUpdate.Dispose()
             Next
 
@@ -1238,11 +1250,13 @@ Public Module WS_Items
             End Get
         End Property
     End Class
+    
     Public Class TDamage
         Public Minimum As Single = 0
         Public Maximum As Single = 0
         Public Type As Integer = DamageTypes.DMG_PHYSICAL
     End Class
+    
     Public Class TEnchantmentInfo
         Public SpellID As Integer = 0
         Public Duration As Integer = 0
@@ -1254,6 +1268,7 @@ Public Module WS_Items
             Charges = Charges_
         End Sub
     End Class
+    
     Public Class TItemSpellInfo
         Public SpellID As Integer = 0
         Public SpellTrigger As ITEM_SPELLTRIGGER_TYPE = 0
@@ -1262,13 +1277,14 @@ Public Module WS_Items
         Public SpellCategory As Integer = 0
         Public SpellCategoryCooldown As Integer = 0
     End Class
+    
     Public Class TItemSocket
         Public Color As ITEM_GEMS
         Public Content As UInteger = 0
     End Class
 
-#End Region
-#Region "WS.Items.Handlers"
+    #End Region
+    #Region "WS.Items.Handlers"
 
     <MethodImplAttribute(MethodImplOptions.Synchronized)> _
     Private Function GetNewGUID() As ULong
@@ -1670,7 +1686,7 @@ Public Module WS_Items
         If (packet.Data.Length - 1) < 8 Then Exit Sub
         Try
             packet.GetInt16()
-            Dim srcBag As Byte = CType(packet.GetInt8, Byte)
+            Dim srcBag As Byte = packet.GetInt8
             Dim srcSlot As Byte = packet.GetInt8
             Dim Count As Byte = packet.GetInt8
             If srcBag = 255 Then srcBag = 0
@@ -1747,7 +1763,7 @@ Public Module WS_Items
                 If Client.Character.Items.ContainsKey(EQUIPMENT_SLOT_OFFHAND) AndAlso (Not Client.Character.Items(EQUIPMENT_SLOT_OFFHAND).IsBroken) Then
                     SetVirtualItemInfo(Client.Character, 1, Client.Character.Items(EQUIPMENT_SLOT_OFFHAND))
                     'DONE: Must be applyed SPELL_EFFECT_DUAL_WIELD and weapon in offhand
-                    If Client.Character.spellCanDualWeild AndAlso CType(Client.Character.Items(EQUIPMENT_SLOT_OFFHAND), ItemObject).ItemInfo.ObjectClass = ITEM_CLASS.ITEM_CLASS_WEAPON Then Client.Character.combatCanDualWield = True
+                    If Client.Character.spellCanDualWeild AndAlso Client.Character.Items(EQUIPMENT_SLOT_OFFHAND).ItemInfo.ObjectClass = ITEM_CLASS.ITEM_CLASS_WEAPON Then Client.Character.combatCanDualWield = True
                 Else
                     SetVirtualItemInfo(Client.Character, 1, Nothing)
                 End If
@@ -1802,7 +1818,7 @@ Public Module WS_Items
             For i As Byte = 0 To 4
                 If SPELLs.ContainsKey(itemInfo.Spells(i).SpellID) Then
                     If ((Client.Character.cUnitFlags And UnitFlags.UNIT_FLAG_IN_COMBAT) = UnitFlags.UNIT_FLAG_IN_COMBAT) Then
-                        If (CType(SPELLs(itemInfo.Spells(i).SpellID), SpellInfo).Attributes And SpellAttributes.SPELL_CANT_USED_IN_COMBAT) Then
+                        If (SPELLs(itemInfo.Spells(i).SpellID).Attributes And SpellAttributes.SPELL_CANT_USED_IN_COMBAT) Then
                             SendInventoryChangeFailure(Client.Character, InventoryChangeFailure.EQUIP_ERR_NOT_IN_COMBAT, ItemGUID, 0)
                             Exit Sub
                         End If
@@ -1824,15 +1840,15 @@ Public Module WS_Items
 
             If itemInfo.ObjectClass = ITEM_CLASS.ITEM_CLASS_CONSUMABLE Then
                 'DONE: Consume the item
-                CType(WORLD_ITEMs(ItemGUID), ItemObject).StackCount -= 1
-                If CType(WORLD_ITEMs(ItemGUID), ItemObject).StackCount = 0 Then
+                WORLD_ITEMs(ItemGUID).StackCount -= 1
+                If WORLD_ITEMs(ItemGUID).StackCount = 0 Then
                     Client.Character.ItemREMOVE(bag, slot, True, True)
                 Else
                     Client.Character.SendItemUpdate(WORLD_ITEMs(ItemGUID))
                 End If
             Else
                 'DONE: Bind item to player
-                If CType(WORLD_ITEMs(ItemGUID), ItemObject).ItemInfo.Bonding = ITEM_BONDING_TYPE.BIND_WHEN_USED AndAlso CType(WORLD_ITEMs(ItemGUID), ItemObject).IsSoulBound = False Then CType(WORLD_ITEMs(ItemGUID), ItemObject).SoulbindItem()
+                If WORLD_ITEMs(ItemGUID).ItemInfo.Bonding = ITEM_BONDING_TYPE.BIND_WHEN_USED AndAlso WORLD_ITEMs(ItemGUID).IsSoulBound = False Then WORLD_ITEMs(ItemGUID).SoulbindItem()
             End If
 
             For i As Byte = 0 To 4
@@ -1840,7 +1856,7 @@ Public Module WS_Items
                     If SPELLs.ContainsKey(itemInfo.Spells(i).SpellID) Then
                         'DONE: Read spell targets
                         Dim Targets As New SpellTargets
-                        Targets.ReadTargets(packet, CType(Client.Character, CharacterObject))
+                        Targets.ReadTargets(packet, Client.Character)
                         Dim tmpSpell As New CastSpellParameters
                         tmpSpell.tmpTargets = Targets
                         tmpSpell.tmpCaster = Client.Character
@@ -1851,7 +1867,7 @@ Public Module WS_Items
 
                         Dim castResult As Byte = SpellFailedReason.CAST_NO_ERROR
                         Try
-                            castResult = CType(SPELLs(itemInfo.Spells(i).SpellID), SpellInfo).CanCast(Client.Character, tmpSpell.tmpTargets)
+                            castResult = SPELLs(itemInfo.Spells(i).SpellID).CanCast(Client.Character, tmpSpell.tmpTargets)
 
                             'Only instant cast send ERR_OK for cast result?
                             If castResult = SpellFailedReason.CAST_NO_ERROR Then
@@ -1892,7 +1908,7 @@ Public Module WS_Items
 
         If itemGUID <> 0 Then
             If GenerateLoot(Client.Character, itemGUID, WS_Loot.LootType.LOOTTYPE_CORPSE) Then
-                CType(LootTable(itemGUID), LootObject).SendLoot(Client)
+                LootTable(itemGUID).SendLoot(Client)
                 Exit Sub
             End If
         End If
@@ -1905,7 +1921,7 @@ Public Module WS_Items
         packet.AddInt8(ErrorCode)
 
         If ErrorCode = InventoryChangeFailure.EQUIP_ERR_CANT_EQUIP_LEVEL_I Then
-            packet.AddInt32(CType(WORLD_ITEMs(GUID1), ItemObject).ItemInfo.ReqLevel)
+            packet.AddInt32(WORLD_ITEMs(GUID1).ItemInfo.ReqLevel)
         End If
 
         packet.AddUInt64(GUID1)
@@ -1933,6 +1949,6 @@ Public Module WS_Items
         packet.Dispose()
     End Sub
 
-#End Region
+    #End Region
 
 End Module

@@ -15,14 +15,13 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.IO
 Imports System.ComponentModel
 
 Namespace DBC
     <Description("DBC wrapper class using optimizations for reading row by row.")> _
     Public Class OptimizedDBC
-        Inherits BaseDBC
+    Inherits BaseDBC
 
         Protected tmpRow() As Byte
         Protected tmpRowRead As Integer = -1
@@ -83,9 +82,10 @@ Namespace DBC
         End Property
 
     End Class
+    
     <Description("DBC wrapper class using buffered stream for file access.")> _
     Public Class BufferedDBC
-        Inherits BaseDBC
+    Inherits BaseDBC
 
         Protected bs As BufferedStream
 
@@ -109,7 +109,7 @@ Namespace DBC
         End Sub
 
         <Description("Access to item by row and column.")> _
-       Public Overrides ReadOnly Property Item(ByVal Row As Integer, ByVal Column As Integer, Optional ByVal ValueType As DBCValueType = DBCValueType.DBC_INTEGER) As Object
+        Public Overrides ReadOnly Property Item(ByVal Row As Integer, ByVal Column As Integer, Optional ByVal ValueType As DBCValueType = DBCValueType.DBC_INTEGER) As Object
             Get
                 If Row >= Rows Then Throw New ApplicationException("DBC: Row index outside file definition.")
                 If Column >= Columns Then Throw New ApplicationException("DBC: Column index outside file definition.")
@@ -146,7 +146,7 @@ Namespace DBC
 
     <Description("DBC wrapper class.")> _
     Public Class BaseDBC
-        Implements IDisposable
+    Implements IDisposable
 
         'Variables
         Protected fs As Stream

@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Threading
 Imports System.Collections.Generic
 Imports mangosVB.Common.BaseWriter
@@ -36,7 +35,7 @@ Public Module WS_Handlers_Gamemaster
 
             Client.Character.Teleport(X, Y, Z, O, Map)
         Else
-            'Do we need to notify client that he is using GM command... i think no :)
+        'Do we need to notify client that he is using GM command... i think no :)
         End If
     End Sub
 

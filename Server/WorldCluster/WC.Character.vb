@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Threading
 Imports System.Reflection
 Imports mangosVB.Common
@@ -24,7 +23,7 @@ Imports mangosVB.Common.BaseWriter
 Public Module WC_Character
 
     Class CharacterObject
-        Implements IDisposable
+    Implements IDisposable
 
         Public GUID As ULong
         Public Client As ClientClass

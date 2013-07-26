@@ -15,15 +15,14 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Threading
 Imports System.Runtime.CompilerServices
 
 Public Module WS_Creatures_AI
 
-#Region "WS.Creatures.AI.Framework"
+    #Region "WS.Creatures.AI.Framework"
     Public Class TBaseAI
-        Implements IDisposable
+    Implements IDisposable
         Public Enum AIState
             AI_DO_NOTHING
             AI_DEAD
@@ -79,12 +78,12 @@ Public Module WS_Creatures_AI
         End Sub
     End Class
 
-#End Region
-#Region "WS.Creatures.AI.TestAIs"
+    #End Region
+    #Region "WS.Creatures.AI.TestAIs"
 
     'NOTE: These are timer based AIs
     Public Class TestDefensiveAI
-        Inherits TBaseAI
+    Inherits TBaseAI
         Protected Creature As CreatureObject
         Protected NextAttackTimer As Timer = Nothing
 
@@ -146,12 +145,12 @@ Public Module WS_Creatures_AI
             Else
                 Try
                     If ((TypeOf aiTarget Is CharacterObject) AndAlso (CType(aiTarget, CharacterObject).DEAD = True)) OrElse _
-                       ((TypeOf aiTarget Is CreatureObject) AndAlso (CType(aiTarget, CreatureObject).aiScript.State = AIState.AI_DEAD)) Then
+                    ((TypeOf aiTarget Is CreatureObject) AndAlso (CType(aiTarget, CreatureObject).aiScript.State = AIState.AI_DEAD)) Then
                         aiHateTable.Remove(aiTarget)
                         SelectTarget()
                     End If
 
-                    Dim distance As Single = GetDistance(CType(Creature, CreatureObject), CType(aiTarget, BaseUnit))
+                    Dim distance As Single = GetDistance(Creature, aiTarget)
 
                     'DONE: Very far objects handling
                     If distance > Creature.MaxDistance Then
@@ -162,7 +161,7 @@ Public Module WS_Creatures_AI
                             Reset()
                             Exit Sub
                         End If
-                        distance = GetDistance(CType(Creature, CreatureObject), CType(aiTarget, BaseUnit))
+                        distance = GetDistance(Creature, aiTarget)
                     End If
 
                     'DONE: Far objects handling
@@ -181,20 +180,20 @@ Public Module WS_Creatures_AI
                             'DONE: Cast spell
                             Dim tmpTargets As New SpellTargets
                             tmpTargets.SetTarget_UNIT(aiTarget)
-                            CType(SPELLs(133), SpellInfo).Cast(CType(Creature, CreatureObject), tmpTargets, 0)
-                            NextAttackTimer.Change(CType(SPELLs(133), SpellInfo).GetCastTime, Timeout.Infinite)
+                            SPELLs(133).Cast(Creature, tmpTargets, 0)
+                            NextAttackTimer.Change(SPELLs(133).GetCastTime, Timeout.Infinite)
                             Exit Sub
                         End If
                     End If
 
                     'DONE: Look to target
-                    If Not IsInFrontOf(CType(Creature, CreatureObject), CType(aiTarget, BaseUnit)) Then
-                        Creature.TurnTo(CType(aiTarget, BaseUnit))
+                    If Not IsInFrontOf(Creature, aiTarget) Then
+                        Creature.TurnTo(aiTarget)
                     End If
 
                     'DONE: Fix Creature VS Creature
-                    Dim damageInfo As DamageInfo = CalculateDamage(CType(Creature, CreatureObject), aiTarget, False)
-                    SendAttackerStateUpdate(CType(Creature, CreatureObject), CType(aiTarget, BaseUnit), damageInfo)
+                    Dim damageInfo As DamageInfo = CalculateDamage(Creature, aiTarget, False)
+                    SendAttackerStateUpdate(Creature, aiTarget, damageInfo)
                     aiTarget.DealDamage(damageInfo.GetDamage)
 
                     NextAttackTimer.Change(CREATURESDatabase(Creature.ID).BaseAttackTime, Timeout.Infinite)
@@ -205,8 +204,9 @@ Public Module WS_Creatures_AI
             End If
         End Sub
     End Class
+    
     Public Class TestMovingAI
-        Inherits TBaseAI
+    Inherits TBaseAI
         Protected Creature As CreatureObject
 
         Protected MoveTimer As Threading.Timer = Nothing
@@ -227,8 +227,9 @@ Public Module WS_Creatures_AI
             MoveTimer = New Threading.Timer(AddressOf DoMove, Nothing, 60000, 5000)
         End Sub
     End Class
+    
     Public Class TestDefaultAI
-        Inherits TBaseAI
+    Inherits TBaseAI
 
         Protected Const AI_INTERVAL_MOVE As Integer = 3000
         Protected Const AI_INTERVAL_SLEEP As Integer = 6000
@@ -315,7 +316,7 @@ Public Module WS_Creatures_AI
 
                 'DONE: Do targeted movement to attack target
                 Dim distance As Single = AI_INTERVAL_MOVE / 1000 * aiCreature.CreatureInfo.RunSpeed
-                Dim distanceToTarget As Single = GetDistance(CType(aiCreature, CreatureObject), CType(aiTarget, BaseUnit))
+                Dim distanceToTarget As Single = GetDistance(aiCreature, aiTarget)
 
                 If distanceToTarget < distance Then
                     'DONE: Move to target
@@ -370,14 +371,14 @@ Public Module WS_Creatures_AI
                 'DONE: Do real melee attack
                 Try
                     If ((TypeOf aiTarget Is CharacterObject) AndAlso (CType(aiTarget, CharacterObject).DEAD = True)) OrElse _
-                       ((TypeOf aiTarget Is CreatureObject) AndAlso (CType(aiTarget, CreatureObject).aiScript.State = AIState.AI_DEAD)) Then
+                    ((TypeOf aiTarget Is CreatureObject) AndAlso (CType(aiTarget, CreatureObject).aiScript.State = AIState.AI_DEAD)) Then
                         aiTarget = Nothing
                         aiHateTable.Remove(aiTarget)
                         SelectTarget()
                     End If
                     If CheckTarget() Then Exit Sub
 
-                    Dim distance As Single = GetDistance(CType(aiCreature, CreatureObject), CType(aiTarget, BaseUnit))
+                    Dim distance As Single = GetDistance(aiCreature, aiTarget)
 
                     'DONE: Very far objects handling
                     If distance > aiCreature.MaxDistance Then
@@ -386,7 +387,7 @@ Public Module WS_Creatures_AI
                         aiHateTable.Remove(aiTarget)
                         SelectTarget()
                         If CheckTarget() Then Exit Sub
-                        distance = GetDistance(CType(aiCreature, CreatureObject), CType(aiTarget, BaseUnit))
+                        distance = GetDistance(aiCreature, aiTarget)
                     End If
 
                     'DONE: Far objects handling
@@ -400,20 +401,20 @@ Public Module WS_Creatures_AI
                             'DONE: Cast spell
                             Dim tmpTargets As New SpellTargets
                             tmpTargets.SetTarget_UNIT(aiTarget)
-                            CType(SPELLs(133), SpellInfo).Cast(CType(aiCreature, CreatureObject), tmpTargets, 0)
-                            aiTimer.Change(CType(SPELLs(133), SpellInfo).GetCastTime, Timeout.Infinite)
+                            SPELLs(133).Cast(aiCreature, tmpTargets, 0)
+                            aiTimer.Change(SPELLs(133).GetCastTime, Timeout.Infinite)
                             Exit Sub
                         End If
                     End If
 
                     'DONE: Look to aiTarget
-                    If Not IsInFrontOf(CType(aiCreature, CreatureObject), CType(aiTarget, BaseUnit)) Then
-                        aiCreature.TurnTo(CType(aiTarget, BaseUnit))
+                    If Not IsInFrontOf(aiCreature, aiTarget) Then
+                        aiCreature.TurnTo(aiTarget)
                     End If
 
                     'DONE: Fix aiCreature VS aiCreature
-                    Dim damageInfo As DamageInfo = CalculateDamage(CType(aiCreature, CreatureObject), aiTarget, False)
-                    SendAttackerStateUpdate(CType(aiCreature, CreatureObject), CType(aiTarget, BaseUnit), damageInfo)
+                    Dim damageInfo As DamageInfo = CalculateDamage(aiCreature, aiTarget, False)
+                    SendAttackerStateUpdate(aiCreature, aiTarget, damageInfo)
                     aiTarget.DealDamage(damageInfo.GetDamage)
 
                     aiTimer.Change(CREATURESDatabase(aiCreature.ID).BaseAttackTime, Timeout.Infinite)
@@ -473,8 +474,8 @@ Public Module WS_Creatures_AI
 
     End Class
 
-#End Region
-#Region "WS.Creatures.AI.StandartAIs"
+    #End Region
+    #Region "WS.Creatures.AI.StandartAIs"
 
     'Standart AIs           | move | defend | attack | cooperative | spawn dst. |
     '  DefaultAI:           |  +       +         -          -            +
@@ -486,11 +487,10 @@ Public Module WS_Creatures_AI
     '  WaypointAI:          | move in wayponts and defend
     '  EvilWaypointAI:      | move in wayponts, defend and look for enemy
     Public Class DefaultAI
-        Inherits TBaseAI
+    Inherits TBaseAI
 
         Protected aiCreature As CreatureObject = Nothing
         Protected aiTimer As Integer = 0
-
 
         Protected Const AI_INTERVAL_MOVE As Integer = 3000
         Protected Const AI_INTERVAL_SLEEP As Integer = 6000
@@ -771,7 +771,7 @@ Public Module WS_Creatures_AI
                         Exit Sub
                     End If
 
-                    Dim distance As Single = GetDistance(CType(aiCreature, CreatureObject), CType(aiTarget, BaseUnit))
+                    Dim distance As Single = GetDistance(aiCreature, aiTarget)
 
                     'DONE: Very far objects handling
                     If distance > aiCreature.MaxDistance Then
@@ -783,7 +783,7 @@ Public Module WS_Creatures_AI
                             OnLeaveCombat()
                             Exit Sub
                         End If
-                        distance = GetDistance(CType(aiCreature, CreatureObject), CType(aiTarget, BaseUnit))
+                        distance = GetDistance(aiCreature, aiTarget)
                     End If
 
                     'DONE: Far objects handling
@@ -802,13 +802,13 @@ Public Module WS_Creatures_AI
                     End If
 
                     'DONE: Look to aiTarget
-                    If Not IsInFrontOf(CType(aiCreature, CreatureObject), CType(aiTarget, BaseUnit)) Then
-                        aiCreature.TurnTo(CType(aiTarget, BaseUnit))
+                    If Not IsInFrontOf(aiCreature, aiTarget) Then
+                        aiCreature.TurnTo(aiTarget)
                     End If
 
                     'DONE: Fix aiCreature VS aiCreature
-                    Dim damageInfo As DamageInfo = CalculateDamage(CType(aiCreature, CreatureObject), aiTarget, False)
-                    SendAttackerStateUpdate(CType(aiCreature, CreatureObject), CType(aiTarget, BaseUnit), damageInfo)
+                    Dim damageInfo As DamageInfo = CalculateDamage(aiCreature, aiTarget, False)
+                    SendAttackerStateUpdate(aiCreature, aiTarget, damageInfo)
                     aiTarget.DealDamage(damageInfo.GetDamage)
 
                     aiTimer = CREATURESDatabase(aiCreature.ID).BaseAttackTime
@@ -832,7 +832,7 @@ Public Module WS_Creatures_AI
 
                 'DONE: Do simple random movement
                 Dim MoveTries As Byte = 0
-TryMoveAgain:
+                TryMoveAgain:
                 If MoveTries > 5 Then 'The creature is at a very weird location now
                     Me.State = TBaseAI.AIState.AI_WANDERING
                     aiCreature.Life.Current = aiCreature.Life.Maximum
@@ -863,7 +863,7 @@ TryMoveAgain:
 
                 'DONE: Do targeted movement to attack target
                 Dim distance As Single = AI_INTERVAL_MOVE / 1000 * aiCreature.CreatureInfo.RunSpeed
-                Dim distanceToTarget As Single = GetDistance(CType(aiCreature, CreatureObject), CType(aiTarget, BaseUnit))
+                Dim distanceToTarget As Single = GetDistance(aiCreature, aiTarget)
 
                 If distanceToTarget < distance Then
                     'DONE: Move to target
@@ -931,7 +931,7 @@ TryMoveAgain:
     End Class
 
     Public Class GuardAI
-        Inherits TBaseAI
+    Inherits TBaseAI
 
         Protected aiCreature As CreatureObject = Nothing
         Protected aiTimer As Integer = 0
@@ -1112,7 +1112,7 @@ TryMoveAgain:
                         Exit Sub
                     End If
 
-                    Dim distance As Single = GetDistance(CType(aiCreature, CreatureObject), CType(aiTarget, BaseUnit))
+                    Dim distance As Single = GetDistance(aiCreature, aiTarget)
 
                     'DONE: Very far objects handling
                     If distance > aiCreature.MaxDistance Then
@@ -1121,7 +1121,7 @@ TryMoveAgain:
                         aiHateTable.Remove(aiTarget)
                         SelectTarget()
                         If CheckTarget() Then Exit Sub
-                        distance = GetDistance(CType(aiCreature, CreatureObject), CType(aiTarget, BaseUnit))
+                        distance = GetDistance(aiCreature, aiTarget)
                     End If
 
                     'DONE: Far objects handling
@@ -1140,13 +1140,13 @@ TryMoveAgain:
                     End If
 
                     'DONE: Look to aiTarget
-                    If Not IsInFrontOf(CType(aiCreature, CreatureObject), CType(aiTarget, BaseUnit)) Then
-                        aiCreature.TurnTo(CType(aiTarget, BaseUnit))
+                    If Not IsInFrontOf(aiCreature, aiTarget) Then
+                        aiCreature.TurnTo(aiTarget)
                     End If
 
                     'DONE: Fix aiCreature VS aiCreature
-                    Dim damageInfo As DamageInfo = CalculateDamage(CType(aiCreature, CreatureObject), aiTarget, False)
-                    SendAttackerStateUpdate(CType(aiCreature, CreatureObject), CType(aiTarget, BaseUnit), damageInfo)
+                    Dim damageInfo As DamageInfo = CalculateDamage(aiCreature, aiTarget, False)
+                    SendAttackerStateUpdate(aiCreature, aiTarget, damageInfo)
                     aiTarget.DealDamage(damageInfo.GetDamage)
 
                     aiTimer = CREATURESDatabase(aiCreature.ID).BaseAttackTime
@@ -1178,7 +1178,7 @@ TryMoveAgain:
 
                 'DONE: Do simple random movement
                 Dim MoveTries As Byte = 0
-TryMoveAgain:
+                TryMoveAgain:
                 If MoveTries > 5 Then 'The creature is at a very weird location now
                     Me.State = TBaseAI.AIState.AI_WANDERING
                     aiCreature.Life.Current = aiCreature.Life.Maximum
@@ -1206,7 +1206,7 @@ TryMoveAgain:
             Else
                 'DONE: Do targeted movement to attack target
                 Dim distance As Single = AI_INTERVAL_MOVE / 1000 * aiCreature.CreatureInfo.RunSpeed
-                Dim distanceToTarget As Single = GetDistance(CType(aiCreature, CreatureObject), CType(aiTarget, BaseUnit))
+                Dim distanceToTarget As Single = GetDistance(aiCreature, aiTarget)
 
                 If distanceToTarget < distance Then
                     'DONE: Move to target
@@ -1252,9 +1252,9 @@ TryMoveAgain:
 
     End Class
 
-#End Region
-#Region "WS.Creatures.AI.BossAIs"
+    #End Region
+    #Region "WS.Creatures.AI.BossAIs"
 
-#End Region
+    #End Region
 
 End Module

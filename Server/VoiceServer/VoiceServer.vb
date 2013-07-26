@@ -15,7 +15,6 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
-
 Imports System.Threading
 Imports System.Net.Sockets
 Imports System.Xml.Serialization
@@ -28,7 +27,7 @@ Imports mangosVB.Common
 
 Public Module WorldCluster
 
-#Region "Global.Variables"
+    #Region "Global.Variables"
 
     'System Things...
     Public Log As New BaseWriter
@@ -37,9 +36,10 @@ Public Module WorldCluster
     'Public PacketHandlers As New Dictionary(Of OPCODES, HandlePacket)
     'Delegate Sub HandlePacket(ByRef Packet As PacketClass, ByRef Client As ClientClass)
 
-#End Region
-#Region "Global.Config"
+    #End Region
+    #Region "Global.Config"
     Public Config As XMLConfigFile
+    
     <XmlRoot(ElementName:="VoiceServer")> _
     Public Class XMLConfigFile
         <XmlElement(ElementName:="VSPort")> Public VSPort As Integer = 4720
@@ -97,7 +97,7 @@ Public Module WorldCluster
             Console.WriteLine(e.ToString)
         End Try
     End Sub
-#End Region
+    #End Region
 
     <System.MTAThreadAttribute()> _
     Sub Main()
