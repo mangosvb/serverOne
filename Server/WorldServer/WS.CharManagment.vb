@@ -23,7 +23,7 @@ Imports mangosVB.Common
 
 Public Module WS_CharManagment
 
-    #Region "WS.CharMangment.CharacterInitializators"
+#Region "WS.CharMangment.CharacterInitializators"
     Enum ManaTypes As Integer
         TYPE_MANA = 0
         TYPE_RAGE = 1
@@ -260,8 +260,8 @@ Public Module WS_CharManagment
             Next
         Next
     End Sub
-    #End Region
-    #Region "WS.CharMangment.CharacterHelpingTypes"
+#End Region
+#Region "WS.CharMangment.CharacterHelpingTypes"
     Public Class TSkill
         Private _Current As Int16 = 0
         Public Bonus As Int16 = 0
@@ -297,7 +297,7 @@ Public Module WS_CharManagment
             End Get
         End Property
     End Class
-    
+
     Public Class TStatBar
         Private _Current As Integer = 0
         Public Bonus As Integer = 0
@@ -330,7 +330,7 @@ Public Module WS_CharManagment
             End Set
         End Property
     End Class
-    
+
     Public Class TStat
         Public Base As Short = 0
         Public PositiveBonus As Short = 0
@@ -354,7 +354,7 @@ Public Module WS_CharManagment
             PositiveBonus = NegValue
         End Sub
     End Class
-    
+
     Public Class TDamageBonus
         Public PositiveBonus As Integer = 0
         Public NegativeBonus As Integer = 0
@@ -370,7 +370,7 @@ Public Module WS_CharManagment
             PositiveBonus = NegValue
         End Sub
     End Class
-    
+
     Public Class THonor
         Public HonorPounts As Short = 0                 '! MAX=1000 ?
         Public HonorRank As Byte = 0
@@ -418,14 +418,14 @@ Public Module WS_CharManagment
 
         End Sub
     End Class
-    
+
     Public Class TReputation
         '1:"AtWar" clickable but not checked
         '3:"AtWar" clickable and checked
         Public Flags As Integer = 0
         Public Value As Integer = 0
     End Class
-    
+
     Public Class TActionButton
         Public ActionType As Byte = 0
         Public ActionMisc As Byte = 0
@@ -436,9 +436,9 @@ Public Module WS_CharManagment
             Action = Action_
         End Sub
     End Class
-    
+
     Public Class TDrowningTimer
-    Implements IDisposable
+        Implements IDisposable
 
         Private DrowningTimer As Threading.Timer = Nothing
         Public DrowningValue As Integer = 70000
@@ -456,9 +456,9 @@ Public Module WS_CharManagment
             If CHARACTERs.ContainsKey(CharacterGUID) Then CHARACTERs(CharacterGUID).StopMirrorTimer(1)
         End Sub
     End Class
-    
+
     Public Class TRepopTimer
-    Implements IDisposable
+        Implements IDisposable
 
         Private RepopTimer As Threading.Timer = Nothing
         Public CharacterGUID As ULong = 0
@@ -477,8 +477,8 @@ Public Module WS_CharManagment
             RepopTimer = Nothing
         End Sub
     End Class
-    #End Region
-    #Region "WS.CharMangment.CharacterHelpingSubs"
+#End Region
+#Region "WS.CharMangment.CharacterHelpingSubs"
 
     Public Sub SendBindPointUpdate(ByRef Client As ClientClass, ByRef Character As CharacterObject)
         Dim SMSG_BINDPOINTUPDATE As New PacketClass(OPCODES.SMSG_BINDPOINTUPDATE)
@@ -576,16 +576,16 @@ Public Module WS_CharManagment
         Next
     End Sub
 
-    #End Region
+#End Region
 
-    #Region "WS.CharMangment.CharacterDataType"
+#Region "WS.CharMangment.CharacterDataType"
 
     Public Const ITEM_SLOT_NULL As Byte = 255
     Public Const ITEM_BAG_NULL As Long = -1
 
     Public Class CharacterObject
-    Inherits BaseUnit
-    Implements IDisposable
+        Inherits BaseUnit
+        Implements IDisposable
 
         'Connection Information
         Public Client As ClientClass
@@ -1874,7 +1874,7 @@ Public Module WS_CharManagment
                 XP = XP + Ammount
                 If LogIt Then LogXPGain(Ammount, 0, 0, VictimGUID)
 
-                CheckXPAgain:
+CheckXPAgain:
                 If XP >= XPTable(Level) Then
                     XP -= XPTable(Level)
                     Level = Level + 1
@@ -3349,7 +3349,6 @@ Public Module WS_CharManagment
                 End If
             End If
         End Sub
-        
         Public Enum ChangeSpeedType As Byte
             RUN
             RUNBACK
@@ -3589,11 +3588,11 @@ Public Module WS_CharManagment
 
             'DONE: Hostile by reputation
             Dim Rank As ReputationRank = GetReputation(FactionTemplatesInfo(FactionID).FactionID)
-            If Rank >= ReputationRank.Hostile Then
+            If Rank <= ReputationRank.Hostile Then
                 Return TReaction.HOSTILE
-            ElseIf Rank <= ReputationRank.Revered Then
+            ElseIf Rank >= ReputationRank.Revered Then
                 Return TReaction.FIGHT_SUPPORT
-            ElseIf Rank <= ReputationRank.Friendly Then
+            ElseIf Rank >= ReputationRank.Friendly Then
                 Return TReaction.FRIENDLY
             Else
                 Return TReaction.NEUTRAL
@@ -3640,8 +3639,12 @@ Public Module WS_CharManagment
             End Select
         End Function
         Public Sub SetReputation(ByVal FactionID As Integer, ByVal Value As Integer)
-            If FactionInfo(FactionID).VisibleID > -1 Then
-                Reputation(FactionInfo(FactionID).VisibleID).Value = Reputation(FactionInfo(FactionID).VisibleID).Value + Value
+            If FactionInfo(FactionID).VisibleID = -1 Then Exit Sub
+
+            Reputation(FactionInfo(FactionID).VisibleID).Value += Value
+
+            If (Reputation(FactionInfo(FactionID).VisibleID).Flags And 1) = 0 Then
+                Reputation(FactionInfo(FactionID).VisibleID).Flags = Reputation(FactionInfo(FactionID).VisibleID).Flags Or 1
             End If
 
             If Not Client Is Nothing Then
@@ -3655,8 +3658,8 @@ Public Module WS_CharManagment
         End Sub
         Public Function GetDiscountMod(ByVal FactionID As Integer) As Single
             Dim Rank As ReputationRank = GetReputation(FactionID)
-            If Rank <= ReputationRank.Neutral Then Return 1
-            Return (1 - 0.05 * (Rank - ReputationRank.Neutral))
+            If Rank >= ReputationRank.Honored Then Return 0.9F
+            Return 1.0F
         End Function
 
         'Death
@@ -3710,6 +3713,41 @@ Public Module WS_CharManagment
             'DONE: Check for dead
             If DEAD Then Exit Sub
 
+            'DONE: Break some spells when taking any damage
+            RemoveAurasByInterruptFlag(SpellAuraInterruptFlags.AURA_INTERRUPT_FLAG_DAMAGE)
+
+            If Attacker IsNot Nothing Then
+                'DONE: Add into combat if not already
+                If Not inCombatWith.Contains(Attacker.GUID) Then
+                    inCombatWith.Add(Attacker.GUID)
+                    CheckCombat()
+                    SendCharacterUpdate()
+                End If
+
+                'DONE: Add the attacker into combat if not already
+                If TypeOf Attacker Is CharacterObject AndAlso CType(Attacker, CharacterObject).inCombatWith.Contains(GUID) = False Then
+                    CType(Attacker, CharacterObject).inCombatWith.Add(GUID)
+                    If (CType(Attacker, CharacterObject).cUnitFlags And UnitFlags.UNIT_FLAG_IN_COMBAT) = 0 Then
+                        CType(Attacker, CharacterObject).cUnitFlags = CType(Attacker, CharacterObject).cUnitFlags Or UnitFlags.UNIT_FLAG_IN_COMBAT
+                        CType(Attacker, CharacterObject).SetUpdateFlag(EUnitFields.UNIT_FIELD_FLAGS, CType(Attacker, CharacterObject).cUnitFlags)
+                        CType(Attacker, CharacterObject).SendCharacterUpdate()
+                    End If
+                End If
+
+                'DONE: Fight support by NPCs
+                For Each cGUID As ULong In creaturesNear.ToArray
+                    If WORLD_CREATUREs.ContainsKey(cGUID) AndAlso WORLD_CREATUREs(cGUID).aiScript IsNot Nothing AndAlso WORLD_CREATUREs(cGUID).isGuard Then
+                        If WORLD_CREATUREs(cGUID).isDead = False AndAlso WORLD_CREATUREs(cGUID).aiScript.InCombat() = False Then
+                            If inCombatWith.Contains(cGUID) Then Continue For
+                            If GetReaction(WORLD_CREATUREs(cGUID).Faction) = TReaction.FIGHT_SUPPORT AndAlso GetDistance(WORLD_CREATUREs(cGUID), Me) <= WORLD_CREATUREs(cGUID).AggroRange(Me) Then
+                                WORLD_CREATUREs(cGUID).aiScript.OnGenerateHate(Attacker, Damage)
+                            End If
+                        End If
+                    End If
+                Next
+
+            End If
+
             'TODO: Enter combat for PvP combat, and then remove it after a 10 seconds non combat period (remember incombatwith array)
 
             Select Case DamageType
@@ -3717,7 +3755,7 @@ Public Module WS_CharManagment
                     Me.DealDamage(Damage, Attacker)
                     Return
                 Case Else
-            'TODO: Magical resists here
+                    'TODO: Magical resists here
             End Select
 
             If Life.Current = 0 Then
@@ -4776,9 +4814,9 @@ Public Module WS_CharManagment
         FATIGUE = 0
     End Enum
 
-    #End Region
+#End Region
 
-    #Region "WS.CharMangment.Handlers"
+#Region "WS.CharMangment.Handlers"
 
     Public Sub On_CMSG_LFM_SET_AUTOFILL(ByRef packet As PacketClass, ByRef Client As ClientClass)
     'Unsure how this works
@@ -5034,9 +5072,9 @@ Public Module WS_CharManagment
         Client.Character.SendCharacterUpdate(False)
     End Sub
 
-    #End Region
+#End Region
 
-    #Region "WS.CharMangment.CreateCharacter"
+#Region "WS.CharMangment.CreateCharacter"
 
     Public Function CreateCharacter(ByVal Account As String, ByVal Name As String, ByVal Race As Byte, ByVal Classe As Byte, ByVal Gender As Byte, ByVal Skin As Byte, ByVal Face As Byte, ByVal HairStyle As Byte, ByVal HairColor As Byte, ByVal FacialHair As Byte, ByVal OutfitID As Byte) As Integer
         Dim Character As New CharacterObject
@@ -5296,6 +5334,6 @@ Public Module WS_CharManagment
 
     End Sub
 
-    #End Region
+#End Region
 
 End Module
