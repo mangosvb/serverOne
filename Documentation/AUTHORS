@@ -15,9 +15,6 @@ Additional input from other teams is acknowledged in the THANKS file.
 Authorship is assigned for each commit within the git history, which is stored in these git repositories:
 * github.com/mangosvb/serverOne (History since then)
 
-Unfortunately we have no detailed information of the history of the Spurious project;
-if somebody can provide information, please contact us, so that we can make this history available
-
 The third party libraries have their own way of addressing authorship, and the authorship of commits importing/ updating
 a third party library reflects who did the importing instead of who wrote the code within the commit.
 
