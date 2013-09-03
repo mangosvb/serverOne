@@ -134,7 +134,7 @@ Public Module WS_DynamicObjects
             Effects.Remove(EffectInfo)
         End Sub
 
-        Public Function Update(ByVal Time As Integer) As Boolean
+        Public Function Update() As Boolean
             'DONE: Remove if caster doesn't exist
             If Caster Is Nothing Then
                 Return True
@@ -142,8 +142,9 @@ Public Module WS_DynamicObjects
 
             'DONE: Tick down
             Dim DeleteThis As Boolean = False
-            If Duration > Time Then
-                Duration -= Time
+
+            If Duration > TSpellManager.UPDATE_TIMER Then
+                Duration -= TSpellManager.UPDATE_TIMER
                 Dim Amplitude As Integer = 0
                 For Each Effect As SpellEffect In Effects
                     If Effect.Amplitude > Amplitude Then

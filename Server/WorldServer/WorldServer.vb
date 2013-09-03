@@ -37,6 +37,7 @@ Public Module WS_Main
     'Worlds containers
     Public WORLD_CREATUREs_Lock As New ReaderWriterLock
     Public WORLD_CREATUREs As New Dictionary(Of ULong, CreatureObject)
+    Public WORLD_CREATUREsKeys As New ArrayList()
     Public WORLD_GAMEOBJECTs As New Dictionary(Of ULong, GameObjectObject)
     Public WORLD_CORPSEOBJECTs As New Dictionary(Of ULong, CorpseObject)
     Public WORLD_DYNAMICOBJECTs_Lock As New ReaderWriterLock

@@ -217,9 +217,13 @@ Public Module WS_TimerBasedEvents
 
             Try
                 WORLD_CREATUREs_Lock.AcquireReaderLock(DEFAULT_LOCK_TIMEOUT)
-                For Each de As KeyValuePair(Of ULong, CreatureObject) In WORLD_CREATUREs
-                    If de.Value IsNot Nothing Then UpdateSpells(de.Value)
+
+                For i As Long = 0 To WORLD_CREATUREsKeys.Count - 1
+                    If WORLD_CREATUREs(WORLD_CREATUREsKeys(i)) IsNot Nothing Then
+                        UpdateSpells(WORLD_CREATUREs(WORLD_CREATUREsKeys(i)))
+                    End If
                 Next
+
             Catch ex As Exception
                 Log.WriteLine(LogType.FAILED, ex.ToString, Nothing)
             Finally
@@ -241,7 +245,7 @@ Public Module WS_TimerBasedEvents
             Try
                 WORLD_DYNAMICOBJECTs_Lock.AcquireReaderLock(DEFAULT_LOCK_TIMEOUT)
                 For Each Dynamic As KeyValuePair(Of ULong, DynamicObjectObject) In WORLD_DYNAMICOBJECTs
-                    If Dynamic.Value.Update(UPDATE_TIMER) Then
+                    If Dynamic.Value IsNot Nothing AndAlso Dynamic.Value.Update() Then
                         DynamicObjectsToDelete.Add(Dynamic.Value)
                     End If
                 Next
@@ -315,22 +319,44 @@ Public Module WS_TimerBasedEvents
                 Exit Sub
             End If
 
-            Dim aiCreature As CreatureObject = Nothing
-            Dim iKey As Long = 0
-
             Dim StartTime As Integer = timeGetTime
             AIManagerWorking = True
+
+            'TODO: Add Transports Handling To The Emulator
+            'First transports
+            ''Try
+            ''    WORLD_TRANSPORTs_Lock.AcquireReaderLock(DEFAULT_LOCK_TIMEOUT)
+
+            ''    For Each Transport As KeyValuePair(Of ULong, TransportObject) In WORLD_TRANSPORTs
+            ''        Transport.Value.Update()
+            ''    Next
+
+            ''Catch ex As Exception
+            ''    Log.WriteLine(LogType.CRITICAL, "Error updating transports.{0}{1}", vbNewLine, ex.ToString)
+            ''Finally
+            ''    WORLD_TRANSPORTs_Lock.ReleaseReaderLock()
+            ''End Try
+
+            'Then creatures
             Try
                 WORLD_CREATUREs_Lock.AcquireReaderLock(DEFAULT_LOCK_TIMEOUT)
 
-                For Each de As KeyValuePair(Of ULong, CreatureObject) In WORLD_CREATUREs
-                    If Not de.Value.aiScript Is Nothing Then de.Value.aiScript.DoThink()
-                Next
-                aiCreature = Nothing
+                Try
+                    For i As Long = 0 To WORLD_CREATUREsKeys.Count - 1
+                        If WORLD_CREATUREs(WORLD_CREATUREsKeys(i)) IsNot Nothing AndAlso WORLD_CREATUREs(WORLD_CREATUREsKeys(i)).aiScript IsNot Nothing Then
+                            WORLD_CREATUREs(WORLD_CREATUREsKeys(i)).aiScript.DoThink()
+                        End If
+                    Next
+                Catch ex As Exception
+                    Log.WriteLine(LogType.CRITICAL, "Error updating AI.{0}{1}", vbNewLine, ex.ToString)
+                Finally
+                    WORLD_CREATUREs_Lock.ReleaseReaderLock()
+                End Try
+
+            Catch ex As ApplicationException
+                Log.WriteLine(LogType.WARNING, "Update: AI Manager timed out")
             Catch ex As Exception
-                Log.WriteLine(LogType.CRITICAL, ex.ToString, Nothing)
-            Finally
-                WORLD_CREATUREs_Lock.ReleaseReaderLock()
+                Log.WriteLine(LogType.CRITICAL, "Error updating AI.{0}{1}", vbNewLine, ex.ToString)
             End Try
             AIManagerWorking = False
         End Sub

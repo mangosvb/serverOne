@@ -1135,6 +1135,7 @@ Public Module WS_Creatures
             Try
                 WORLD_CREATUREs_Lock.AcquireWriterLock(DEFAULT_LOCK_TIMEOUT)
                 WORLD_CREATUREs.Add(GUID, Me)
+                WORLD_CREATUREsKeys.Add(GUID)
                 WORLD_CREATUREs_Lock.ReleaseWriterLock()
             Catch
                 Log.WriteLine(LogType.FAILED, "Creature Spawn failed.")
@@ -1156,7 +1157,7 @@ Public Module WS_Creatures
             Try
                 WORLD_CREATUREs_Lock.AcquireWriterLock(DEFAULT_LOCK_TIMEOUT)
                 WORLD_CREATUREs.Add(GUID, Me)
-                'WORLD_CREATUREsKeys.Add(GUID)
+                WORLD_CREATUREsKeys.Add(GUID)
                 WORLD_CREATUREs_Lock.ReleaseWriterLock()
             Catch
                 Log.WriteLine(LogType.FAILED, "Creature Spawn failed.")
@@ -1179,6 +1180,7 @@ Public Module WS_Creatures
             Try
                 WORLD_CREATUREs_Lock.AcquireWriterLock(DEFAULT_LOCK_TIMEOUT)
                 WORLD_CREATUREs.Add(GUID, Me)
+                WORLD_CREATUREsKeys.Add(GUID)
                 WORLD_CREATUREs_Lock.ReleaseWriterLock()
             Catch
                 Log.WriteLine(LogType.FAILED, "Creature Spawn failed.")
@@ -1224,6 +1226,7 @@ Public Module WS_Creatures
             Try
                 WORLD_CREATUREs_Lock.AcquireWriterLock(DEFAULT_LOCK_TIMEOUT)
                 WORLD_CREATUREs.Add(GUID, Me)
+                WORLD_CREATUREsKeys.Add(GUID)
                 WORLD_CREATUREs_Lock.ReleaseWriterLock()
             Catch
                 Log.WriteLine(LogType.FAILED, "Creature Spawn failed.")
@@ -1237,6 +1240,7 @@ Public Module WS_Creatures
             Try
                 WORLD_CREATUREs_Lock.AcquireWriterLock(DEFAULT_LOCK_TIMEOUT)
                 WORLD_CREATUREs.Remove(GUID)
+                WORLD_CREATUREsKeys.Remove(GUID)
                 WORLD_CREATUREs_Lock.ReleaseWriterLock()
             Catch
                 Log.WriteLine(LogType.FAILED, "Creature Dispose failed.")
