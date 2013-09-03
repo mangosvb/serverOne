@@ -25,6 +25,7 @@ Public Module WS_TimerBasedEvents
     Public AIManager As TAIManager
     Public SpellManager As TSpellManager
     Public CharacterSaver As TCharacterSaver
+    Public WeatherChanger As TWeatherChanger
 
     'NOTE: Regenerates players' Mana, Life and Rage
     
@@ -380,8 +381,38 @@ Public Module WS_TimerBasedEvents
         End Sub
     End Class
 
+    'NOTE: Manages the weather
+    Public Class TWeatherChanger
+        Implements IDisposable
+
+        Public WeatherTimer As Threading.Timer = Nothing
+        Private WeatherWorking As Boolean = False
+
+        Public UPDATE_TIMER As Integer = Config.WeatherTimer     'Timer period (ms)
+        Public Sub New()
+            WeatherTimer = New Threading.Timer(AddressOf Update, Nothing, 10000, UPDATE_TIMER)
+        End Sub
+        Private Sub Update(ByVal state As Object)
+            If WeatherWorking Then
+                Log.WriteLine(LogType.WARNING, "Update: Weather changer skipping update")
+                Exit Sub
+            End If
+
+            WeatherWorking = True
+
+            For Each Weather As KeyValuePair(Of Integer, WeatherZone) In WeatherZones
+                Weather.Value.Update()
+            Next
+
+            WeatherWorking = False
+        End Sub
+        Public Sub Dispose() Implements System.IDisposable.Dispose
+            WeatherTimer.Dispose()
+            WeatherTimer = Nothing
+        End Sub
+    End Class
+
     'TODO: Timer for kicking not connected players (ping timeout)
     'TODO: Timer for auction items and mails
-    'TODO: Timer for weather change
 
 End Module

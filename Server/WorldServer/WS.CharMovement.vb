@@ -406,12 +406,8 @@ Module WS_CharMovement
         WS.Cluster.ClientUpdate(Client.Index, Client.Character.ZoneID, Client.Character.Level)
 
         'DONE: Send weather
-        Dim MySQLQuery As New DataTable
-        WorldDatabase.Query(String.Format("SELECT * FROM weather WHERE weather_zone = {0};", Client.Character.ZoneID), MySQLQuery)
-        If MySQLQuery.Rows.Count = 0 Then
-            SendWeather(0, 0, Client)
-        Else
-            SendWeather(MySQLQuery.Rows(0).Item("weather_type"), MySQLQuery.Rows(0).Item("weather_intensity"), Client)
+        If WeatherZones.ContainsKey(newZone) Then
+            SendWeather(newZone, Client)
         End If
     End Sub
     Public Sub On_MSG_MOVE_HEARTBEAT(ByRef packet As PacketClass, ByRef Client As ClientClass)
@@ -1039,45 +1035,5 @@ Module WS_CharMovement
 
     #End Region
 
-    Public Sub SendWeather(ByVal Type As Byte, ByVal Intensity As Single, ByRef Client As ClientClass)
-        ' WEATHER_SOUND_NOSOUND                 0
-        ' WEATHER_SOUND_RAINLIGHT               8533
-        ' WEATHER_SOUND_RAINMEDIUM              8534
-        ' WEATHER_SOUND_RAINHEAVY               8535
-        ' WEATHER_SOUND_SNOWLIGHT               8536
-        ' WEATHER_SOUND_SNOWMEDIUM              8537
-        ' WEATHER_SOUND_SNOWHEAVY               8538
-        ' WEATHER_SOUND_SANDSTORMLIGHT          8556
-        ' WEATHER_SOUND_SANDSTORMMEDIUM         8557
-        ' WEATHER_SOUND_SANDSTORMHEAVY          8558
-
-        ' WEATHER_RAIN							1
-        ' WEATHER_SNOW							2
-        ' WEATHER_SANDSTORM						3
-
-        Dim SMSG_WEATHER As New PacketClass(OPCODES.SMSG_WEATHER)
-        SMSG_WEATHER.AddInt32(Type)
-        SMSG_WEATHER.AddSingle(Intensity)
-        'SMSG_WEATHER.AddInt32(Sound)
-        Select Case Intensity
-            Case 0
-                SMSG_WEATHER.AddInt32(0)
-            Case Is <= 0.33
-                If Type = 1 Then SMSG_WEATHER.AddInt32(8533)
-                If Type = 2 Then SMSG_WEATHER.AddInt32(8533 + 3)
-                If Type = 3 Then SMSG_WEATHER.AddInt32(8533 + 23)
-            Case Is <= 0.66
-                If Type = 1 Then SMSG_WEATHER.AddInt32(8534)
-                If Type = 2 Then SMSG_WEATHER.AddInt32(8534 + 3)
-                If Type = 3 Then SMSG_WEATHER.AddInt32(8534 + 23)
-            Case Else
-                If Type = 1 Then SMSG_WEATHER.AddInt32(8535)
-                If Type = 2 Then SMSG_WEATHER.AddInt32(8535 + 3)
-                If Type = 3 Then SMSG_WEATHER.AddInt32(8535 + 23)
-        End Select
-        Client.Send(SMSG_WEATHER)
-        'Client.Character.SendToNearPlayers(SMSG_WEATHER)
-        SMSG_WEATHER.Dispose()
-    End Sub
 
 End Module

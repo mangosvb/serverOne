@@ -271,6 +271,7 @@
     <Compile Include="WS.TimerBasedEvents.vb">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="WS.Weather.vb" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

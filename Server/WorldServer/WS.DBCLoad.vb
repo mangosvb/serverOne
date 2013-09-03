@@ -1128,5 +1128,32 @@ Public Module WS_DBCLoad
         End Try
     End Sub
     #End Region
+#Region "Weather"
+    Public Sub LoadWeather()
+        Try
+            Dim WeatherQuery As New DataTable
+            WorldDatabase.Query("SELECT * FROM game_weather;", WeatherQuery)
+
+            For Each Weather As DataRow In WeatherQuery.Rows
+                Dim Zone As Integer = Weather.Item("zone")
+
+                If WeatherZones.ContainsKey(Zone) = False Then
+                    Dim ZoneChanges As New WeatherZone(Zone)
+                    ZoneChanges.Seasons(0) = New WeatherSeasonChances(Weather.Item("spring_rain_chance"), Weather.Item("spring_snow_chance"), Weather.Item("spring_storm_chance"))
+                    ZoneChanges.Seasons(1) = New WeatherSeasonChances(Weather.Item("summer_rain_chance"), Weather.Item("summer_snow_chance"), Weather.Item("summer_storm_chance"))
+                    ZoneChanges.Seasons(2) = New WeatherSeasonChances(Weather.Item("fall_rain_chance"), Weather.Item("fall_snow_chance"), Weather.Item("fall_storm_chance"))
+                    ZoneChanges.Seasons(3) = New WeatherSeasonChances(Weather.Item("winter_rain_chance"), Weather.Item("winter_snow_chance"), Weather.Item("winter_storm_chance"))
+                    WeatherZones.Add(Zone, ZoneChanges)
+                End If
+            Next
+
+            Log.WriteLine(LogType.INFORMATION, "Database: {0} Weather zones initialized.", WeatherQuery.Rows.Count)
+        Catch e As System.IO.DirectoryNotFoundException
+            Console.ForegroundColor = System.ConsoleColor.DarkRed
+            Console.WriteLine("Database : WeatherQuery missing.")
+            Console.ForegroundColor = System.ConsoleColor.Gray
+        End Try
+    End Sub
+#End Region
 
 End Module

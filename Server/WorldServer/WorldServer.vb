@@ -82,7 +82,7 @@ Public Module WS_Main
         <XmlElement(ElementName:="HealthRegenerationRate")> Public HealthRegenerationRate As Single = 1.0
         <XmlElement(ElementName:="GlobalAuction")> Public GlobalAuction As Boolean = False
         <XmlElement(ElementName:="SaveTimer")> Public SaveTimer As Integer = 120000
-
+        <XmlElement(ElementName:="WeatherTimer")> Public WeatherTimer As Integer = 600000
         <XmlElement(ElementName:="LogType")> Public LogType As String = "COLORCONSOLE"
         <XmlElement(ElementName:="LogLevel")> Public LogLevel As LogType = mangosVB.Common.BaseWriter.LogType.NETWORK
         <XmlElement(ElementName:="LogConfig")> Public LogConfig As String = ""

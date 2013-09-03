@@ -1302,21 +1302,19 @@ Public Module WS_Commands
 
         Return True
     End Function
-
     <ChatCommandAttribute("SetWeather", "SETWEATHER <TYPE> <INTENSITY> - Change weather in current zone. Intensity is float value!")> _
     Public Function cmdSetWeather(ByRef c As CharacterObject, ByVal Message As String) As Boolean
         Dim tmp() As String = Split(Message, " ", 2)
         Dim Type As Integer = tmp(0)
         Dim Intensity As Single = tmp(1)
 
-        Dim MySQLQuery As New DataTable
-        WorldDatabase.Query(String.Format("SELECT * FROM weather WHERE weather_zone = {0};", c.ZoneID), MySQLQuery)
-        If MySQLQuery.Rows.Count = 0 Then
-            WorldDatabase.Update(String.Format("INSERT INTO weather (weather_zone, weather_type, weather_intensity) VALUES ({0}, {1}, {2});", c.ZoneID, Type, Trim(Str(Intensity))))
+        If WeatherZones.ContainsKey(c.ZoneID) = False Then
+            c.CommandResponse("No weather for this zone is found!")
         Else
-            WorldDatabase.Update(String.Format("UPDATE weather SET weather_zone = {0}, weather_type = {1}, weather_intensity = {2};", c.ZoneID, Type, Trim(Str(Intensity))))
+            WeatherZones(c.ZoneID).CurrentWeather = Type
+            WeatherZones(c.ZoneID).Intensity = Intensity
+            SendWeather(c.ZoneID, c.Client)
         End If
-        SendWeather(Type, Intensity, c.Client)
 
         Return True
     End Function

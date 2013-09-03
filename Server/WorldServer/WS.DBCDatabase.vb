@@ -1786,6 +1786,7 @@ Public Module WS_DBCDatabase
             AIManager = New TAIManager
             SpellManager = New TSpellManager
             CharacterSaver = New TCharacterSaver
+            WeatherChanger = New TWeatherChanger
 
             Log.WriteLine(LogType.INFORMATION, "World: Loading Maps and Spawns....")
 
@@ -1850,6 +1851,7 @@ Public Module WS_DBCDatabase
         LoadTalentDBC()
         LoadTalentTabDBC()
         LoadAuctionHouseDBC()
+        LoadWeather()
         LoadOCTLifeRegenDBC()
         LoadOCTManaRegenDBC()
         LoadRegenLifePerSpiritDBC()
