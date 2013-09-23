@@ -84,7 +84,6 @@ Public Module WS_GameObjects
         End Sub
     End Class
     'WARNING: Use only with WORLD_GAMEOBJECTs()
-    
     Public Class GameObjectObject
     Inherits BaseObject
     Implements IDisposable
@@ -440,7 +439,6 @@ Public Module WS_GameObjects
         GameObjectsGUIDCounter += 1
         GetNewGUID = GameObjectsGUIDCounter
     End Function
-    
     Public Enum GameObjectType As Byte
         GAMEOBJECT_TYPE_DOOR = 0
         GAMEOBJECT_TYPE_BUTTON = 1

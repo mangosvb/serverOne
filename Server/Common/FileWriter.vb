@@ -20,7 +20,6 @@ Imports System.IO
 
 'Using this logging type, all logs are saved in files numbered by date.
 'Writting commands is done trought console.
-
 Public Class FileWriter
 Inherits BaseWriter
 

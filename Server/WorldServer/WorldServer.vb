@@ -74,7 +74,6 @@ Public Module WS_Main
     #End Region
     #Region "Global.Config"
     Public Config As XMLConfigFile
-    
     <XmlRoot(ElementName:="WorldServer")> _
     Public Class XMLConfigFile
         <XmlElement(ElementName:="ServerLimit")> Public ServerLimit As Integer = 10

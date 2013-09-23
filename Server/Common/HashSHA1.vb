@@ -5,7 +5,6 @@
 '''
 Imports System.IO
 Imports System.Security.Cryptography
-
 Public Class SHA1Hash
 Implements IHasher
     Public Function hashOfFile(ByVal fileToHash As String) As String Implements IHasher.hashOfFile

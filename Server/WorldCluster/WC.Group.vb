@@ -29,7 +29,6 @@ Public Module WC_Group
     Private GroupCounter As Long = 1
 
     Public GROUPs As New Dictionary(Of Long, Group)
-    
     Public Class Group
     Implements IDisposable
 

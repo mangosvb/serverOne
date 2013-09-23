@@ -484,7 +484,6 @@ Public Module WC_Network
     End Enum
 
     Public LastConnections As New Dictionary(Of UInteger, Date)
-    
     Class ClientClass
     Inherits ClientInfo
     Implements IDisposable

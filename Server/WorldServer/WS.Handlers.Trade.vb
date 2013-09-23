@@ -272,7 +272,6 @@ Public Module WS_Handlers_Trade
             End Try
         End Sub
     End Class
-    
     Private Enum TradeStatus
         TRADE_TARGET_UNAVIABLE = 0              '"[NAME] is busy"
         TRADE_STATUS_OK = 1                     'BEGIN TRADE

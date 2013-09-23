@@ -5,7 +5,6 @@ Public Enum ExpansionLevel As Byte
     NORMAL = 0          'WoW
     EXPANSION_1 = 1     'WoW: Burning Crusade
 End Enum
-
 Public Enum AccessLevel As Byte
     Trial = 0
     Player = 1
@@ -54,7 +53,6 @@ Public Interface ICluster
     Sub GroupRequestUpdate(ByVal ID As UInteger)
 
 End Interface
-
 Public Interface IWorld
 
     <Description("Initialize client object.")> _
@@ -70,7 +68,7 @@ Public Interface IWorld
 
     <Description("Create CharacterObject.")> _
     Function ClientCreateCharacter(ByVal Account As String, ByVal Name As String, ByVal Race As Byte, ByVal Classe As Byte, ByVal Gender As Byte, ByVal Skin As Byte, _
-    ByVal Face As Byte, ByVal HairStyle As Byte, ByVal HairColor As Byte, ByVal FacialHair As Byte, ByVal OutfitID As Byte) As Integer
+                                   ByVal Face As Byte, ByVal HairStyle As Byte, ByVal HairColor As Byte, ByVal FacialHair As Byte, ByVal OutfitID As Byte) As Integer
 
     <Description("Respond to world server if still alive.")> _
     Function Ping(ByVal Timestamp As Integer) As Integer
@@ -96,7 +94,6 @@ Public Interface IWorld
     Function GroupMemberStats(ByVal GUID As ULong, ByVal Flag As Integer) As Byte()
 
 End Interface
-
 Public Interface IVoice
 
     <Description("Create new channel, returns the channel ID")> _

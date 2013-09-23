@@ -26,7 +26,6 @@ Public Module WS_DBCDatabase
     #Region "Maps"
 
     Public Maps As New Dictionary(Of Integer, MapInfo)
-    
     Public Class MapInfo
         Public ID As Integer
         Public Type As MapTypes = MapTypes.MAP_COMMON
@@ -86,7 +85,6 @@ Public Module WS_DBCDatabase
         FLAG_LFG = &H40000              ' LookingForGroup
     End Enum
     Public ChatChannelsInfo As New Dictionary(Of Integer, ChatChannelInfo)
-    
     Public Class ChatChannelInfo
         Public Index As Integer
         Public Flags As Integer

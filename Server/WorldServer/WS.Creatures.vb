@@ -31,7 +31,6 @@ Public Module WS_Creatures
     Public Delegate Sub CastEvent(ByRef target As Object, ByRef caster As Object)
 
     'WARNING: Use only with CREATUREsDatabase()
-    
     Public Class CreatureInfo
     Implements IDisposable
         Public Sub New(ByVal CreatureID As Integer)
@@ -220,7 +219,6 @@ Public Module WS_Creatures
     End Class
 
     'WARNING: Use only with WORLD_CREATUREs()
-    
     Public Class CreatureObject
     Inherits BaseUnit
     Implements IDisposable
@@ -1650,7 +1648,6 @@ Public Module WS_Creatures
         Client.Send(response)
         response.Dispose()
     End Sub
-    
     Public Class NPCText
         Public Count As Byte = 1
 
@@ -1669,7 +1666,6 @@ Public Module WS_Creatures
     #End Region
     #Region "WS.Creatures.MonsterSayCombat"
     Public MonsterSayCombat As New Dictionary(Of Integer, TMonsterSayCombat)
-    
     Public Class TMonsterSayCombat
         Public Entry As Integer
         Public EventNo As Integer
@@ -1730,7 +1726,6 @@ Public Class GossipMenu
     Public Costs As New ArrayList
     Public WarningMessages As New ArrayList
 End Class
-
 Public Class QuestMenu
     Public Sub AddMenu(ByVal QuestName As String, ByVal ID As Short, ByVal Level As Short, Optional ByVal Icon As Byte = 0)
         Names.Add(QuestName)
@@ -1743,7 +1738,6 @@ Public Class QuestMenu
     Public Icons As ArrayList = New ArrayList
     Public Levels As ArrayList = New ArrayList
 End Class
-
 Public Class TBaseTalk
     Public Overridable Sub OnGossipHello(ByRef c As CharacterObject, ByVal cGUID As ULong)
 

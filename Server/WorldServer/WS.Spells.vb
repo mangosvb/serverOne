@@ -35,7 +35,6 @@ Public Module WS_Spells
         TRADESKILL_FISHING = 12
         TRADESKILL_SKINNING = 13
     End Enum
-    
     Public Enum TradeSkillLevel As Integer
         TRADESKILL_LEVEL_NONE = 0
         TRADESKILL_LEVEL_APPRENTICE = 1
@@ -66,7 +65,6 @@ Public Module WS_Spells
         Party = 2
         Pet = 3
     End Enum
-    
     Public Enum TrackableCreatures
         All = 128
         Beast = 1
@@ -79,7 +77,6 @@ Public Module WS_Spells
         Mechanical = 9
         Undead = 6
     End Enum
-    
     Public Enum TrackableResources
         ElvenGems = 7
         GahzRidian = 15
@@ -95,7 +92,6 @@ Public Module WS_Spells
         SPELL_STATE_FINISHED = 3
         SPELL_STATE_IDLE = 4
     End Enum
-    
     Public Enum SpellSchoolMask As Byte
         SPELL_SCHOOL_MASK_NONE = &H0
         SPELL_SCHOOL_MASK_NORMAL = &H1
@@ -109,7 +105,6 @@ Public Module WS_Spells
         SPELL_SCHOOL_MASK_MAGIC = (SPELL_SCHOOL_MASK_HOLY Or SPELL_SCHOOL_MASK_SPELL)
         SPELL_SCHOOL_MASK_ALL = (SPELL_SCHOOL_MASK_NORMAL Or SPELL_SCHOOL_MASK_MAGIC)
     End Enum
-    
     Public Enum SpellAuraInterruptFlags As Integer
         AURA_INTERRUPT_FLAG_UNK0 = &H1
         AURA_INTERRUPT_FLAG_DAMAGE = &H2 'removed by any damage
@@ -137,7 +132,6 @@ Public Module WS_Spells
         AURA_INTERRUPT_FLAG_ENTER_PVP_COMBAT = &H800000 'removed by entering pvp combat
         AURA_INTERRUPT_FLAG_DIRECT_DAMAGE = &H1000000 'removed by any direct damage
     End Enum
-    
     Public Enum SpellAuraProcFlags As Integer
         AURA_PROC_NULL = &H0
         AURA_PROC_ON_ANY_HOSTILE_ACTION = &H1
@@ -173,7 +167,6 @@ Public Module WS_Spells
         AURA_PROC_ON_SPELL_CRIT_HIT = &H40000000
         AURA_PROC_TARGET_SELF = &H80000000                   'our custom flag to decide if AURA_PROC target is self or victim
     End Enum
-    
     Public Enum SpellAuraStates As Integer
         AURASTATE_FLAG_DODGE_BLOCK = 1
         AURASTATE_FLAG_HEALTH20 = 2
@@ -187,7 +180,6 @@ Public Module WS_Spells
         AURASTATE_FLAG_REJUVENATE = 16384
         AURASTATE_FLAG_POISON = 32768
     End Enum
-    
     Public Enum AuraTickFlags As Byte
         FLAG_PERIODIC_DAMAGE = &H2
         FLAG_PERIODIC_TRIGGER_SPELL = &H4
@@ -195,7 +187,6 @@ Public Module WS_Spells
         FLAG_PERIODIC_LEECH = &H10
         FLAG_PERIODIC_ENERGIZE = &H20
     End Enum
-    
     Public Enum AuraFlags
         AFLAG_NONE = &H0
         AFLAG_VISIBLE = &H1
@@ -209,18 +200,15 @@ Public Module WS_Spells
         AFLAG_POSITIVE = &H1F
         AFLAG_MASK = &HFF
     End Enum
-    
     Public Enum SpellProcFlags As Byte
         PROC_ON_DAMAGE_RECEIVED = 3
     End Enum
-    
     Public Enum SpellCastFlags As Short
         CAST_FLAG_UNKNOWN1 = &H2
         CAST_FLAG_UNKNOWN2 = &H10
         CAST_FLAG_AMMO = &H20
         CAST_FLAG_UNKNOWN3 = &H100
     End Enum
-    
     Public Enum SpellAttributes As Integer
         SPELL_UNK0 = &H1                                    ' 0
         SPELL_RANGED = &H2                                  ' 1 All ranged abilites have this flag
@@ -255,7 +243,6 @@ Public Module WS_Spells
         SPELL_UNK30 = &H40000000                            ' 30 breakable by damage?
         SPELL_UNK31 = &H80000000                            ' 31
     End Enum
-    
     Public Enum SpellAttributesEx As Integer
         SPELL_ATTR_EX_DRAIN_ALL_POWER = &H2 'use all power (Only paladin Lay of Hands and Bunyanize)
         SPELL_ATTR_EX_CHANNELED_1 = &H4 'channeled 1
@@ -269,14 +256,12 @@ Public Module WS_Spells
         SPELL_ATTR_EX_REQ_COMBO_POINTS1 = &H100000 'Req combo points on target
         SPELL_ATTR_EX_REQ_COMBO_POINTS2 = &H400000 'Req combo points on target
     End Enum
-    
     Public Enum SpellAttributesEx2 As Integer
         SPELL_ATTR_EX2_AUTO_SHOOT = &H20 'Auto Shoot?
         SPELL_ATTR_EX2_HEALTH_FUNNEL = &H800 'Health funnel pets?
         SPELL_ATTR_EX2_NOT_NEED_SHAPESHIFT = &H80000 'does not necessarly need shapeshift
         SPELL_ATTR_EX2_CANT_CRIT = &H20000000 'Spell can't crit
     End Enum
-    
     Public Enum SpellAttributesEx3 As Integer
         SPELL_ATTR_EX3_MAIN_HAND = &H400 'Main hand weapon required
         SPELL_ATTR_EX3_BATTLEGROUND = &H80 'Can casted only on battleground
@@ -287,12 +272,10 @@ Public Module WS_Spells
         SPELL_ATTR_EX3_REQ_WAND = &H400000 'Req wand
         SPELL_ATTR_EX3_REQ_OFFHAND = &H1000000 'Req offhand weapon
     End Enum
-    
     Public Enum SpellAttributesEx4 As Integer
         SPELL_ATTR_EX4_SPELL_VS_EXTEND_COST = &H400 'Rogue Shiv have this flag
         SPELL_ATTR_EX4_CAST_ONLY_IN_OUTLAND = &H4000000 'Can only be used in Outland.
     End Enum
-    
     Public Enum SpellAttributesEx5 As Integer
         SPELL_ATTR_EX5_USABLE_WHILE_STUNNED = &H8 'usable while stunned
         SPELL_ATTR_EX5_SINGLE_TARGET_SPELL = &H20 'Only one target can be apply at a time
@@ -321,7 +304,6 @@ Public Module WS_Spells
         'TARGET_FLAG_OBJECT=&H4000          'World Object
         'TARGET_FLAG_RESS_CORPSE=&H8000     'Resurrectable Corpse
     End Enum
-    
     Public Enum SpellFailedReason As Byte
         CAST_NO_ERROR = 255
         CAST_FAIL_AFFECTING_COMBAT = 0
@@ -494,7 +476,6 @@ Public Module WS_Spells
         CAST_FAIL_TARGET_LOCKED_TO_RAID_INSTANCE = 167
         CAST_FAIL_UNKNOWN = 168
     End Enum
-    
     Public Enum SpellImplicitTargets As Byte
         TARGET_NOTHING = 0
 
@@ -1239,7 +1220,6 @@ Public Module WS_Spells
             End If
         End Sub
     End Class
-    
     Public Class SpellEffect
         Public ID As SpellEffects_Names = SpellEffects_Names.SPELL_EFFECT_NOTHING
 
@@ -1300,7 +1280,6 @@ Public Module WS_Spells
             End Get
         End Property
     End Class
-    
     Public Class SpellTargets
         Public unitTarget As BaseUnit = Nothing
         Public goTarget As BaseObject = Nothing
@@ -2138,7 +2117,6 @@ Public Module WS_Spells
         SPELL_EFFECT_152 = 152
         SPELL_EFFECT_153 = 153
     End Enum
-    
     Public Enum AuraEffects_Names As Integer
         SPELL_AURA_NONE = 0
         SPELL_AURA_BIND_SIGHT = 1
@@ -2405,7 +2383,6 @@ Public Module WS_Spells
     End Enum
 
     Delegate Function SpellEffectHandler(ByRef Target As SpellTargets, ByRef Caster As BaseUnit, ByRef value As SpellEffect, ByVal SpellID As Integer, ByRef Infected As ArrayList, ByRef Item As ItemObject) As SpellFailedReason
-    
     Public Class SpellEffectParameter
         Public Caster As BaseObject
 

@@ -57,7 +57,6 @@ Public Module WS_Guilds
         PETITIONSIGN_CANT_SIGN_OWN = 3          'You can's sign own guild charter
         PETITIONSIGN_NOT_SERVER = 4             'That player is not from your server
     End Enum
-    
     Public Enum PetitionTurnInError As Integer
         PETITIONTURNIN_OK = 0                   ':Closes the window
         PETITIONTURNIN_ALREADY_IN_GUILD = 2     'You are already in a guild
@@ -851,7 +850,6 @@ Public Module WS_Guilds
     End Sub
 
     'Guild Leader Options
-    
     Public Enum GuildRankRights
         GR_RIGHT_EMPTY = &H40
         GR_RIGHT_GCHATLISTEN = &H41
@@ -1654,7 +1652,6 @@ Public Module WS_Guilds
     End Sub
 
     'Helping Subs
-    
     Public Enum GuildCommand As Byte
         GUILD_CREATE_S = &H0
         GUILD_INVITE_S = &H1
@@ -1664,7 +1661,6 @@ Public Module WS_Guilds
         GUILD_BANK_S = &H15
         GUILD_UNK3 = &H16
     End Enum
-    
     Public Enum GuildError As Byte
         GUILD_PLAYER_NO_MORE_IN_GUILD = &H0
         GUILD_INTERNAL = &H1

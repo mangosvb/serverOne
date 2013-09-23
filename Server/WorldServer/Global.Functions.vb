@@ -371,7 +371,6 @@ Public Module Functions
         STATUS_OFFLINE_PVP = 2
         STATUS_ONLINE_PVP = 3
     End Enum
-    
     Public Enum PartyMemberStatsBits As Byte
         FIELD_STATUS = 0
         FIELD_LIFE_CURRENT = 1
@@ -383,7 +382,6 @@ Public Module Functions
         FIELD_ZONEID = 7
         FIELD_POSXPOSY = 8
     End Enum
-    
     Public Enum PartyMemberStatsFlag As Integer
         GROUP_UPDATE_FLAG_NONE = &H0 'nothing
         GROUP_UPDATE_FLAG_STATUS = &H1 'uint16, flags

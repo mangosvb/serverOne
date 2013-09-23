@@ -25,7 +25,6 @@ Public Module WS_NPCs
         SELL_ERR_CANT_SELL_ITEM = 2
         SELL_ERR_CANT_FIND_VENDOR = 3
     End Enum
-    
     Enum BUY_ERROR As Byte
         'SMSG_BUY_FAILED error
         '0: cant find item
@@ -1000,7 +999,6 @@ Public Module WS_NPCs
         GOSSIP_OPTION_ARMORER = 15                             'UNIT_NPC_FLAG_ARMORER           = 16384
         GOSSIP_OPTION_TALENTWIPE = 16
     End Enum
-    
     Enum Gossip_Guard
         GOSSIP_GUARD_BANK = 32
         GOSSIP_GUARD_RIDE = 33
@@ -1014,7 +1012,6 @@ Public Module WS_NPCs
         GOSSIP_GUARD_SPELLTRAINER = 41
         GOSSIP_GUARD_SKILLTRAINER = 42
     End Enum
-    
     Enum Gossip_Guard_Spell
         GOSSIP_GUARD_SPELL_WARRIOR = 64
         GOSSIP_GUARD_SPELL_PALADIN = 65
@@ -1028,7 +1025,6 @@ Public Module WS_NPCs
         GOSSIP_GUARD_SPELL_UNKNOWN2 = 73
         GOSSIP_GUARD_SPELL_DRUID = 74
     End Enum
-    
     Enum Gossip_Guard_Skill
         GOSSIP_GUARD_SKILL_ALCHEMY = 80
         GOSSIP_GUARD_SKILL_BLACKSMITH = 81
@@ -1043,7 +1039,6 @@ Public Module WS_NPCs
         GOSSIP_GUARD_SKILL_TAILORING = 90
         GOSSIP_GUARD_SKILL_ENGINERING = 91
     End Enum
-    
     Public Class TDefaultTalk
     Inherits TBaseTalk
         Public Overrides Sub OnGossipHello(ByRef c As CharacterObject, ByVal cGUID As ULong)

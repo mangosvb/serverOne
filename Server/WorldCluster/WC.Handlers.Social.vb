@@ -47,7 +47,6 @@ Public Module WC_Handlers_Social
         FRIEND_STATUS_UNK3 = 3
         FRIEND_STATUS_DND = 4
     End Enum
-    
     Public Enum FriendResult As Byte
         FRIEND_DB_ERROR = &H0
         FRIEND_LIST_FULL = &H1
@@ -67,7 +66,6 @@ Public Module WC_Handlers_Social
         FRIEND_IGNORE_ADDED = &HF
         FRIEND_IGNORE_REMOVED = &H10
     End Enum
-    
     Public Enum SocialFlag As Byte
         SOCIAL_FLAG_FRIEND = &H1
         SOCIAL_FLAG_IGNORED = &H2

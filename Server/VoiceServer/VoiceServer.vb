@@ -39,7 +39,6 @@ Public Module WorldCluster
     #End Region
     #Region "Global.Config"
     Public Config As XMLConfigFile
-    
     <XmlRoot(ElementName:="VoiceServer")> _
     Public Class XMLConfigFile
         <XmlElement(ElementName:="VSPort")> Public VSPort As Integer = 4720

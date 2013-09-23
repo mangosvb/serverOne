@@ -39,7 +39,6 @@ Public Module WS_Quests
         DIALOG_STATUS_REWARD2 = 7                ' Quest has been finished. - Yellow Question ? Mark (No yellow dot on the minimap?)
         DIALOG_STATUS_REWARD = 8                ' Quest has been finished. - Yellow Question ? Mark
     End Enum
-    
     Public Enum QuestObjectiveFlag 'These flags are custom and are only used for MangosVB
         QUEST_OBJECTIVE_KILL = 1 'You have to kill creatures
         QUEST_OBJECTIVE_EXPLORE = 2 'You have to explore an area
@@ -48,7 +47,6 @@ Public Module WS_Quests
         QUEST_OBJECTIVE_CAST = 16 'You will have to cast a spell on a creature or a gameobject (spells on gameobjects are f.ex opening)
         QUEST_OBJECTIVE_ITEM = 32 'You have to recieve some items to deliver
     End Enum
-    
     Public Enum QuestFlag As Integer
         QUEST_FLAGS_STAY_ALIVE = 1 'Needs to stay alive or else it fails
         QUEST_FLAGS_EVENT = 2 'Something must happen
@@ -63,14 +61,12 @@ Public Module WS_Quests
         QUEST_FLAGS_TBC_RACES = 2048 'Bloodelf/draenei starting zone quests
         QUEST_FLAGS_DAILY = 4096 'Daily quest
     End Enum
-    
     Public Enum QuestSpecialFlag As Integer
         QUEST_SPECIALFLAGS_REPEATABLE = 1 'Quest can be repeated
         QUEST_SPECIALFLAGS_EXPLORATION_OR_EVENT = 2 'if required area explore, spell SPELL_EFFECT_QUEST_COMPLETE casting
     End Enum
 
     'Used in the queststarters and questfinishers tables to see what type of object it is
-    
     Public Enum QuestGiverType As Byte
         QUEST_OBJECTTYPE_CREATURE = 1
         QUEST_OBJECTTYPE_GAMEOBJECT = 2
@@ -93,7 +89,6 @@ Public Module WS_Quests
         INVALIDREASON_REACHED_DAILY_LIMIT = 26              'You have completed xx daily quests today
         INVALIDREASON_UNKNOW27 = 27                         'You can not complete quests once you have reached tired time ???
     End Enum
-    
     Public Enum QuestFailedReason
         'SMSG_QUESTGIVER_QUEST_FAILED
         '		uint32 questID
@@ -104,7 +99,6 @@ Public Module WS_Quests
         FAILED_INVENTORY_FULL2 = &H31   '0x31: '%s failed: Inventory is full.'
         FAILED_NOREASON = 0       '0x00: '%s failed.'
     End Enum
-    
     Public Enum QuestPartyPushError As Byte
         QUEST_PARTY_MSG_SHARRING_QUEST = 0
         QUEST_PARTY_MSG_CANT_TAKE_QUEST = 1
@@ -295,7 +289,6 @@ Public Module WS_Quests
     End Class
 
     'WARNING: These are used only for CharManagment
-    
     Public Class BaseQuest
         Public ID As Integer = 0
         Public Title As String = ""

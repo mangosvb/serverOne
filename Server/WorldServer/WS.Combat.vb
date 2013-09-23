@@ -608,7 +608,6 @@ Public Module WS_Combat
         VICTIMSTATE_IS_IMMUNE = 7
         VICTIMSTATE_DEFLECTS = 8
     End Enum
-    
     Public Enum AttackHitState As Integer
 
         HIT_UNARMED = HITINFO_NORMALSWING
@@ -635,7 +634,6 @@ Public Module WS_Combat
         HITINFO_NOACTION = &H10000
         HITINFO_SWINGNOHITSOUND = &H80000
     End Enum
-    
     Structure DamageInfo
         Public Damage As Integer
         Public DamageType As DamageMasks

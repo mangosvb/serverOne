@@ -46,7 +46,6 @@ Public Module WorldCluster
     #End Region
     #Region "Global.Config"
     Public Config As XMLConfigFile
-    
     <XmlRoot(ElementName:="WorldCluster")> _
     Public Class XMLConfigFile
         <XmlElement(ElementName:="WCPort")> Public WCPort As Integer = 8085

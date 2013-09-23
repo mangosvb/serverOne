@@ -28,7 +28,6 @@ Public Module WS_TimerBasedEvents
     Public WeatherChanger As TWeatherChanger
 
     'NOTE: Regenerates players' Mana, Life and Rage
-    
     Public Class TRegenerator
     Implements IDisposable
 
@@ -223,7 +222,6 @@ Public Module WS_TimerBasedEvents
                         UpdateSpells(WORLD_CREATUREs(WORLD_CREATUREsKeys(i)))
                     End If
                 Next
-
             Catch ex As Exception
                 Log.WriteLine(LogType.FAILED, ex.ToString, Nothing)
             Finally
@@ -302,7 +300,6 @@ Public Module WS_TimerBasedEvents
     End Class
 
     'NOTE: Manages ai movement
-    
     Public Class TAIManager
     Implements IDisposable
 
@@ -371,7 +368,6 @@ Public Module WS_TimerBasedEvents
     End Class
 
     'NOTE: Manages character savings
-    
     Public Class TCharacterSaver
     Implements IDisposable
 

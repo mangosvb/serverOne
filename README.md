@@ -23,7 +23,6 @@ How Can I contribute to the project
 There are two ways to help contribute to this project:-
 
 1) Clone this repo, make your changes and submit a pull request
-
 2) Visit http://getmangos.co.uk/community and tell us that you want to help.
 
 

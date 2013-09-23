@@ -204,7 +204,6 @@ Public Module WS_Creatures_AI
             End If
         End Sub
     End Class
-    
     Public Class TestMovingAI
     Inherits TBaseAI
         Protected Creature As CreatureObject
@@ -227,7 +226,6 @@ Public Module WS_Creatures_AI
             MoveTimer = New Threading.Timer(AddressOf DoMove, Nothing, 60000, 5000)
         End Sub
     End Class
-    
     Public Class TestDefaultAI
     Inherits TBaseAI
 

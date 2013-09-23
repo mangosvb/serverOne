@@ -24,7 +24,6 @@ Public Module WS_DBCDatabase
 
     #Region "WorldMap"
     Public WorldMapContinent As New Dictionary(Of Integer, WorldMapContinentDimension)
-    
     Public Class WorldMapContinentDimension
         Public X_Minimum As Single
         Public Y_Minimum As Single
@@ -33,7 +32,6 @@ Public Module WS_DBCDatabase
     End Class
 
     Public WorldMapTransforms As New List(Of WorldMapTransformsDimension)
-    
     Public Class WorldMapTransformsDimension
         Public Map As UInteger
         Public X_Minimum As Single
@@ -49,7 +47,6 @@ Public Module WS_DBCDatabase
     #End Region
     #Region "EmotesText"
     Public EmotesText As New Dictionary(Of Integer, Integer)
-    
     Public Enum Emotes As Integer
         'Auto generated from Emotes.dbc
         STATE_WORK_NOSHEATHE_MINING = 233
@@ -129,7 +126,6 @@ Public Module WS_DBCDatabase
         STATE_SPELLKNEELSTART = 353
         ONESHOT_SUBMERGE = 374
     End Enum
-    
     Public Enum EmoteStates As Integer
         ANIM_STAND = &H0
         ANIM_DEATH = &H1
@@ -279,7 +275,6 @@ Public Module WS_DBCDatabase
         PROFESSIONS = 11
         NOT_DISPLAYED = 12
     End Enum
-    
     Public Enum SKILL_IDs As Integer
         SKILL_NONE = 0
         SKILL_FROST = 6
@@ -426,7 +421,6 @@ Public Module WS_DBCDatabase
     Public TaxiNodes As New Dictionary(Of Integer, TTaxiNode)
     Public TaxiPaths As New Dictionary(Of Integer, TTaxiPath)
     Public TaxiPathNodes As New Dictionary(Of Integer, TTaxiPathNode)
-    
     Public Class TTaxiNode
         Public x As Single
         Public y As Single
@@ -498,7 +492,6 @@ Public Module WS_DBCDatabase
     #Region "Talents"
     Public TalentsTab As New Dictionary(Of Integer, Integer)(30)
     Public Talents As New Dictionary(Of Integer, TalentInfo)(500)
-    
     Public Class TalentInfo
         Public TalentID As Integer
         Public TalentTab As Integer
@@ -511,7 +504,6 @@ Public Module WS_DBCDatabase
     #End Region
     #Region "Factions"
     Public Const FACTION_TEMPLATES_COUNT As Integer = 2074
-    
     Enum FactionTemplates
         ' Fields
         None = 0
@@ -1120,14 +1112,12 @@ Public Module WS_DBCDatabase
         MonsterPredator_2 = 2029
         CavernsOfTimeDurnholde_2 = 2074
     End Enum                    'FactionTemplate.dbc       'Used in CREATUREs Database as Faction
-    
     Public Enum TReaction As Byte
         HOSTILE = 0
         NEUTRAL = 1
         FRIENDLY = 2
         FIGHT_SUPPORT = 3
     End Enum
-    
     Enum Factions
         None = 0
         PLAYERHuman = 1
@@ -1402,7 +1392,6 @@ Public Module WS_DBCDatabase
         ObjectForceReaction = 1081
         HolidayMonster = 1087
     End Enum        'Faction.dbc
-    
     Public Enum FactionMasks
         FACTION_MASK_PLAYER = 1     'any player
         FACTION_MASK_ALLIANCE = 2   'player or creature from alliance team
@@ -1411,7 +1400,6 @@ Public Module WS_DBCDatabase
     End Enum
 
     Public CharRaces As New Dictionary(Of Integer, TCharRace)
-    
     Public Class TCharRace
         Public FactionID As Short
         Public ModelMale As Integer
@@ -1429,7 +1417,6 @@ Public Module WS_DBCDatabase
     End Class
 
     Public FactionInfo As New Dictionary(Of Integer, TFaction)
-    
     Public Class TFaction
         Public ID As Short
         Public VisibleID As Short
@@ -1456,7 +1443,6 @@ Public Module WS_DBCDatabase
     End Class
 
     Public FactionTemplatesInfo As New Dictionary(Of Integer, TFactionTemplate)
-    
     Public Class TFactionTemplate
         Public FactionID As Integer
         Public ourMask As UInteger
@@ -1474,7 +1460,6 @@ Public Module WS_DBCDatabase
     #End Region
     #Region "Spells"
     Public SpellShapeShiftForm As New List(Of TSpellShapeshiftForm)
-    
     Public Class TSpellShapeshiftForm
         Public ID As Integer = 0
         Public Flags1 As Integer = 0
@@ -1509,7 +1494,6 @@ Public Module WS_DBCDatabase
     Public DurabilityCosts(DurabilityCosts_MAX, 28) As Short
 
     Public ItemExtendedCosts As New Dictionary(Of Integer, TItemExtendedCost)
-    
     Public Class TItemExtendedCost
         Public HonorPoints As Integer
         Public ArenaPoints As Integer

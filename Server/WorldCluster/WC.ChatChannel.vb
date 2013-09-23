@@ -638,7 +638,6 @@ Public Module WS_Channels
             CHANNEL_FLAG_LFG = &H40
             CHANNEL_FLAG_VOICE = &H80
         End Enum
-        
         <Flags()> _
         Protected Enum CHANNEL_USER_FLAG As Byte
             CHANNEL_FLAG_NONE = &H0
@@ -649,7 +648,6 @@ Public Module WS_Channels
             CHANNEL_FLAG_CUSTOM = &H10
             CHANNEL_FLAG_MICROPHONE_MUTE = &H20
         End Enum
-        
         Protected Enum CHANNEL_NOTIFY_FLAGS
             CHANNEL_JOINED = 0                      ' %s joined channel.
             CHANNEL_LEFT = 1                        ' %s left channel.
@@ -741,7 +739,6 @@ Public Module WS_Channels
         PARTY = 2
         NONE = 4
     End Enum
-    
     Public Class VoiceChatChannelClass
     Inherits ChatChannelClass
 

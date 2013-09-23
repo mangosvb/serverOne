@@ -297,7 +297,6 @@ Public Module WS_CharManagment
             End Get
         End Property
     End Class
-
     Public Class TStatBar
         Private _Current As Integer = 0
         Public Bonus As Integer = 0
@@ -330,7 +329,6 @@ Public Module WS_CharManagment
             End Set
         End Property
     End Class
-
     Public Class TStat
         Public Base As Short = 0
         Public PositiveBonus As Short = 0
@@ -354,7 +352,6 @@ Public Module WS_CharManagment
             PositiveBonus = NegValue
         End Sub
     End Class
-
     Public Class TDamageBonus
         Public PositiveBonus As Integer = 0
         Public NegativeBonus As Integer = 0
@@ -370,7 +367,6 @@ Public Module WS_CharManagment
             PositiveBonus = NegValue
         End Sub
     End Class
-
     Public Class THonor
         Public HonorPounts As Short = 0                 '! MAX=1000 ?
         Public HonorRank As Byte = 0
@@ -418,14 +414,12 @@ Public Module WS_CharManagment
 
         End Sub
     End Class
-
     Public Class TReputation
         '1:"AtWar" clickable but not checked
         '3:"AtWar" clickable and checked
         Public Flags As Integer = 0
         Public Value As Integer = 0
     End Class
-
     Public Class TActionButton
         Public ActionType As Byte = 0
         Public ActionMisc As Byte = 0
@@ -436,7 +430,6 @@ Public Module WS_CharManagment
             Action = Action_
         End Sub
     End Class
-
     Public Class TDrowningTimer
         Implements IDisposable
 
@@ -456,7 +449,6 @@ Public Module WS_CharManagment
             If CHARACTERs.ContainsKey(CharacterGUID) Then CHARACTERs(CharacterGUID).StopMirrorTimer(1)
         End Sub
     End Class
-
     Public Class TRepopTimer
         Implements IDisposable
 

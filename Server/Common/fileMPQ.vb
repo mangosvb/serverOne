@@ -374,7 +374,6 @@ Namespace MPQ
         Public Flags As MpqFileFlags
         Public Const Size As Long = 16
     End Structure
-    
     <StructLayout(LayoutKind.Sequential)> _
     Friend Structure MpqHash
         Public Sub New(ByVal br As BinaryReader)
@@ -396,7 +395,6 @@ Namespace MPQ
         Public Name2 As Long
         Public Const Size As Long = 16
     End Structure
-    
     <StructLayout(LayoutKind.Sequential)> _
     Friend Structure MpqHeader
 
@@ -426,7 +424,6 @@ Namespace MPQ
     End Structure
 
     'A Stream based class for reading a file from an MPQ file
-    
     Public Class MpqStream
     Inherits Stream
 

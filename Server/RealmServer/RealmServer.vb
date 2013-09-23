@@ -82,7 +82,6 @@ Public Module RS_Main
 
     #Region "Global.Config"
     Public Config As XMLConfigFile
-    
     <XmlRoot(ElementName:="RealmServer")> _
     Public Class XMLConfigFile
         'Server Configurations
@@ -148,7 +147,6 @@ Public Module RS_Main
     #Region "RS.Sockets"
     Public LastConnections As New Dictionary(Of UInteger, Date)
     Public RS As RealmServerClass
-    
     Class RealmServerClass
         Public _flagStopListen As Boolean = False
         Private lstHost As Net.IPAddress = Net.IPAddress.Parse(Config.RSHost)
@@ -212,7 +210,6 @@ Public Module RS_Main
         NORMAL = 0          'WoW
         EXPANSION_1 = 1     'WoW: Burning Crusade
     End Enum
-    
     Class ClientClass
     Implements IDisposable
 

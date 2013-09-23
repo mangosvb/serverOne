@@ -21,7 +21,6 @@ Module WS_Auction
 
     #Region "WS.Auction.Constants"
     Public AuctionID As Integer
-    
     Public Enum AuctionHouses As Integer
         AUCTION_UNDEFINED = 0
         AUCTION_ALLIANCE = 2
@@ -35,13 +34,11 @@ Module WS_Auction
         AUCTION_ORGRIMMAR = 6
         AUCTION_BLACKWATER = 7
     End Enum
-    
     Public Enum AuctionAction As Integer
         AUCTION_SELL_ITEM = 0
         AUCTION_CANCEL = 1
         AUCTION_PLACE_BID = 2
     End Enum
-    
     Public Enum AuctionError As Integer
         AUCTION_OK = 0
         AUCTION_INTERNAL_ERROR = 2
@@ -90,7 +87,6 @@ Module WS_Auction
     '       Subject -> ItemID:0:4
     '       Body    -> ""
     '       Item returned
-    
     Public Enum MailAuctionAction As Integer
         OUTBID = 0
         AUCTION_WON = 1

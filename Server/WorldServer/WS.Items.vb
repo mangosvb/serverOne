@@ -114,7 +114,6 @@ Public Module WS_Items
         SHADOW_DAMAGE = 5
         ARCANE_DAMAGE = 6
     End Enum
-    
     Public Enum ITEM_QUALITY_NAMES As Byte
         ITEM_QUALITY_POOR_GREY = 0
         ITEM_QUALITY_NORMAL_WHITE = 1
@@ -124,7 +123,6 @@ Public Module WS_Items
         ITEM_QUALITY_LEGENDARY_ORANGE = 5
         ITEM_QUALITY_ARTIFACT_LIGHT_YELLOW = 6
     End Enum
-    
     Public Enum ITEM_STAT_TYPE As Byte
         HEALTH = 1
         UNKNOWN = 2
@@ -159,7 +157,6 @@ Public Module WS_Items
         RESILIENCE = 35
         HITHASTERATING = 36
     End Enum
-    
     Public Enum ITEM_SPELLTRIGGER_TYPE As Byte
         USE = 0
         ON_EQUIP = 1
@@ -168,7 +165,6 @@ Public Module WS_Items
         NO_DELAY_USE = 5
         LEARN_SPELL = 6
     End Enum
-    
     Public Enum ITEM_BONDING_TYPE As Byte
         NO_BIND = 0
         BIND_WHEN_PICKED_UP = 1
@@ -177,7 +173,6 @@ Public Module WS_Items
         BIND_UNK_QUESTITEM1 = 4
         BIND_UNK_QUESTITEM2 = 5
     End Enum
-    
     Public Enum SHEATHE_TYPE As Byte
         SHEATHETYPE_NONE = 0
         SHEATHETYPE_MAINHAND = 1
@@ -188,13 +183,11 @@ Public Module WS_Items
         SHEATHETYPE_HIPWEAPONRIGHT = 6
         SHEATHETYPE_SHIELD = 7
     End Enum
-    
     Public Enum SHEATHE_SLOT As Byte
         SHEATHE_NONE = 0
         SHEATHE_WEAPON = 1
         SHEATHE_RANGED = 2
     End Enum
-    
     Public Enum INVENTORY_TYPES As Byte
         INVTYPE_NON_EQUIP = &H0
         INVTYPE_HEAD = &H1
@@ -229,7 +222,6 @@ Public Module WS_Items
     End Enum
 
     'Got them from ItemSubClass.dbc
-    
     Public Enum ITEM_CLASS As Byte
         ITEM_CLASS_CONSUMABLE = 0
         ITEM_CLASS_CONTAINER = 1
@@ -248,7 +240,6 @@ Public Module WS_Items
         ITEM_CLASS_PERMANENT = 14
         ITEM_CLASS_JUNK = 15
     End Enum
-    
     Public Enum ITEM_SUBCLASS As Byte
         ' Consumable
         ITEM_SUBCLASS_CONSUMABLE = 0
@@ -370,11 +361,9 @@ Public Module WS_Items
         ITEM_SUBCLASS_OTHER = 4
         ITEM_SUBCLASS_MOUNT = 5
     End Enum
-    
     Public Enum ITEM_FLAGS As Byte
         ITEM_FLAGS_BINDED = 1
     End Enum
-    
     Public Enum ITEM_BAG As Integer
         NONE = 0
         ARROW = 1
@@ -387,7 +376,6 @@ Public Module WS_Items
         JEWELCRAFTING = 10
         MINNING = 11
     End Enum
-    
     Public Enum ITEM_GEMS As Byte
         COLOR_META = 1
         COLOR_RED = 2
@@ -843,7 +831,6 @@ Public Module WS_Items
     End Class
 
     'WARNING: Use only with ITEMs()
-    
     Public Class ItemObject
     Implements IDisposable
 
@@ -1250,13 +1237,11 @@ Public Module WS_Items
             End Get
         End Property
     End Class
-    
     Public Class TDamage
         Public Minimum As Single = 0
         Public Maximum As Single = 0
         Public Type As Integer = DamageTypes.DMG_PHYSICAL
     End Class
-    
     Public Class TEnchantmentInfo
         Public SpellID As Integer = 0
         Public Duration As Integer = 0
@@ -1268,7 +1253,6 @@ Public Module WS_Items
             Charges = Charges_
         End Sub
     End Class
-    
     Public Class TItemSpellInfo
         Public SpellID As Integer = 0
         Public SpellTrigger As ITEM_SPELLTRIGGER_TYPE = 0
@@ -1277,7 +1261,6 @@ Public Module WS_Items
         Public SpellCategory As Integer = 0
         Public SpellCategoryCooldown As Integer = 0
     End Class
-    
     Public Class TItemSocket
         Public Color As ITEM_GEMS
         Public Content As UInteger = 0

@@ -20,7 +20,6 @@ Imports System.Net.Sockets
 
 'Using this logging type, you can watch logs with ordinary telnet client.
 'Writting commands requires client, which don't send every key typed.
-
 Public Class TelnetWriter
 Inherits BaseWriter
 

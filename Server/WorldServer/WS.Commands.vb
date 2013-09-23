@@ -25,38 +25,38 @@ Imports mangosVB.Common.BaseWriter
 Public Class ChatCommandAttribute
 Inherits System.Attribute
 
-    Private command As String = ""
-    Private commandHelp As String = "No information available."
-    Private commandAccess As AccessLevel = AccessLevel.GameMaster
+    Private Command As String = ""
+    Private CommandHelp As String = "No information available."
+    Private CommandAccess As AccessLevel = AccessLevel.GameMaster
 
     Public Sub New(ByVal cmdName As String, Optional ByVal cmdHelp As String = "No information available.", Optional ByVal cmdAccess As AccessLevel = AccessLevel.GameMaster)
-        command = cmdName
-        commandHelp = cmdHelp
-        commandAccess = cmdAccess
+        Command = cmdName
+        CommandHelp = cmdHelp
+        CommandAccess = cmdAccess
     End Sub
 
-    Public Property CmdName() As String
+    Public Property cmdName() As String
         Get
-            Return command
+            Return Command
         End Get
-        Set(ByVal value As String)
-            command = value
+        Set(ByVal Value As String)
+            Command = Value
         End Set
     End Property
     Public Property cmdHelp() As String
         Get
-            Return commandHelp
+            Return CommandHelp
         End Get
         Set(ByVal Value As String)
-            commandHelp = Value
+            CommandHelp = Value
         End Set
     End Property
     Public Property cmdAccess() As AccessLevel
         Get
-            Return commandAccess
+            Return CommandAccess
         End Get
         Set(ByVal Value As AccessLevel)
-            commandAccess = Value
+            CommandAccess = Value
         End Set
     End Property
 
@@ -77,7 +77,6 @@ Public Module WS_Commands
 
     Public ChatCommands As New Dictionary(Of String, ChatCommand)
     Public ScriptedChatCommands As ScriptedObject
-    
     Public Class ChatCommand
         Public CommandHelp As String
         Public CommandAccess As AccessLevel = AccessLevel.GameMaster
@@ -233,11 +232,11 @@ Public Module WS_Commands
     End Function
     Dim currentSpError As SpellFailedReason = SpellFailedReason.CAST_NO_ERROR
     <ChatCommandAttribute("SpellFailedMSG", "SPELLFAILEDMSG <optional ID> - Sends test spell failed message.", AccessLevel.Developer)> _
-    Public Function CmdSpellFailed(ByRef c As CharacterObject, ByVal message As String) As Boolean
-        If message = "" Then
+    Public Function cmdSpellFailed(ByRef c As CharacterObject, ByVal Message As String) As Boolean
+        If Message = "" Then
             currentSpError += 1
         Else
-            currentSpError = message
+            currentSpError = Message
         End If
         SendCastResult(currentSpError, c.Client, 133, 0)
         c.CommandResponse(String.Format("Sent spell failed message:{2} {0} = {1}", currentSpError, CType(currentSpError, Integer), vbNewLine))
@@ -246,11 +245,11 @@ Public Module WS_Commands
 
     Dim currentInvError As InventoryChangeFailure = InventoryChangeFailure.EQUIP_ERR_OK
     <ChatCommandAttribute("InvFailedMSG", "INVFAILEDMSG <optional ID> - Sends test inventory failed message.", AccessLevel.Developer)> _
-    Public Function CmdInventoryFailed(ByRef c As CharacterObject, ByVal message As String) As Boolean
-        If message = "" Then
+    Public Function cmdInventoryFailed(ByRef c As CharacterObject, ByVal Message As String) As Boolean
+        If Message = "" Then
             currentInvError += 1
         Else
-            currentInvError = message
+            currentInvError = Message
         End If
         Dim response As New PacketClass(OPCODES.SMSG_INVENTORY_CHANGE_FAILURE)
         response.AddInt8(currentInvError)
@@ -265,11 +264,11 @@ Public Module WS_Commands
 
     Dim currentInstanceResetError As ResetFailedReason = ResetFailedReason.INSTANCE_RESET_FAILED_ZONING
     <ChatCommandAttribute("InstanceResetFailedMSG", "INSTANCERESETFAILEDMSG <optional ID> - Sends test inventory failed message.", AccessLevel.Developer)> _
-    Public Function CmdInstanceResetFailedReason(ByRef c As CharacterObject, ByVal message As String) As Boolean
-        If message = "" Then
+    Public Function cmdInstanceResetFailedReason(ByRef c As CharacterObject, ByVal Message As String) As Boolean
+        If Message = "" Then
             currentInstanceResetError += 1
         Else
-            currentInstanceResetError = message
+            currentInstanceResetError = Message
         End If
         SendResetInstanceFailed(c.Client, c.MapID, currentInstanceResetError)
         c.CommandResponse(String.Format("Sent instance failed message:{2} {0} = {1}", currentInstanceResetError, CType(currentInstanceResetError, Integer), vbNewLine))
@@ -277,13 +276,13 @@ Public Module WS_Commands
     End Function
 
     <ChatCommandAttribute("CastSpell", "CASTSPELL <SpellID> <Target> - Selected unit will start casting spell. Target can be ME or SELF.", AccessLevel.Developer)> _
-    Public Function CmdCastSpellMe(ByRef c As CharacterObject, ByVal message As String) As Boolean
-        Dim tmp As String() = Split(message, " ", 2)
-        Dim spellID As Integer = tmp(0)
-        Dim target As String = UCase(tmp(1))
+    Public Function cmdCastSpellMe(ByRef c As CharacterObject, ByVal Message As String) As Boolean
+        Dim tmp As String() = Split(Message, " ", 2)
+        Dim SpellID As Integer = tmp(0)
+        Dim Target As String = UCase(tmp(1))
 
         If WORLD_CREATUREs.ContainsKey(c.TargetGUID) Then
-            Select Case target
+            Select Case Target
                 Case "ME"
                     WORLD_CREATUREs(c.TargetGUID).CastSpell(spellID, c)
                 Case "SELF"
@@ -297,29 +296,29 @@ Public Module WS_Commands
     End Function
 
     <ChatCommandAttribute("CreateGuild", "CreateGuild <Name> - Creates a guild.", AccessLevel.Developer)> _
-    Public Function CmdCreateGuild(ByRef c As CharacterObject, ByVal message As String) As Boolean
-        Dim tmp As String() = Split(message, "", 2)
-        Dim guildName As String = tmp(0)
+    Public Function cmdCreateGuild(ByRef c As CharacterObject, ByVal Message As String) As Boolean
+        Dim tmp As String() = Split(Message, "", 2)
+        Dim GuildName As String = tmp(0)
 
-        Dim mySqlQuery As New DataTable
-        CharacterDatabase.Query(String.Format("INSERT INTO guilds (guild_name, guild_leader, guild_cYear, guild_cMonth, guild_cDay) VALUES (""{0}"", {1}, {2}, {3}, {4}); SELECT guild_id FROM guilds WHERE guild_name = ""{0}"";", guildName, c.GUID, Now.Year - 2006, Now.Month, Now.Day), mySqlQuery)
+        Dim MySQLQuery As New DataTable
+        CharacterDatabase.Query(String.Format("INSERT INTO guilds (guild_name, guild_leader, guild_cYear, guild_cMonth, guild_cDay) VALUES (""{0}"", {1}, {2}, {3}, {4}); SELECT guild_id FROM guilds WHERE guild_name = ""{0}"";", GuildName, c.GUID, Now.Year - 2006, Now.Month, Now.Day), MySQLQuery)
 
-        AddCharacterToGuild(c, mySqlQuery.Rows(0).Item("guild_id"), 0)
+        AddCharacterToGuild(c, MySQLQuery.Rows(0).Item("guild_id"), 0)
         Return True
     End Function
 
     <ChatCommandAttribute("Cast", "CAST <SpellID> - You will start casting spell on selected target.", AccessLevel.Developer)> _
-    Public Function CmdCastSpell(ByRef c As CharacterObject, ByVal message As String) As Boolean
-        Dim tmp As String() = Split(message, " ", 2)
-        Dim spellID As Integer = tmp(0)
+    Public Function cmdCastSpell(ByRef c As CharacterObject, ByVal Message As String) As Boolean
+        Dim tmp As String() = Split(Message, " ", 2)
+        Dim SpellID As Integer = tmp(0)
 
         If WORLD_CREATUREs.ContainsKey(c.TargetGUID) Then
-            Dim targets As New SpellTargets
-            targets.SetTarget_UNIT(WORLD_CREATUREs(c.TargetGUID))
+            Dim Targets As New SpellTargets
+            Targets.SetTarget_UNIT(WORLD_CREATUREs(c.TargetGUID))
             SPELLs(spellID).Cast(c, targets, 0)
         ElseIf CHARACTERs.ContainsKey(c.TargetGUID) Then
-            Dim targets As New SpellTargets
-            targets.SetTarget_UNIT(CHARACTERs(c.TargetGUID))
+            Dim Targets As New SpellTargets
+            Targets.SetTarget_UNIT(CHARACTERs(c.TargetGUID))
             SPELLs(spellID).Cast(c, targets, 0)
         Else
             c.CommandResponse(String.Format("GUID=[{0:X}] not found or unsupported.", c.TargetGUID))
@@ -1211,25 +1210,25 @@ Public Module WS_Commands
             'DONE: Info by selection
             If CHARACTERs.ContainsKey(GUID) Then
                 c.CommandResponse(String.Format("Information for character [{0}]:{1}account = {2}{1}ip = {3}{1}guid = {4:X}{1}access = {5}", _
-                                                CHARACTERs(GUID).Name, vbNewLine, _
-                                                CHARACTERs(GUID).Client.Account, _
-                                                CHARACTERs(GUID).Client.IP.ToString, _
-                                                CHARACTERs(GUID).GUID, _
-                                                CHARACTERs(GUID).Access))
+                CHARACTERs(GUID).Name, vbNewLine, _
+                CHARACTERs(GUID).Client.Account, _
+                CHARACTERs(GUID).Client.IP.ToString, _
+                CHARACTERs(GUID).GUID, _
+                CHARACTERs(GUID).Access))
             ElseIf WORLD_CREATUREs.ContainsKey(GUID) Then
                 c.CommandResponse(String.Format("Information for creature [{0}]:{1}id = {2}{1}guid = {3:X}{1}model = {4}{1}ai = {5}{1}his reaction = {6}", _
-                                                WORLD_CREATUREs(GUID).Name, vbNewLine, _
-                                                WORLD_CREATUREs(GUID).ID, _
-                                                GUID, _
-                                                CREATURESDatabase(WORLD_CREATUREs(GUID).ID).Model, _
-                                                WORLD_CREATUREs(GUID).aiScript.GetType().ToString, _
-                                                c.GetReaction(WORLD_CREATUREs(GUID).Faction)))
+                WORLD_CREATUREs(GUID).Name, vbNewLine, _
+                WORLD_CREATUREs(GUID).ID, _
+                GUID, _
+                CREATURESDatabase(WORLD_CREATUREs(GUID).ID).Model, _
+                WORLD_CREATUREs(GUID).aiScript.GetType().ToString, _
+                c.GetReaction(WORLD_CREATUREs(GUID).Faction)))
             ElseIf WORLD_GAMEOBJECTs.ContainsKey(GUID) Then
                 c.CommandResponse(String.Format("Information for gameobject [{0}]:{1}id = {2}{1}guid = {3:X}{1}model = {4}", _
-                                                WORLD_GAMEOBJECTs(GUID).Name, vbNewLine, _
-                                                WORLD_GAMEOBJECTs(GUID).ID, _
-                                                GUID, _
-                                                GAMEOBJECTSDatabase(WORLD_GAMEOBJECTs(GUID).ID).Model))
+                WORLD_GAMEOBJECTs(GUID).Name, vbNewLine, _
+                WORLD_GAMEOBJECTs(GUID).ID, _
+                GUID, _
+                GAMEOBJECTSDatabase(WORLD_GAMEOBJECTs(GUID).ID).Model))
             Else
                 c.CommandResponse(String.Format("GUID=[{0:X}] not found or unsupported.", GUID))
             End If

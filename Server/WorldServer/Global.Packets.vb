@@ -55,7 +55,6 @@ Public Module Packets
             Log.WriteLine(LogType.FAILED, "Error dumping packet: {0}{1}", vbNewLine, e.ToString)
         End Try
     End Sub
-    
     Public Class UpdateClass
     Implements IDisposable
 
@@ -778,7 +777,6 @@ Public Module Packets
         Public Sub Dispose() Implements System.IDisposable.Dispose
         End Sub
     End Class
-    
     Public Class UpdatePacketClass
     Inherits PacketClass
 
@@ -1084,7 +1082,6 @@ Public Module Packets
         End Function
 
     End Class
-    
     Public Class UpdatePacketClassNew
     Inherits PacketClassNew
 

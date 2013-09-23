@@ -33,7 +33,6 @@ Public Module WS_Mail
         MAIL_MADE_PERMANENT = 5
 
     End Enum
-    
     Private Enum MailSentError
         NO_ERROR = 0
         BAG_FULL = 1
@@ -53,7 +52,6 @@ Public Module WS_Mail
         Auction = 4
         COD = 8
     End Enum
-    
     Private Enum MailTypeInfo As Byte
         NORMAL = 0
         GMMAIL = 1

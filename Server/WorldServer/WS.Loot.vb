@@ -21,7 +21,6 @@ Imports mangosVB.Common.BaseWriter
 Public Module WS_Loot
 
     Public LootTable As New Dictionary(Of ULong, LootObject)
-    
     Public Enum LootType As Byte
         LOOTTYPE_CORPSE = 1
         LOOTTYPE_SKINNNING = 2
@@ -57,7 +56,6 @@ Public Module WS_Loot
     End Enum
 
     Public Locks As New Dictionary(Of Integer, TLock)
-    
     Public Class TLock
         Public ID As Integer
         Public KeyType(4) As Byte
@@ -100,7 +98,6 @@ Public Module WS_Loot
 
         End Sub
     End Class
-    
     Public Class LootObject
     Implements IDisposable
         Public GUID As ULong = 0

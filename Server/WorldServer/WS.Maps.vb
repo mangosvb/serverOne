@@ -25,7 +25,6 @@ Imports mangosVB.Common
 Public Module WS_Maps
     #Region "Zones"
     Public AreaTable As New Dictionary(Of Integer, TArea)
-    
     Public Class TArea
         Public ID As Integer
         Public Level As Byte
@@ -33,13 +32,11 @@ Public Module WS_Maps
         Public ZoneType As Integer
         Public Team As AreaTeam
         Public Name As String
-        
         Public Enum AreaTeam As Integer
             AREATEAM_NONE = 0
             AREATEAM_ALLY = 2
             AREATEAM_HORDE = 4
         End Enum
-        
         Public Enum AreaFlag As Integer
             AREA_FLAG_SNOW = &H1                ' snow (only Dun Morogh, Naxxramas, Razorfen Downs and Winterspring)
             AREA_FLAG_UNK1 = &H2                ' unknown, (only Naxxramas and Razorfen Downs)
@@ -216,7 +213,6 @@ Public Module WS_Maps
             UnloadSpawns(CellX, CellY, CellMap)
         End Sub
     End Class
-    
     Public Class TMap
     Implements IDisposable
 
@@ -639,7 +635,6 @@ Public Module WS_Maps
 
     #Region "Graveyards"
     Public Graveyards As New List(Of TGraveyard)
-    
     Public Class TGraveyard
         Public x As Single
         Public y As Single

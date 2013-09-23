@@ -22,7 +22,6 @@ Imports mangosVB.Common.BaseWriter
 Public Module WS_Group
 
     Public GROUPs As New Dictionary(Of Long, Group)
-    
     Public Class Group
     Implements IDisposable
 
