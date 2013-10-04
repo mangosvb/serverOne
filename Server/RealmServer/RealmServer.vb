@@ -448,7 +448,7 @@ Public Module RS_Main
                 'Size 0x34 C4 0D 00 = 902,196 byte (180->181 enGB)
                 Converter.ToBytes(CType(FileLen(Client.UpdateFile), Integer), data_response, i)
                 'Unknown 0x0 always
-                Converter.ToBytes(0, data_response, i)
+                Converter.ToBytes(CType(0, Integer), data_response, i)
                 'MD5 CheckSum
                 Dim md5 As New MD5CryptoServiceProvider
                 Dim buffer() As Byte
@@ -589,7 +589,7 @@ Public Module RS_Main
             Converter.ToBytes(CType(Host.Item("ws_name"), String), data_response, tmp)
             Converter.ToBytes(CType(0, Byte), data_response, tmp) '\0
             '(string) Realm Address ("ip:port", zero terminated)
-            Converter.ToBytes(Host.Item("ws_host") & ":" & Host.Item("ws_port"), data_response, tmp)
+            Converter.ToBytes(CType(Host.Item("ws_host") & ":" & Host.Item("ws_port"), String), data_response, tmp)
             Converter.ToBytes(CType(0, Byte), data_response, tmp) '\0
             '(float) Population
             '   400F -> Full; 5F -> Medium; 1.6F -> Low; 200F -> New; 2F -> High

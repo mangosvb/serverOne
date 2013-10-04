@@ -70,11 +70,11 @@ Public Module Packets
 
         Public Sub SetUpdateFlag(ByVal pos As Integer, ByVal value As Integer)
             UpdateMask.Set(pos, True)
-            UpdateData(pos) = value
+            UpdateData(pos) = (CType(value, Integer))
         End Sub
         Public Sub SetUpdateFlag(ByVal pos As Integer, ByVal value As UInteger)
             UpdateMask.Set(pos, True)
-            UpdateData(pos) = value
+            UpdateData(pos) = (CType(value, UInteger))
         End Sub
         Public Sub SetUpdateFlag(ByVal pos As Integer, ByVal value As Long)
             UpdateMask.Set(pos, True)
@@ -90,7 +90,7 @@ Public Module Packets
         End Sub
         Public Sub SetUpdateFlag(ByVal pos As Integer, ByVal value As Single)
             UpdateMask.Set(pos, True)
-            UpdateData(pos) = value
+            UpdateData(pos) = (CType(value, Single))
         End Sub
 
         Public Sub AddToPacket(ByRef packet As PacketClass, ByVal updateType As ObjectUpdateType, ByRef updateObject As CreatureObject, Optional ByVal IsClientObject As Byte = 0)
@@ -228,7 +228,7 @@ Public Module Packets
             packet.AddPackGUID(updateObject.GUID)
 
             If updateType = ObjectUpdateType.UPDATETYPE_CREATE_OBJECT Then
-                If ITEMDatabase(updateObject.ItemEntry).ContainerSlots > 0 Then
+                If CType(ITEMDatabase(updateObject.ItemEntry), ItemInfo).ContainerSlots > 0 Then
                     packet.AddInt8(ObjectTypeID.TYPEID_CONTAINER)
                 Else
                     packet.AddInt8(ObjectTypeID.TYPEID_ITEM)
@@ -731,7 +731,7 @@ Public Module Packets
                 Offset += 1
             End If
 
-            Return BitConverter.ToUInt64(GUID, 0)
+            Return CType(BitConverter.ToUInt64(GUID, 0), ULong)
         End Function
         Public Function GetPackGUID(ByVal Offset As Integer) As ULong
             Dim flags As Byte = Data(Offset)
@@ -771,7 +771,7 @@ Public Module Packets
                 Offset += 1
             End If
 
-            Return BitConverter.ToUInt64(GUID, 0)
+            Return CType(BitConverter.ToUInt64(GUID, 0), ULong)
         End Function
 
         Public Sub Dispose() Implements System.IDisposable.Dispose
@@ -1061,7 +1061,7 @@ Public Module Packets
             If (flags And 64) = 64 Then GUID(6) = br.ReadByte
             If (flags And 128) = 128 Then GUID(7) = br.ReadByte
 
-            Return BitConverter.ToUInt64(GUID, 0)
+            Return CType(BitConverter.ToUInt64(GUID, 0), ULong)
         End Function
         Public Function GetPackGUID(ByVal Offset As Integer) As ULong
             ms.Seek(Offset, SeekOrigin.Begin)
@@ -1078,7 +1078,7 @@ Public Module Packets
             If (flags And 64) = 64 Then GUID(6) = br.ReadByte
             If (flags And 128) = 128 Then GUID(7) = br.ReadByte
 
-            Return BitConverter.ToUInt64(GUID, 0)
+            Return CType(BitConverter.ToUInt64(GUID, 0), ULong)
         End Function
 
     End Class

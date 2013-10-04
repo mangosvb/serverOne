@@ -147,7 +147,7 @@ Public Module WS_Base
         Public Sub SetAura(ByVal SpellID As Integer, ByVal Slot As Integer, ByVal Duration As Integer)
             If ActiveSpells(Slot) Is Nothing Then Exit Sub
             'DONE: Passive auras are not displayed
-            If SpellID <> 0 AndAlso SPELLs.ContainsKey(SpellID) AndAlso SPELLs(SpellID).IsPassive Then Exit Sub
+            If SpellID <> 0 AndAlso SPELLs.ContainsKey(SpellID) AndAlso CType(SPELLs(SpellID), SpellInfo).IsPassive Then Exit Sub
 
             'DONE: Calculating slots
             Dim AuraFlag_Slot As Integer = Slot \ 4
@@ -155,7 +155,7 @@ Public Module WS_Base
 
             'DONE: Check if the spell is negative
             Dim Positive As Boolean = True
-            If SpellID Then Positive = (Not SPELLs(SpellID).IsNegative)
+            If SpellID Then Positive = (Not CType(SPELLs(SpellID), SpellInfo).IsNegative)
             ActiveSpells(Slot).Flags = 0
             If SpellID Then
                 ActiveSpells(Slot).Flags = ActiveSpells(Slot).Flags Or AuraFlags.AFLAG_VISIBLE
@@ -304,8 +304,8 @@ Public Module WS_Base
             Dim i As Integer
             For i = 0 To MAX_AURA_EFFECTs_VISIBLE - 1
                 If Not ActiveSpells(i) Is Nothing Then
-                    If SPELLs.ContainsKey(ActiveSpells(i).SpellID) AndAlso (SPELLs(ActiveSpells(i).SpellID).auraInterruptFlags And AuraInterruptFlag) Then
-                        If (SPELLs(ActiveSpells(i).SpellID).procFlags And SpellAuraProcFlags.AURA_PROC_REMOVEONUSE) = 0 Then
+                    If SPELLs.ContainsKey(ActiveSpells(i).SpellID) AndAlso (CType(SPELLs(ActiveSpells(i).SpellID), SpellInfo).auraInterruptFlags And AuraInterruptFlag) Then
+                        If (CType(SPELLs(ActiveSpells(i).SpellID), SpellInfo).procFlags And SpellAuraProcFlags.AURA_PROC_REMOVEONUSE) = 0 Then
                             RemoveAura(i, ActiveSpells(i).SpellCaster)
                         End If
                     End If
@@ -315,10 +315,10 @@ Public Module WS_Base
         Public Sub AddAura(ByVal SpellID As Integer, ByVal Duration As Integer, ByRef Caster As BaseUnit)
             Dim AuraStart As Integer = 0
             Dim AuraEnd As Integer = MAX_POSITIVE_AURA_EFFECTs - 1
-            If SPELLs(SpellID).IsPassive Then
+            If CType(SPELLs(SpellID), SpellInfo).IsPassive Then
                 AuraStart = MAX_AURA_EFFECTs_VISIBLE
                 AuraEnd = MAX_AURA_EFFECTs
-            ElseIf SPELLs(SpellID).IsNegative Then
+            ElseIf CType(SPELLs(SpellID), SpellInfo).IsNegative Then
                 AuraStart = MAX_POSITIVE_AURA_EFFECTs
                 AuraEnd = MAX_AURA_EFFECTs_VISIBLE - 1
             End If

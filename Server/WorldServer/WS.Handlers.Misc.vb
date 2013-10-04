@@ -27,11 +27,11 @@ Public Module WS_Handlers_Misc
         Dim TextCount As Integer = 0
         Dim RandomText As Integer = 0
 
-        If Trim(MonsterSayCombat(MonsterID).Text0) <> "" Then TextCount = TextCount + 1
-        If Trim(MonsterSayCombat(MonsterID).Text1) <> "" Then TextCount = TextCount + 1
-        If Trim(MonsterSayCombat(MonsterID).Text2) <> "" Then TextCount = TextCount + 1
-        If Trim(MonsterSayCombat(MonsterID).Text3) <> "" Then TextCount = TextCount + 1
-        If Trim(MonsterSayCombat(MonsterID).Text4) <> "" Then TextCount = TextCount + 1
+        If Trim((CType(MonsterSayCombat(MonsterID), TMonsterSayCombat)).Text0) <> "" Then TextCount = TextCount + 1
+        If Trim((CType(MonsterSayCombat(MonsterID), TMonsterSayCombat)).Text1) <> "" Then TextCount = TextCount + 1
+        If Trim((CType(MonsterSayCombat(MonsterID), TMonsterSayCombat)).Text2) <> "" Then TextCount = TextCount + 1
+        If Trim((CType(MonsterSayCombat(MonsterID), TMonsterSayCombat)).Text3) <> "" Then TextCount = TextCount + 1
+        If Trim((CType(MonsterSayCombat(MonsterID), TMonsterSayCombat)).Text4) <> "" Then TextCount = TextCount + 1
 
         RandomText = Rnd.Next(1, TextCount + 1)
 
@@ -39,15 +39,15 @@ Public Module WS_Handlers_Misc
 
         Select Case RandomText
             Case 1
-                SelectMonsterSay = MonsterSayCombat(MonsterID).Text0
+                SelectMonsterSay = (CType(MonsterSayCombat(MonsterID), TMonsterSayCombat)).Text0
             Case 2
-                SelectMonsterSay = MonsterSayCombat(MonsterID).Text1
+                SelectMonsterSay = (CType(MonsterSayCombat(MonsterID), TMonsterSayCombat)).Text1
             Case 3
-                SelectMonsterSay = MonsterSayCombat(MonsterID).Text2
+                SelectMonsterSay = (CType(MonsterSayCombat(MonsterID), TMonsterSayCombat)).Text2
             Case 4
-                SelectMonsterSay = MonsterSayCombat(MonsterID).Text3
+                SelectMonsterSay = (CType(MonsterSayCombat(MonsterID), TMonsterSayCombat)).Text3
             Case 5
-                SelectMonsterSay = MonsterSayCombat(MonsterID).Text4
+                SelectMonsterSay = (CType(MonsterSayCombat(MonsterID), TMonsterSayCombat)).Text4
         End Select
 
     End Function
@@ -78,11 +78,11 @@ Public Module WS_Handlers_Misc
             If GuidIsPlayer(GUID) Then
                 If CHARACTERs.ContainsKey(GUID) = True Then
                     SMSG_NAME_QUERY_RESPONSE.AddUInt64(GUID)
-                    SMSG_NAME_QUERY_RESPONSE.AddString(CHARACTERs(GUID).Name)
+                    SMSG_NAME_QUERY_RESPONSE.AddString(CType(CHARACTERs(GUID), CharacterObject).Name)
                     SMSG_NAME_QUERY_RESPONSE.AddInt8(0) ' Realm Name I think( if player from another realm)?
-                    SMSG_NAME_QUERY_RESPONSE.AddInt32(CHARACTERs(GUID).Race)
-                    SMSG_NAME_QUERY_RESPONSE.AddInt32(CHARACTERs(GUID).Gender)
-                    SMSG_NAME_QUERY_RESPONSE.AddInt32(CHARACTERs(GUID).Classe)
+                    SMSG_NAME_QUERY_RESPONSE.AddInt32(CType(CHARACTERs(GUID), CharacterObject).Race)
+                    SMSG_NAME_QUERY_RESPONSE.AddInt32(CType(CHARACTERs(GUID), CharacterObject).Gender)
+                    SMSG_NAME_QUERY_RESPONSE.AddInt32(CType(CHARACTERs(GUID), CharacterObject).Classe)
                     SMSG_NAME_QUERY_RESPONSE.AddInt8(0) ' Unknown (came in 2.4)
                     Client.Send(SMSG_NAME_QUERY_RESPONSE)
                     SMSG_NAME_QUERY_RESPONSE.Dispose()
@@ -114,7 +114,7 @@ Public Module WS_Handlers_Misc
             If GuidIsCreature(GUID) Then
                 If WORLD_CREATUREs.ContainsKey(GUID) Then
                     SMSG_NAME_QUERY_RESPONSE.AddUInt64(GUID)
-                    SMSG_NAME_QUERY_RESPONSE.AddString(WORLD_CREATUREs(GUID).Name)
+                    SMSG_NAME_QUERY_RESPONSE.AddString(CType(WORLD_CREATUREs(GUID), CreatureObject).Name)
                     SMSG_NAME_QUERY_RESPONSE.AddInt8(0)
                     SMSG_NAME_QUERY_RESPONSE.AddInt32(0)
                     SMSG_NAME_QUERY_RESPONSE.AddInt32(0)
@@ -367,7 +367,16 @@ Public Module WS_Handlers_Misc
 
         'DONE: Spawn Bones, Delete Corpse
         If Character.corpseGUID <> 0 Then
-            WORLD_CORPSEOBJECTs(Character.corpseGUID).ConvertToBones()
+            If WORLD_CORPSEOBJECTs.ContainsKey(Character.corpseGUID) Then
+                WORLD_CORPSEOBJECTs(Character.corpseGUID).ConvertToBones()
+            Else
+                Log.WriteLine(LogType.DEBUG, "Corpse wasn't found [{0}]!", Character.corpseGUID - GUID_CORPSE)
+
+                'DONE: Delete from database
+                CharacterDatabase.Update(String.Format("DELETE FROM tmpspawnedcorpses WHERE corpse_owner = ""{0}"";", Character.GUID))
+
+                'TODO: Turn the corpse into bones on the server it is located at!
+            End If
             Character.corpseGUID = 0
             Character.corpseMapID = 0
             Character.corpsePositionX = 0

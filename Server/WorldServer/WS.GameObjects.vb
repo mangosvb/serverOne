@@ -155,8 +155,8 @@ Public Module WS_GameObjects
 
         Public Sub FillAllUpdateFlags(ByRef Update As UpdateClass, ByRef Character As CharacterObject)
             Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_GUID, GUID)
-            Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_TYPE, ObjectType.TYPE_GAMEOBJECT + ObjectType.TYPE_OBJECT)
-            Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_ENTRY, ID)
+            Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_TYPE, CType(ObjectType.TYPE_GAMEOBJECT + ObjectType.TYPE_OBJECT, Integer))
+            Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_ENTRY, CType(ID, Integer))
             Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_SCALE_X, Size)
 
             If Owner Then Update.SetUpdateFlag(EGameObjectFields.OBJECT_FIELD_CREATED_BY, Owner)
@@ -264,7 +264,7 @@ Public Module WS_GameObjects
 
             'If there's a loottable open for this gameobject already then hook it to the gameobject
             If LootTable.ContainsKey(GUID) Then
-                Loot = LootTable(GUID)
+                Loot = CType(LootTable(GUID), LootObject)
             End If
         End Sub
 
@@ -289,7 +289,7 @@ Public Module WS_GameObjects
                         With Maps(MapID).Tiles(CellX + i, CellY + j)
                             list = .PlayersHere.ToArray
                             For Each plGUID As ULong In list
-                                If CHARACTERs(plGUID).CanSee(Me) Then
+                                If CHARACTERs.ContainsKey(plGUID) AndAlso CHARACTERs(plGUID).CanSee(Me) Then
                                     Dim packet As New PacketClass(OPCODES.SMSG_UPDATE_OBJECT)
                                     packet.AddInt32(1)
                                     packet.AddInt8(0)
@@ -528,7 +528,7 @@ Public Module WS_GameObjects
 
             Case GameObjectType.GAMEOBJECT_TYPE_DOOR
                 'DONE: Doors opening
-                WORLD_GAMEOBJECTs(GameObjectGUID).State = GameObjectLootState.DOOR_OPEN
+                CType(WORLD_GAMEOBJECTs(GameObjectGUID), GameObjectObject).State = GameObjectLootState.DOOR_OPEN
 
                 Dim response As New PacketClass(OPCODES.SMSG_UPDATE_OBJECT)
                 response.AddInt32(1)
@@ -536,12 +536,12 @@ Public Module WS_GameObjects
                 Dim UpdateData As New UpdateClass
                 UpdateData.SetUpdateFlag(EGameObjectFields.GAMEOBJECT_STATE, WORLD_GAMEOBJECTs(GameObjectGUID).State)
                 UpdateData.SetUpdateFlag(EGameObjectFields.GAMEOBJECT_FLAGS, WORLD_GAMEOBJECTs(GameObjectGUID).Flags)
-                UpdateData.AddToPacket(response, ObjectUpdateType.UPDATETYPE_VALUES, WORLD_GAMEOBJECTs(GameObjectGUID), 1)
+                UpdateData.AddToPacket(response, ObjectUpdateType.UPDATETYPE_VALUES, CType(WORLD_GAMEOBJECTs(GameObjectGUID), GameObjectObject), 1)
                 WORLD_GAMEOBJECTs(GameObjectGUID).SendToNearPlayers(response)
                 UpdateData.Dispose()
                 response.Dispose()
 
-                ThreadPool.RegisterWaitForSingleObject(New AutoResetEvent(False), New WaitOrTimerCallback(AddressOf WORLD_GAMEOBJECTs(GameObjectGUID).Respawn), Nothing, 6000, True)
+                ThreadPool.RegisterWaitForSingleObject(New AutoResetEvent(False), New WaitOrTimerCallback(AddressOf CType(WORLD_GAMEOBJECTs(GameObjectGUID), GameObjectObject).Respawn), Nothing, 6000, True)
 
             Case GameObjectType.GAMEOBJECT_TYPE_CHAIR
                 'DONE: Chair sitting

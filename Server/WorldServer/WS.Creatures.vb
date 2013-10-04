@@ -242,19 +242,19 @@ Public Module WS_Creatures
 
         Public ReadOnly Property Name() As String
             Get
-                Return CREATURESDatabase(ID).Name
+                Return CType(CREATURESDatabase(ID), CreatureInfo).Name
             End Get
         End Property
         Public ReadOnly Property MaxDistance() As Single
             Get
-                Return CREATURESDatabase(ID).BoundingRadius * 50
+                Return CType(CREATURESDatabase(ID), CreatureInfo).BoundingRadius * 50
             End Get
         End Property
 
         Public ReadOnly Property isAbleToWalkOnWater() As Boolean
             Get
                 'TODO: Fix family filter
-                Select Case CREATURESDatabase(ID).CreatureFamily
+                Select Case CType(CREATURESDatabase(ID), CreatureInfo).CreatureFamily
                     Case 3, 10, 11, 12, 20, 21, 27
                         Return False
                     Case Else
@@ -265,7 +265,7 @@ Public Module WS_Creatures
         Public ReadOnly Property isAbleToWalkOnGround() As Boolean
             Get
                 'TODO: Fix family filter
-                Select Case CREATURESDatabase(ID).CreatureFamily
+                Select Case CType(CREATURESDatabase(ID), CreatureInfo).CreatureFamily
                     Case 255
                         Return False
                     Case Else
@@ -345,17 +345,17 @@ Public Module WS_Creatures
             Dim packet As New UpdatePacketClass
             Dim tmpUpdate As New UpdateClass(EUnitFields.UNIT_END)
             tmpUpdate.SetUpdateFlag(EUnitFields.UNIT_FIELD_TARGET, TargetGUID)
-            tmpUpdate.AddToPacket(packet, ObjectUpdateType.UPDATETYPE_VALUES, Me)
+            tmpUpdate.AddToPacket(CType(packet, UpdatePacketClass), ObjectUpdateType.UPDATETYPE_VALUES, Me)
             tmpUpdate.Dispose()
 
-            SendToNearPlayers(packet)
+            SendToNearPlayers(CType(packet, UpdatePacketClass))
             packet.Dispose()
         End Sub
         Public Sub FillAllUpdateFlags(ByRef Update As UpdateClass, ByRef Character As CharacterObject)
             Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_GUID, GUID)
             Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_SCALE_X, Size)
-            Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_TYPE, ObjectType.TYPE_OBJECT + ObjectType.TYPE_UNIT)
-            Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_ENTRY, ID)
+            Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_TYPE, CType(ObjectType.TYPE_OBJECT + ObjectType.TYPE_UNIT, Integer))
+            Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_ENTRY, CType(ID, Integer))
 
             If (Not aiScript Is Nothing) AndAlso (Not aiScript.aiTarget Is Nothing) Then
                 Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_TARGET, aiScript.aiTarget.GUID)
@@ -369,7 +369,7 @@ Public Module WS_Creatures
             Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_NATIVEDISPLAYID, CREATURESDatabase(ID).Model)
             Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_MOUNTDISPLAYID, Mount)
 
-            Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_BYTES_0, CType(CREATURESDatabase(ID).ManaType, Integer) << 24)
+            Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_BYTES_0, CType(CType(CREATURESDatabase(ID).ManaType, Integer) << 24, Integer))
             Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_BYTES_1, cBytes1)
             Update.SetUpdateFlag(EUnitFields.UNIT_FIELD_BYTES_2, cBytes2)
 
@@ -600,12 +600,12 @@ Public Module WS_Creatures
             'DONE: Send the update
             Dim packetForNear As New UpdatePacketClass
             Dim UpdateData As New UpdateClass(EUnitFields.UNIT_END)
-            UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, Life.Current)
-            UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER1 + ManaType, Mana.Current)
+            UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, CType(Life.Current, Integer))
+            UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER1 + ManaType, CType(Mana.Current, Integer))
             UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_FLAGS, cUnitFlags)
-            UpdateData.AddToPacket(packetForNear, ObjectUpdateType.UPDATETYPE_VALUES, Me)
+            UpdateData.AddToPacket(CType(packetForNear, UpdatePacketClass), ObjectUpdateType.UPDATETYPE_VALUES, Me)
 
-            SendToNearPlayers(packetForNear)
+            SendToNearPlayers(CType(packetForNear, UpdatePacketClass))
             packetForNear.Dispose()
             UpdateData.Dispose()
 
@@ -660,7 +660,7 @@ Public Module WS_Creatures
                     Me.DealDamage(Damage, Attacker)
                     Return
                 Case Else
-                    If CREATURESDatabase(ID).CreatureType = UNIT_TYPE.CRITTER Then
+                    If CType(CREATURESDatabase(ID), CreatureInfo).CreatureType = UNIT_TYPE.CRITTER Then
                         'DONE: Critters die in one shot
                         Life.Current = 0
                     Else
@@ -675,12 +675,12 @@ Public Module WS_Creatures
             If SeenBy.Count > 0 Then
                 Dim packetForNear As New UpdatePacketClass
                 Dim UpdateData As New UpdateClass(EUnitFields.UNIT_END)
-                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, Life.Current)
+                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, CType(Life.Current, Integer))
                 UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_FLAGS, cUnitFlags)
                 UpdateData.SetUpdateFlag(EUnitFields.UNIT_DYNAMIC_FLAGS, cDynamicFlags)
-                UpdateData.AddToPacket(packetForNear, ObjectUpdateType.UPDATETYPE_VALUES, Me, 0)
+                UpdateData.AddToPacket(CType(packetForNear, UpdatePacketClass), ObjectUpdateType.UPDATETYPE_VALUES, Me, 0)
 
-                SendToNearPlayers(packetForNear)
+                SendToNearPlayers(CType(packetForNear, UpdatePacketClass))
                 packetForNear.Dispose()
                 UpdateData.Dispose()
             End If
@@ -701,13 +701,13 @@ Public Module WS_Creatures
             If SeenBy.Count > 0 Then
                 Dim packetForNear As New UpdatePacketClass
                 Dim UpdateData As New UpdateClass(EUnitFields.UNIT_END)
-                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, Life.Current)
-                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER1 + ManaType, Mana.Current)
+                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, CType(Life.Current, Integer))
+                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER1 + ManaType, CType(Mana.Current, Integer))
                 UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_FLAGS, cUnitFlags)
                 UpdateData.SetUpdateFlag(EUnitFields.UNIT_DYNAMIC_FLAGS, cDynamicFlags)
-                UpdateData.AddToPacket(packetForNear, ObjectUpdateType.UPDATETYPE_VALUES, Me)
+                UpdateData.AddToPacket(CType(packetForNear, UpdatePacketClass), ObjectUpdateType.UPDATETYPE_VALUES, Me)
 
-                SendToNearPlayers(packetForNear)
+                SendToNearPlayers(CType(packetForNear, UpdatePacketClass))
                 packetForNear.Dispose()
                 UpdateData.Dispose()
             End If
@@ -721,10 +721,10 @@ Public Module WS_Creatures
             If SeenBy.Count > 0 Then
                 Dim packetForNear As New UpdatePacketClass
                 Dim UpdateData As New UpdateClass(EUnitFields.UNIT_END)
-                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, Life.Current)
-                UpdateData.AddToPacket(packetForNear, ObjectUpdateType.UPDATETYPE_VALUES, Me)
+                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, CType(Life.Current, Integer))
+                UpdateData.AddToPacket(CType(packetForNear, UpdatePacketClass), ObjectUpdateType.UPDATETYPE_VALUES, Me)
 
-                SendToNearPlayers(packetForNear)
+                SendToNearPlayers(CType(packetForNear, UpdatePacketClass))
                 packetForNear.Dispose()
                 UpdateData.Dispose()
             End If
@@ -740,10 +740,10 @@ Public Module WS_Creatures
             If SeenBy.Count > 0 Then
                 Dim packetForNear As New UpdatePacketClass
                 Dim UpdateData As New UpdateClass(EUnitFields.UNIT_END)
-                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER1 + ManaType, Mana.Current)
-                UpdateData.AddToPacket(packetForNear, ObjectUpdateType.UPDATETYPE_VALUES, Me)
+                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER1 + ManaType, CType(Mana.Current, Integer))
+                UpdateData.AddToPacket(CType(packetForNear, UpdatePacketClass), ObjectUpdateType.UPDATETYPE_VALUES, Me)
 
-                SendToNearPlayers(packetForNear)
+                SendToNearPlayers(CType(packetForNear, UpdatePacketClass))
                 packetForNear.Dispose()
                 UpdateData.Dispose()
             End If
@@ -840,7 +840,7 @@ Public Module WS_Creatures
                 If CType(LootRow.Item("loot_chance"), Single) * 10000 > (Rnd.Next(1, 2000001) Mod 1000000) Then
                     Dim ItemCount As Byte = CByte(Rnd.Next(CType(lootmin, Byte), CType(LootRow.Item("loot_max"), Byte) + 1))
                     If ITEMDatabase.ContainsKey(CType(LootRow.Item("loot_item"), Integer)) = False Then Dim tmpItem As ItemInfo = New ItemInfo(CType(LootRow.Item("loot_item"), Integer))
-                    If ITEMDatabase(CType(LootRow.Item("loot_item"), Integer)).ObjectClass = ITEM_CLASS.ITEM_CLASS_QUEST Then
+                    If CType(ITEMDatabase(CType(LootRow.Item("loot_item"), Integer)), ItemInfo).ObjectClass = ITEM_CLASS.ITEM_CLASS_QUEST Then
                         'Check if this quest item can be looted
                         If IsItemNeededForQuest(Character, CType(LootRow.Item("loot_item"), Integer)) Then
                             Loot.Items.Add(New LootItem(CType(LootRow.Item("loot_item"), Integer), ItemCount))
@@ -855,12 +855,12 @@ Public Module WS_Creatures
             'TODO: Get money from DB
             'TODO: Only humanoids and bosses (can a boss be a not humanoid?) drops money.
             If LootType = LootType.LOOTTYPE_CORPSE Then
-                If CREATURESDatabase(ID).Elite = 0 Then
-                    If CREATURESDatabase(ID).CreatureType = UNIT_TYPE.HUMANOID Then
+                If CType(CREATURESDatabase(ID), CreatureInfo).Elite = 0 Then
+                    If CType(CREATURESDatabase(ID), CreatureInfo).CreatureType = UNIT_TYPE.HUMANOID Then
                         Loot.Money = Fix(CInt(Level) * Rnd.Next(0, CInt(Level)))
                     End If
                 Else
-                    Loot.Money = Fix(Level * Rnd.Next(0, Level) * CREATURESDatabase(ID).Elite)
+                    Loot.Money = Fix(Level * Rnd.Next(0, Level) * CType(CREATURESDatabase(ID), CreatureInfo).Elite)
                 End If
             End If
 
@@ -916,7 +916,7 @@ Public Module WS_Creatures
 
             'DONE: Killing elites
             Try
-                If CREATURESDatabase(ID).Elite > 0 Then XP *= 2
+                If CType(CREATURESDatabase(ID), CreatureInfo).Elite > 0 Then XP *= 2
                 'DONE: XP Rate config
                 XP *= Config.XPRate
             Catch ex As Exception
@@ -999,7 +999,7 @@ Public Module WS_Creatures
             tmpSpell.tmpSpellID = SpellID
 
             ThreadPool.QueueUserWorkItem(New WaitCallback(AddressOf tmpSpell.Cast))
-            Return SPELLs(SpellID).GetCastTime
+            Return CType(SPELLs(SpellID), SpellInfo).GetCastTime
         End Function
         Public Sub SendChatMessage(ByVal Message As String, ByVal msgType As ChatMsg, ByVal msgLanguage As LANGUAGES, Optional ByVal SecondGUID As ULong = 0)
             Dim packet As New PacketClass(OPCODES.SMSG_MESSAGECHAT)
@@ -1265,7 +1265,7 @@ Public Module WS_Creatures
             RemoveFromWorld()
 
             If LootTable.ContainsKey(GUID) Then
-                LootTable(GUID).Dispose()
+                CType(LootTable(GUID), LootObject).Dispose()
             End If
         End Sub
         Public Sub Respawn()
@@ -1282,13 +1282,13 @@ Public Module WS_Creatures
             If SeenBy.Count > 0 Then
                 Dim packetForNear As New UpdatePacketClass
                 Dim UpdateData As New UpdateClass(EUnitFields.UNIT_END)
-                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, Life.Current)
-                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER1 + ManaType, Mana.Current)
+                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, CType(Life.Current, Integer))
+                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER1 + ManaType, CType(Mana.Current, Integer))
                 UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_FLAGS, cUnitFlags)
                 UpdateData.SetUpdateFlag(EUnitFields.UNIT_DYNAMIC_FLAGS, cDynamicFlags)
-                UpdateData.AddToPacket(packetForNear, ObjectUpdateType.UPDATETYPE_VALUES, Me)
+                UpdateData.AddToPacket(CType(packetForNear, UpdatePacketClass), ObjectUpdateType.UPDATETYPE_VALUES, Me)
 
-                SendToNearPlayers(packetForNear)
+                SendToNearPlayers(CType(packetForNear, UpdatePacketClass))
                 packetForNear.Dispose()
                 UpdateData.Dispose()
 

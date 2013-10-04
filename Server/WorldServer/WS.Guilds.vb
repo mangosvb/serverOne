@@ -550,7 +550,7 @@ Public Module WS_Guilds
 
         For Each r As DataRow In q.Rows
             If CHARACTERs.ContainsKey(CType(r.Item("char_guid"), Long)) Then
-                CHARACTERs(CType(r.Item("char_guid"), Long)).Client.SendMultiplyPackets(packet)
+                CType(CHARACTERs(CType(r.Item("char_guid"), Long)), CharacterObject).Client.SendMultiplyPackets(packet)
             End If
         Next
     End Sub
@@ -576,8 +576,8 @@ Public Module WS_Guilds
 
         For Each r As DataRow In q.Rows
             If CHARACTERs.ContainsKey(CType(r.Item("char_guid"), Long)) Then
-                If CHARACTERs(CType(r.Item("char_guid"), Long)).IsGuildRightSet(GuildRankRights.GR_RIGHT_GCHATLISTEN) Then
-                    CHARACTERs(CType(r.Item("char_guid"), Long)).Client.SendMultiplyPackets(packet)
+                If CType(CHARACTERs(CType(r.Item("char_guid"), Long)), CharacterObject).IsGuildRightSet(GuildRankRights.GR_RIGHT_GCHATLISTEN) Then
+                    CType(CHARACTERs(CType(r.Item("char_guid"), Long)), CharacterObject).Client.SendMultiplyPackets(packet)
                 End If
             End If
         Next
@@ -606,8 +606,8 @@ Public Module WS_Guilds
 
         For Each r As DataRow In q.Rows
             If CHARACTERs.ContainsKey(CType(r.Item("char_guid"), Long)) Then
-                If CHARACTERs(CType(r.Item("char_guid"), Long)).IsGuildRightSet(GuildRankRights.GR_RIGHT_OFFCHATLISTEN) Then
-                    CHARACTERs(CType(r.Item("char_guid"), Long)).Client.SendMultiplyPackets(packet)
+                If CType(CHARACTERs(CType(r.Item("char_guid"), Long)), CharacterObject).IsGuildRightSet(GuildRankRights.GR_RIGHT_OFFCHATLISTEN) Then
+                    CType(CHARACTERs(CType(r.Item("char_guid"), Long)), CharacterObject).Client.SendMultiplyPackets(packet)
                 End If
             End If
         Next
@@ -1108,8 +1108,8 @@ Public Module WS_Guilds
 
         For Each r As DataRow In q.Rows
             If CHARACTERs.ContainsKey(CType(r.Item("char_guid"), Long)) Then
-                RemoveCharacterFromGuild(CHARACTERs(CType(r.Item("char_guid"), Long)))
-                CHARACTERs(CType(r.Item("char_guid"), Long)).Client.SendMultiplyPackets(response)
+                RemoveCharacterFromGuild(CType(CHARACTERs(CType(r.Item("char_guid"), Long)), CharacterObject))
+                CType(CHARACTERs(CType(r.Item("char_guid"), Long)), CharacterObject).Client.SendMultiplyPackets(response)
             Else
                 RemoveCharacterFromGuild(CType(r.Item("char_guid"), Long))
             End If
@@ -1239,7 +1239,7 @@ Public Module WS_Guilds
             Exit Sub
         End If
 
-        Dim c As CharacterObject = CHARACTERs(CType(q.Rows(0).Item("char_guid"), Long))
+        Dim c As CharacterObject = CType(CHARACTERs(CType(q.Rows(0).Item("char_guid"), Long)), CharacterObject)
 
         If c.IsGuildLeader Then
             SendGuildResult(Client, GuildCommand.GUILD_QUIT_S, GuildError.GUILD_LEADER_LEAVE)
@@ -1284,7 +1284,7 @@ Public Module WS_Guilds
             SendGuildResult(Client, GuildCommand.GUILD_INVITE_S, GuildError.GUILD_PLAYER_NOT_FOUND, playerName)
             Exit Sub
         End If
-        Dim c As CharacterObject = CHARACTERs(CType(q.Rows(0).Item("char_guid"), Long))
+        Dim c As CharacterObject = CType(CHARACTERs(CType(q.Rows(0).Item("char_guid"), Long)), CharacterObject)
         If c.GuildID <> Client.Character.GuildID Then
             SendGuildResult(Client, GuildCommand.GUILD_INVITE_S, GuildError.GUILD_PLAYER_NOT_IN_GUILD_S, playerName)
             Exit Sub
@@ -1344,7 +1344,7 @@ Public Module WS_Guilds
             SendGuildResult(Client, GuildCommand.GUILD_INVITE_S, GuildError.GUILD_PLAYER_NOT_FOUND, playerName)
             Exit Sub
         End If
-        Dim c As CharacterObject = CHARACTERs(CType(q.Rows(0).Item("char_guid"), Long))
+        Dim c As CharacterObject = CType(CHARACTERs(CType(q.Rows(0).Item("char_guid"), Long)), CharacterObject)
         If c.GuildID <> Client.Character.GuildID Then
             SendGuildResult(Client, GuildCommand.GUILD_INVITE_S, GuildError.GUILD_PLAYER_NOT_IN_GUILD_S, playerName)
             Exit Sub
@@ -1419,7 +1419,7 @@ Public Module WS_Guilds
             Exit Sub
         End If
 
-        Dim c As CharacterObject = CHARACTERs(CType(q.Rows(0).Item("char_guid"), Long))
+        Dim c As CharacterObject = CType(CHARACTERs(CType(q.Rows(0).Item("char_guid"), Long)), CharacterObject)
         If c.GuildID <> 0 Then
             SendGuildResult(Client, GuildCommand.GUILD_INVITE_S, GuildError.ALREADY_IN_GUILD, playerName)
             Exit Sub

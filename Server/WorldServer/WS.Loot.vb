@@ -170,12 +170,12 @@ Public Module WS_Loot
                     'DONE: Check threshold if in group
                     For i = 0 To Items.Count - 1
                         If Not Items(i) Is Nothing Then
-                            If ITEMDatabase(CType(Items(i), LootItem).ItemID).Quality >= Client.Character.Group.LootThreshold Then
+                            If CType(ITEMDatabase(CType(Items(i), LootItem).ItemID), ItemInfo).Quality >= Client.Character.Group.LootThreshold Then
                                 GroupLootInfo(i) = New GroupLootInfo
-                                GroupLootInfo(i).LootObject = Me
-                                GroupLootInfo(i).LootSlot = i
+                                CType(GroupLootInfo(i), GroupLootInfo).LootObject = Me
+                                CType(GroupLootInfo(i), GroupLootInfo).LootSlot = i
 
-                                GroupLootInfo(i).Item = Items(i)
+                                CType(GroupLootInfo(i), GroupLootInfo).Item = Items(i)
 
                                 StartRoll(GUID, i, Client.Character)
                                 Exit Sub
@@ -313,8 +313,8 @@ Public Module WS_Loot
                     End If
                 Next
 
-                Dim tmpItem As New ItemObject(Item.ItemID, looterCharacter.GUID)
-                tmpItem.StackCount = Item.ItemCount
+                Dim tmpItem As New ItemObject(CType(Item, LootItem).ItemID, looterCharacter.GUID)
+                tmpItem.StackCount = CType(Item, LootItem).ItemCount
 
                 Dim wonItem As New PacketClass(OPCODES.SMSG_LOOT_ROLL_WON)
                 wonItem.AddUInt64(LootObject.GUID)
@@ -328,7 +328,7 @@ Public Module WS_Loot
                 Broadcast(wonItem)
 
                 If looterCharacter.ItemADD(tmpItem) Then
-                    looterCharacter.LogLootItem(tmpItem, Item.ItemCount, False, False)
+                    looterCharacter.LogLootItem(tmpItem, CType(Item, LootItem).ItemCount, False, False)
 
                     LootObject.GroupLootInfo.Remove(LootSlot)
                     LootObject.Items(LootSlot) = Nothing
@@ -375,7 +375,7 @@ Public Module WS_Loot
             Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_AUTOSTORE_LOOT_ITEM [slot={2}]", Client.IP, Client.Port, slot)
 
             If LootTable.ContainsKey(Client.Character.lootGUID) Then
-                LootTable(Client.Character.lootGUID).GetLoot(Client, slot)
+                CType(LootTable(Client.Character.lootGUID), LootObject).GetLoot(Client, slot)
             Else
                 Dim response As New PacketClass(OPCODES.SMSG_INVENTORY_CHANGE_FAILURE)
                 response.AddInt8(InventoryChangeFailure.EQUIP_ERR_ALREADY_LOOTED)
@@ -397,8 +397,8 @@ Public Module WS_Loot
         If Client.Character.IsInGroup Then
             'DONE: Party share
             Dim members As List(Of BaseUnit) = GetPartyMembersAroundMe(Client.Character, 100)
-            Dim copper As Integer = (LootTable(Client.Character.lootGUID).Money \ members.Count) + 1
-            LootTable(Client.Character.lootGUID).Money = 0
+            Dim copper As Integer = (CType(LootTable(Client.Character.lootGUID), LootObject).Money \ members.Count) + 1
+            CType(LootTable(Client.Character.lootGUID), LootObject).Money = 0
 
             Dim sharePcket As New PacketClass(OPCODES.SMSG_LOOT_MONEY_NOTIFY)
             sharePcket.AddInt32(copper)
@@ -415,8 +415,8 @@ Public Module WS_Loot
             sharePcket.Dispose()
         Else
             'DONE: Not in party
-            Client.Character.Copper += LootTable(Client.Character.lootGUID).Money
-            LootTable(Client.Character.lootGUID).Money = 0
+            Client.Character.Copper += CType(LootTable(Client.Character.lootGUID), LootObject).Money
+            CType(LootTable(Client.Character.lootGUID), LootObject).Money = 0
         End If
         Client.Character.SetUpdateFlag(EPlayerFields.PLAYER_FIELD_COINAGE, Client.Character.Copper)
         Client.Character.SendCharacterUpdate(False)
@@ -435,7 +435,7 @@ Public Module WS_Loot
         Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_LOOT [GUID={2:X}]", Client.IP, Client.Port, GUID)
 
         If LootTable.ContainsKey(GUID) Then
-            LootTable(GUID).SendLoot(Client)
+            CType(LootTable(GUID), LootObject).SendLoot(Client)
         Else
             SendEmptyLoot(GUID, LootType.LOOTTYPE_CORPSE, Client)
         End If
@@ -448,11 +448,11 @@ Public Module WS_Loot
 
         If LootTable.ContainsKey(GUID) Then
             'DONE: Remove loot owner
-            LootTable(GUID).LootOwner = 0
+            CType(LootTable(GUID), LootObject).LootOwner = 0
 
-            If LootTable(GUID).IsEmpty Then
+            If CType(LootTable(GUID), LootObject).IsEmpty Then
                 'DONE: Delete loot
-                LootTable(GUID).Dispose()
+                CType(LootTable(GUID), LootObject).Dispose()
 
                 'DONE: Remove loot sing for player
                 If GuidIsCreature(GUID) Then
@@ -475,14 +475,14 @@ Public Module WS_Loot
                     Dim UpdateData As New UpdateClass
                     UpdateData.SetUpdateFlag(EUnitFields.UNIT_DYNAMIC_FLAGS, WORLD_CREATUREs(GUID).cDynamicFlags)
                     UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_FLAGS, WORLD_CREATUREs(GUID).cUnitFlags)
-                    UpdateData.AddToPacket(response, ObjectUpdateType.UPDATETYPE_VALUES, WORLD_CREATUREs(GUID), 0)
+                    UpdateData.AddToPacket(response, ObjectUpdateType.UPDATETYPE_VALUES, CType(WORLD_CREATUREs(GUID), CreatureObject), 0)
                     WORLD_CREATUREs(GUID).SendToNearPlayers(response)
                     response.Dispose()
                     UpdateData.Dispose()
 
                 ElseIf GuidIsGameObject(GUID) Then
                     WORLD_GAMEOBJECTs(GUID).State = GameObjectLootState.LOOT_LOOTED
-                    WORLD_GAMEOBJECTs(GUID).Despawn()
+                    CType(WORLD_GAMEOBJECTs(GUID), GameObjectObject).Despawn()
 
                 ElseIf GuidIsItem(GUID) Then
 
@@ -500,7 +500,7 @@ Public Module WS_Loot
                     response.AddInt8(0)
                     Dim UpdateData As New UpdateClass
                     UpdateData.SetUpdateFlag(EUnitFields.UNIT_DYNAMIC_FLAGS, WORLD_CREATUREs(GUID).cDynamicFlags)
-                    UpdateData.AddToPacket(response, ObjectUpdateType.UPDATETYPE_VALUES, WORLD_CREATUREs(GUID), 0)
+                    UpdateData.AddToPacket(response, ObjectUpdateType.UPDATETYPE_VALUES, CType(WORLD_CREATUREs(GUID), CreatureObject), 0)
                     WORLD_CREATUREs(GUID).SendToNearPlayers(response)
                     response.Dispose()
                     UpdateData.Dispose()
@@ -512,18 +512,18 @@ Public Module WS_Loot
                     response.AddInt8(0)
                     Dim UpdateData As New UpdateClass
                     UpdateData.SetUpdateFlag(EGameObjectFields.GAMEOBJECT_STATE, WORLD_GAMEOBJECTs(GUID).State)
-                    UpdateData.AddToPacket(response, ObjectUpdateType.UPDATETYPE_VALUES, WORLD_GAMEOBJECTs(GUID), 0)
+                    UpdateData.AddToPacket(response, ObjectUpdateType.UPDATETYPE_VALUES, CType(WORLD_GAMEOBJECTs(GUID), GameObjectObject), 0)
 
                     WORLD_GAMEOBJECTs(GUID).SendToNearPlayers(response)
                     response.Dispose()
                     UpdateData.Dispose()
 
                 ElseIf GuidIsItem(GUID) Then
-                    LootTable(GUID).Dispose()
+                    CType(LootTable(GUID), LootObject).Dispose()
                     Client.Character.ItemREMOVE(GUID, True, True)
                 Else
                     'DONE: In all other cases - delete the loot
-                    LootTable(GUID).Dispose()
+                    CType(LootTable(GUID), LootObject).Dispose()
                 End If
 
             End If
@@ -541,7 +541,7 @@ Public Module WS_Loot
             '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             If Not WORLD_ITEMs.ContainsKey(GUID) Then Return False
             Dim q As New DataTable
-            WorldDatabase.Query(String.Format("SELECT item_loot FROM items WHERE entry = {0} LIMIT 1;", WORLD_ITEMs(GUID).ItemEntry), q)
+            WorldDatabase.Query(String.Format("SELECT item_loot FROM items WHERE entry = {0} LIMIT 1;", CType(WORLD_ITEMs(GUID), ItemObject).ItemEntry), q)
             If q.Rows.Count = 0 Then Return False
             If q.Rows(0).Item("item_loot") = 0 Then Return False
 
@@ -599,8 +599,8 @@ Public Module WS_Loot
         Next
         startRoll.Dispose()
 
-        LootTable(LootGUID).GroupLootInfo(Slot).Rolls = rollCharacters
-        LootTable(LootGUID).GroupLootInfo(Slot).RollTimeoutTimer = New Timer(AddressOf LootTable(LootGUID).GroupLootInfo(Slot).EndRoll, 0, 60000, Timeout.Infinite)
+        CType(CType(LootTable(LootGUID), LootObject).GroupLootInfo(CType(Slot, Byte)), GroupLootInfo).Rolls = rollCharacters
+        CType(CType(LootTable(LootGUID), LootObject).GroupLootInfo(CType(Slot, Byte)), GroupLootInfo).RollTimeoutTimer = New Timer(AddressOf CType(CType(LootTable(LootGUID), LootObject).GroupLootInfo(CType(Slot, Byte)), GroupLootInfo).EndRoll, 0, 60000, Timeout.Infinite)
     End Sub
     Public Sub On_CMSG_LOOT_ROLL(ByRef packet As PacketClass, ByRef Client As ClientClass)
         If (packet.Data.Length - 1) < 18 Then Exit Sub
@@ -620,7 +620,7 @@ Public Module WS_Loot
         response.AddUInt64(GUID)
         response.AddInt32(Slot)
         response.AddUInt64(Client.Character.GUID)
-        response.AddInt32(LootTable(GUID).GroupLootInfo(Slot).Item.ItemID)
+        response.AddInt32(CType(CType(CType(LootTable(GUID), LootObject).GroupLootInfo(Slot), GroupLootInfo).Item, LootItem).ItemID)
         response.AddInt32(0)
         response.AddInt32(0)
 
@@ -638,11 +638,11 @@ Public Module WS_Loot
                 response.AddInt8(2)
         End Select
 
-        LootTable(GUID).GroupLootInfo(Slot).Broadcast(response)
+        CType(CType(LootTable(GUID), LootObject).GroupLootInfo(CType(Slot, Byte)), GroupLootInfo).Broadcast(response)
         response.Dispose()
 
-        LootTable(GUID).GroupLootInfo(Slot).Looters(Client.Character) = rollType
-        LootTable(GUID).GroupLootInfo(Slot).Check()
+        CType(CType(LootTable(GUID), LootObject).GroupLootInfo(CType(Slot, Byte)), GroupLootInfo).Looters(Client.Character) = rollType
+        CType(CType(LootTable(GUID), LootObject).GroupLootInfo(CType(Slot, Byte)), GroupLootInfo).Check()
     End Sub
 
     Private Enum LootState As UInteger

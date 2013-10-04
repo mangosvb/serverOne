@@ -195,7 +195,7 @@ Implements IDisposable
         G_Hash = algorithm1.ComputeHash(g)
         User_Hash = algorithm1.ComputeHash(Username)
         For i = 0 To 19
-            NG_Hash(i) = N_Hash(i) Xor G_Hash(i)
+            NG_Hash(i) = CType(N_Hash(i) Xor G_Hash(i), Byte)
         Next i
 
         Dim temp As Byte() = AuthEngineClass.Concat(NG_Hash, User_Hash)
@@ -237,7 +237,7 @@ Implements IDisposable
         Dim NG_Hash As Byte() = New Byte(20 - 1) {}
         i = 0
         Do While (i < 20)
-            NG_Hash(i) = (N_Hash(i) Xor G_Hash(i))
+            NG_Hash(i) = CType((N_Hash(i) Xor G_Hash(i)), Byte)
             i += 1
         Loop
 

@@ -15,6 +15,7 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
+
 Imports mangosVB.Common.BaseWriter
 
 Public Module WS_GuardGossip
@@ -42,7 +43,7 @@ Public Module WS_GuardGossip
         Dim GuardGUID As Integer
 
         MenuData.Clear()
-        GuardGUID = WORLD_CREATUREs(cGUID).ID
+        GuardGUID = CType(WORLD_CREATUREs(cGUID).ID, Integer)
 
         Dim GuardMenusSQLQuery As New DataTable
         WorldDatabase.Query(String.Format("SELECT * FROM guard_gossip_menus WHERE entry = {0} AND Menu_Number = 0;", GuardGUID), GuardMenusSQLQuery)
@@ -79,8 +80,8 @@ Public Module WS_GuardGossip
             Dim npcMenu As New GossipMenu
             For i = 0 To MenuData.Count - 1
                 Dim MenuItemsSQLQuery As New DataTable
-                WorldDatabase.Query(String.Format("SELECT * FROM guard_gossip_menuitems WHERE MenuItem_ID = {0} LIMIT 1;", MenuData(i).MenuItem_ID), MenuItemsSQLQuery)
-                npcMenu.AddMenu(CType(MenuItemsSQLQuery.Rows(0).Item("MenuItem_Text"), String), MenuData(i).Icon)
+                WorldDatabase.Query(String.Format("SELECT * FROM guard_gossip_menuitems WHERE MenuItem_ID = {0} LIMIT 1;", CType(MenuData(i).MenuItem_ID, Integer)), MenuItemsSQLQuery)
+                npcMenu.AddMenu(CType(MenuItemsSQLQuery.Rows(0).Item("MenuItem_Text"), String), CType(MenuData(i).Icon, Integer))
                 c.TalkMenuTypes.Add(Gossip_Option.GOSSIP_OPTION_GUARD)
             Next
 
@@ -101,11 +102,11 @@ Public Module WS_GuardGossip
     Public Sub SendGuardGossip(ByRef c As CharacterObject, ByVal cGUID As ULong, ByVal Selected As Integer)
         Dim GuardGUID As Integer
         Dim i As Integer
-        Dim SubNumber As Integer = MenuData(Selected).SubMenuNumber
+        Dim SubNumber As Integer = CType(MenuData(Selected).SubMenuNumber, Integer)
 
-        GuardGUID = WORLD_CREATUREs(cGUID).ID
+        GuardGUID = CType(WORLD_CREATUREs(cGUID).ID, Integer)
 
-        If MenuData(Selected).SubMenuNumber <> 0 Then
+        If CType(MenuData(Selected).SubMenuNumber, Integer) <> 0 Then
 
             Dim GuardMenusSQLQuery As New DataTable
             WorldDatabase.Query(String.Format("SELECT * FROM guard_gossip_menus WHERE entry = {0} AND Menu_Number = {1};", GuardGUID, MenuData(Selected).SubMenuNumber), GuardMenusSQLQuery)
@@ -136,18 +137,18 @@ Public Module WS_GuardGossip
             Dim npcMenu As New GossipMenu
             For i = 0 To MenuData.Count - 1
                 Dim MenuItemsSQLQuery As New DataTable
-                WorldDatabase.Query(String.Format("SELECT * FROM guard_gossip_menuitems WHERE MenuItem_ID = {0} LIMIT 1;", MenuData(i).MenuItem_ID), MenuItemsSQLQuery)
-                npcMenu.AddMenu(CType(MenuItemsSQLQuery.Rows(0).Item("MenuItem_Text"), String), MenuData(i).Icon)
+                WorldDatabase.Query(String.Format("SELECT * FROM guard_gossip_menuitems WHERE MenuItem_ID = {0} LIMIT 1;", CType(MenuData(i).MenuItem_ID, Integer)), MenuItemsSQLQuery)
+                npcMenu.AddMenu(CType(MenuItemsSQLQuery.Rows(0).Item("MenuItem_Text"), String), CType(MenuData(i).Icon, Integer))
                 c.TalkMenuTypes.Add(Gossip_Option.GOSSIP_OPTION_GUARD)
             Next
 
             c.SendGossip(cGUID, 99999999, npcMenu)
             c.MenuNumber = SubNumber
         Else
-            If MenuData(Selected).Text_ID <> -1 Then
-                c.SendGossip(cGUID, MenuData(Selected).Text_ID)
+            If CType(MenuData(Selected).Text_ID, Integer) <> -1 Then
+                c.SendGossip(cGUID, CType(MenuData(Selected).Text_ID, Integer))
             End If
-            If MenuData(Selected).POI_ID <> -1 Then
+            If CType(MenuData(Selected).POI_ID, Integer) <> -1 Then
                 Dim PoI_X As Single
                 Dim PoI_Y As Single
                 Dim PoI_Icon As Integer

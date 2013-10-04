@@ -341,11 +341,11 @@ Public Module WS_Network
                                 Log.WriteLine(LogType.WARNING, "Packet processing took too long: {0}, {1}ms", p.OpCode, timeGetTime - start)
                             End If
                         Catch e As Exception 'TargetInvocationException
-                            Log.WriteLine(LogType.FAILED, "Opcode handler {2}:{3} caused an error:{1}{0}", e.Message, vbNewLine, p.OpCode, p.OpCode)
+                            Log.WriteLine(LogType.FAILED, "Opcode handler {2}:{3} caused an error:{1}{0}", e.Message, vbNewLine, p.OpCode, CType(p.OpCode, OPCODES))
                         'DumpPacket(packet.Data, Me)
                         End Try
                     Else
-                        Log.WriteLine(LogType.WARNING, "[{0}:{1}] Unknown Opcode 0x{2:X} [DataLen={3} {4}]", IP, Port, CType(p.OpCode, Integer), p.Data.Length, p.OpCode)
+                        Log.WriteLine(LogType.WARNING, "[{0}:{1}] Unknown Opcode 0x{2:X} [DataLen={3} {4}]", IP, Port, CType(p.OpCode, Integer), p.Data.Length, CType(p.OpCode, OPCODES))
                         DumpPacket(p.Data, Me)
                     End If
 

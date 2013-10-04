@@ -162,7 +162,7 @@ Namespace MPQ
             For Each c As Char In Input
                 Dim val As Long = Asc(Char.ToUpper(c))
 
-                seed1 = Convert.ToInt64(BitConverter.ToUInt32(BitConverter.GetBytes((sStormBuffer(Offset + val) Xor (seed1 + seed2) And &HFFFFFFFF)), 0))
+                seed1 = Convert.ToInt64(BitConverter.ToUInt32(BitConverter.GetBytes((sStormBuffer(Offset + val) Xor CType((seed1 + seed2) And &HFFFFFFFF, Long))), 0))
                 seed2 = Convert.ToInt64(BitConverter.ToUInt32(BitConverter.GetBytes((val + seed1 + seed2 + (seed2 << 5) + 3)), 0))
             Next
             Return seed1
@@ -180,7 +180,7 @@ Namespace MPQ
                 Dim result As Long = Convert.ToInt64(BitConverter.ToUInt32(Data, i))
                 result = Convert.ToInt64(BitConverter.ToUInt32(BitConverter.GetBytes(result Xor (Seed1 + seed2)), 0))
 
-                Seed1 = Convert.ToInt64(BitConverter.ToUInt32(BitConverter.GetBytes(((Not Seed1 << 21) + &H11111111) Or (Seed1 >> 11)), 0))
+                Seed1 = Convert.ToInt64(BitConverter.ToUInt32(BitConverter.GetBytes(((CType(Not Seed1, Long) << 21) + &H11111111) Or (Seed1 >> 11)), 0))
                 seed2 = Convert.ToInt64(BitConverter.ToUInt32(BitConverter.GetBytes(((result + seed2) + (seed2 << 5)) + 3), 0))
                 If BitConverter.IsLittleEndian Then
                     Data(i) = CByte(result And &HFF)
@@ -563,7 +563,7 @@ Namespace MPQ
                 Loop
             End SyncLock
 
-            Dim blockpossize As Long = (blockposcount * 4)
+            Dim blockpossize As Long = CType((blockposcount * 4), Long)
             If (((mBlock.Flags And MpqFileFlags.MPQ_FileHasMetadata) = CType(0, MpqFileFlags)) AndAlso (mBlockPositions(0) <> blockpossize)) Then
                 mBlock.Flags = (mBlock.Flags Or MpqFileFlags.MPQ_Encrypted)
             End If

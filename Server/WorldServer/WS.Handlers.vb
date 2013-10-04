@@ -270,7 +270,7 @@ Public Module WS_Handlers
     End Sub
 
     Public Sub OnUnhandledPacket(ByRef packet As PacketClass, ByRef Client As ClientClass)
-        Log.WriteLine(LogType.WARNING, "[{0}:{1}] {2} [Unhandled Packet]", Client.IP, Client.Port, packet.OpCode)
+        Log.WriteLine(LogType.WARNING, "[{0}:{1}] {2} [Unhandled Packet]", Client.IP, Client.Port, CType(packet.OpCode, OPCODES))
     End Sub
 
 End Module

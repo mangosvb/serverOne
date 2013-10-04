@@ -77,7 +77,6 @@ Public Module WC_Handlers_Misc
     End Sub
 
     Public Sub On_MSG_MOVE_HEARTBEAT(ByRef packet As PacketClass, ByRef Client As ClientClass)
-        'Client.Character.GetWorld.ClientPacket(Client.Index, packet.Data)
         Try
             Client.Character.GetWorld.ClientPacket(Client.Index, packet.Data)
         Catch
@@ -99,7 +98,6 @@ Public Module WC_Handlers_Misc
     End Sub
     Public Sub On_CMSG_CANCEL_TRADE(ByRef packet As PacketClass, ByRef Client As ClientClass)
         If Client.Character IsNot Nothing AndAlso Client.Character.IsInWorld Then
-            'Client.Character.GetWorld.ClientPacket(Client.Index, packet.Data)
             Try
                 Client.Character.GetWorld.ClientPacket(Client.Index, packet.Data)
             Catch

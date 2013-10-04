@@ -861,7 +861,7 @@ Public Module WS_Items
         Public Sub FillAllUpdateFlags(ByRef Update As UpdateClass)
             If ItemInfo.ContainerSlots > 0 Then
                 Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_GUID, GUID)
-                Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_TYPE, ObjectType.TYPE_CONTAINER + ObjectType.TYPE_OBJECT)
+                Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_TYPE, CType(ObjectType.TYPE_CONTAINER + ObjectType.TYPE_OBJECT, Integer))
                 Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_ENTRY, ItemEntry)
                 Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_SCALE_X, 1.0F)
 
@@ -886,7 +886,7 @@ Public Module WS_Items
                 Next
             Else
                 Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_GUID, GUID)
-                Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_TYPE, ObjectType.TYPE_ITEM + ObjectType.TYPE_OBJECT)
+                Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_TYPE, CType(ObjectType.TYPE_ITEM + ObjectType.TYPE_OBJECT, Integer))
                 Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_ENTRY, ItemEntry)
                 Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_SCALE_X, 1.0F)
 
@@ -926,7 +926,7 @@ Public Module WS_Items
             For Each Item As KeyValuePair(Of Byte, ItemObject) In Items
                 Dim tmpUpdate As New UpdateClass(FIELD_MASK_SIZE_ITEM)
                 Item.Value.FillAllUpdateFlags(tmpUpdate)
-                tmpUpdate.AddToPacket(packet, UPDATETYPE, Item.Value, 0)
+                tmpUpdate.AddToPacket(packet, UPDATETYPE, CType(Item.Value, ItemObject), 0)
                 tmpUpdate.Dispose()
             Next
 
@@ -1669,7 +1669,7 @@ Public Module WS_Items
         If (packet.Data.Length - 1) < 8 Then Exit Sub
         Try
             packet.GetInt16()
-            Dim srcBag As Byte = packet.GetInt8
+            Dim srcBag As Byte = CType(packet.GetInt8, Byte)
             Dim srcSlot As Byte = packet.GetInt8
             Dim Count As Byte = packet.GetInt8
             If srcBag = 255 Then srcBag = 0
@@ -1746,7 +1746,7 @@ Public Module WS_Items
                 If Client.Character.Items.ContainsKey(EQUIPMENT_SLOT_OFFHAND) AndAlso (Not Client.Character.Items(EQUIPMENT_SLOT_OFFHAND).IsBroken) Then
                     SetVirtualItemInfo(Client.Character, 1, Client.Character.Items(EQUIPMENT_SLOT_OFFHAND))
                     'DONE: Must be applyed SPELL_EFFECT_DUAL_WIELD and weapon in offhand
-                    If Client.Character.spellCanDualWeild AndAlso Client.Character.Items(EQUIPMENT_SLOT_OFFHAND).ItemInfo.ObjectClass = ITEM_CLASS.ITEM_CLASS_WEAPON Then Client.Character.combatCanDualWield = True
+                    If Client.Character.spellCanDualWeild AndAlso CType(Client.Character.Items(EQUIPMENT_SLOT_OFFHAND), ItemObject).ItemInfo.ObjectClass = ITEM_CLASS.ITEM_CLASS_WEAPON Then Client.Character.combatCanDualWield = True
                 Else
                     SetVirtualItemInfo(Client.Character, 1, Nothing)
                 End If
@@ -1801,7 +1801,7 @@ Public Module WS_Items
             For i As Byte = 0 To 4
                 If SPELLs.ContainsKey(itemInfo.Spells(i).SpellID) Then
                     If ((Client.Character.cUnitFlags And UnitFlags.UNIT_FLAG_IN_COMBAT) = UnitFlags.UNIT_FLAG_IN_COMBAT) Then
-                        If (SPELLs(itemInfo.Spells(i).SpellID).Attributes And SpellAttributes.SPELL_CANT_USED_IN_COMBAT) Then
+                        If (CType(SPELLs(itemInfo.Spells(i).SpellID), SpellInfo).Attributes And SpellAttributes.SPELL_CANT_USED_IN_COMBAT) Then
                             SendInventoryChangeFailure(Client.Character, InventoryChangeFailure.EQUIP_ERR_NOT_IN_COMBAT, ItemGUID, 0)
                             Exit Sub
                         End If
@@ -1823,15 +1823,15 @@ Public Module WS_Items
 
             If itemInfo.ObjectClass = ITEM_CLASS.ITEM_CLASS_CONSUMABLE Then
                 'DONE: Consume the item
-                WORLD_ITEMs(ItemGUID).StackCount -= 1
-                If WORLD_ITEMs(ItemGUID).StackCount = 0 Then
+                CType(WORLD_ITEMs(ItemGUID), ItemObject).StackCount -= 1
+                If CType(WORLD_ITEMs(ItemGUID), ItemObject).StackCount = 0 Then
                     Client.Character.ItemREMOVE(bag, slot, True, True)
                 Else
                     Client.Character.SendItemUpdate(WORLD_ITEMs(ItemGUID))
                 End If
             Else
                 'DONE: Bind item to player
-                If WORLD_ITEMs(ItemGUID).ItemInfo.Bonding = ITEM_BONDING_TYPE.BIND_WHEN_USED AndAlso WORLD_ITEMs(ItemGUID).IsSoulBound = False Then WORLD_ITEMs(ItemGUID).SoulbindItem()
+                If CType(WORLD_ITEMs(ItemGUID), ItemObject).ItemInfo.Bonding = ITEM_BONDING_TYPE.BIND_WHEN_USED AndAlso CType(WORLD_ITEMs(ItemGUID), ItemObject).IsSoulBound = False Then CType(WORLD_ITEMs(ItemGUID), ItemObject).SoulbindItem()
             End If
 
             For i As Byte = 0 To 4
@@ -1839,7 +1839,7 @@ Public Module WS_Items
                     If SPELLs.ContainsKey(itemInfo.Spells(i).SpellID) Then
                         'DONE: Read spell targets
                         Dim Targets As New SpellTargets
-                        Targets.ReadTargets(packet, Client.Character)
+                        Targets.ReadTargets(packet, CType(Client.Character, CharacterObject))
                         Dim tmpSpell As New CastSpellParameters
                         tmpSpell.tmpTargets = Targets
                         tmpSpell.tmpCaster = Client.Character
@@ -1850,7 +1850,7 @@ Public Module WS_Items
 
                         Dim castResult As Byte = SpellFailedReason.CAST_NO_ERROR
                         Try
-                            castResult = SPELLs(itemInfo.Spells(i).SpellID).CanCast(Client.Character, tmpSpell.tmpTargets)
+                            castResult = CType(SPELLs(itemInfo.Spells(i).SpellID), SpellInfo).CanCast(Client.Character, tmpSpell.tmpTargets)
 
                             'Only instant cast send ERR_OK for cast result?
                             If castResult = SpellFailedReason.CAST_NO_ERROR Then
@@ -1891,7 +1891,7 @@ Public Module WS_Items
 
         If itemGUID <> 0 Then
             If GenerateLoot(Client.Character, itemGUID, WS_Loot.LootType.LOOTTYPE_CORPSE) Then
-                LootTable(itemGUID).SendLoot(Client)
+                CType(LootTable(itemGUID), LootObject).SendLoot(Client)
                 Exit Sub
             End If
         End If
@@ -1904,7 +1904,7 @@ Public Module WS_Items
         packet.AddInt8(ErrorCode)
 
         If ErrorCode = InventoryChangeFailure.EQUIP_ERR_CANT_EQUIP_LEVEL_I Then
-            packet.AddInt32(WORLD_ITEMs(GUID1).ItemInfo.ReqLevel)
+            packet.AddInt32(CType(WORLD_ITEMs(GUID1), ItemObject).ItemInfo.ReqLevel)
         End If
 
         packet.AddUInt64(GUID1)

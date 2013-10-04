@@ -47,7 +47,7 @@ Module WS_Auction
     End Enum
     Public Function GetAuctionSide(ByVal GUID As ULong) As AuctionHouses
         If Config.GlobalAuction Then Return AuctionHouses.AUCTION_UNDEFINED
-        Select Case WORLD_CREATUREs(GUID).CreatureInfo.Faction
+        Select Case CType(WORLD_CREATUREs(GUID), CreatureObject).CreatureInfo.Faction
             Case 29, 68, 104
                 Return AuctionHouses.AUCTION_HORDE
             Case 12, 55, 79
@@ -302,7 +302,7 @@ Module WS_Auction
         Dim Time As Integer = packet.GetInt32
 
         'DONE: Calculate deposit with time in hours
-        Dim Deposit As Integer = GetAuctionDeposit(cGUID, WORLD_ITEMs(iGUID).ItemInfo.SellPrice, WORLD_ITEMs(iGUID).StackCount, Time)
+        Dim Deposit As Integer = GetAuctionDeposit(cGUID, CType(WORLD_ITEMs(iGUID), ItemObject).ItemInfo.SellPrice, CType(WORLD_ITEMs(iGUID), ItemObject).StackCount, Time)
 
         Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_AUCTION_SELL_ITEM [Bid={2} BuyOut={3} Time={4}]", Client.IP, Client.Port, Bid, Buyout, Time)
 
@@ -310,7 +310,7 @@ Module WS_Auction
         Time = Time * 60
 
         'DONE: Check if item is bag with items
-        If WORLD_ITEMs(iGUID).ItemInfo.IsContainer AndAlso Not WORLD_ITEMs(iGUID).IsFree Then
+        If CType(WORLD_ITEMs(iGUID), ItemObject).ItemInfo.IsContainer AndAlso Not CType(WORLD_ITEMs(iGUID), ItemObject).IsFree Then
             SendAuctionCommandResult(Client, 0, AuctionAction.AUCTION_SELL_ITEM, AuctionError.CANNOT_BID_YOUR_AUCTION_ERROR, 0)
             Return
         End If
@@ -327,7 +327,7 @@ Module WS_Auction
         Client.Character.ItemREMOVE(iGUID, False, True)
 
         'DONE: Add auction entry into table
-        CharacterDatabase.Update(String.Format("INSERT INTO auctionhouse (auction_bid, auction_buyout, auction_timeleft, auction_bidder, auction_owner, auction_itemId, auction_itemGUID, auction_itemCount) VALUES ({0},{1},{2},{3},{4},{5},{6},{7});", Bid, Buyout, Time, 0, Client.Character.GUID, WORLD_ITEMs(iGUID).ItemEntry, iGUID - GUID_ITEM, WORLD_ITEMs(iGUID).StackCount))
+        CharacterDatabase.Update(String.Format("INSERT INTO auctionhouse (auction_bid, auction_buyout, auction_timeleft, auction_bidder, auction_owner, auction_itemId, auction_itemGUID, auction_itemCount) VALUES ({0},{1},{2},{3},{4},{5},{6},{7});", Bid, Buyout, Time, 0, Client.Character.GUID, CType(WORLD_ITEMs(iGUID), ItemObject).ItemEntry, iGUID - GUID_ITEM, CType(WORLD_ITEMs(iGUID), ItemObject).StackCount))
 
         'DONE: Send result packet
         Dim MySQLQuery As New DataTable

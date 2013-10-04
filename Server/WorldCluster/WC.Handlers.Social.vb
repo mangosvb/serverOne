@@ -96,9 +96,9 @@ Public Module WC_Handlers_Social
                         'Else
                         SMSG_FRIEND_LIST.AddInt8(FriendStatus.FRIEND_STATUS_ONLINE)
                         'End If
-                        SMSG_FRIEND_LIST.AddInt32(CHARACTERs(GUID).Zone)    'Area
-                        SMSG_FRIEND_LIST.AddInt32(CHARACTERs(GUID).Level)   'Level
-                        SMSG_FRIEND_LIST.AddInt32(CHARACTERs(GUID).Classe)  'Class
+                        SMSG_FRIEND_LIST.AddInt32(CType(CHARACTERs(GUID), CharacterObject).Zone)    'Area
+                        SMSG_FRIEND_LIST.AddInt32(CType(CHARACTERs(GUID), CharacterObject).Level)   'Level
+                        SMSG_FRIEND_LIST.AddInt32(CType(CHARACTERs(GUID), CharacterObject).Classe)  'Class
                     Else
                         SMSG_FRIEND_LIST.AddInt8(FriendStatus.FRIEND_STATUS_OFFLINE)
                     End If
@@ -240,9 +240,9 @@ Public Module WC_Handlers_Social
                 'Else
                 response.AddInt8(FriendStatus.FRIEND_STATUS_ONLINE)
                 'End If
-                response.AddInt32(CHARACTERs(GUID).Zone)
-                response.AddInt32(CHARACTERs(GUID).Level)
-                response.AddInt32(CHARACTERs(GUID).Classe)
+                response.AddInt32(CType(CHARACTERs(GUID), CharacterObject).Zone)
+                response.AddInt32(CType(CHARACTERs(GUID), CharacterObject).Level)
+                response.AddInt32(CType(CHARACTERs(GUID), CharacterObject).Classe)
                 CharacterDatabase.Update(String.Format("INSERT INTO characters_social (char_guid, guid, note, flags) VALUES ({0}, {1}, ""{2}"", {3});", Client.Character.GUID, GUID, note, CType(SocialFlag.SOCIAL_FLAG_FRIEND, Byte)))
             Else
                 response.AddInt8(FriendResult.FRIEND_ADDED_OFFLINE)

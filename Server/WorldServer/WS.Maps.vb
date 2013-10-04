@@ -584,8 +584,8 @@ Public Module WS_Maps
         Try
             WORLD_CREATUREs_Lock.AcquireReaderLock(DEFAULT_LOCK_TIMEOUT)
             For Each Creature As KeyValuePair(Of ULong, CreatureObject) In WORLD_CREATUREs
-                If Creature.Value.MapID = TileMap AndAlso Creature.Value.SpawnX >= MinX AndAlso Creature.Value.SpawnX <= MaxX AndAlso Creature.Value.SpawnY >= MinY AndAlso Creature.Value.SpawnY <= MaxY Then
-                    Creature.Value.Destroy()
+                If CType(Creature.Value, CreatureObject).MapID = TileMap AndAlso CType(Creature.Value, CreatureObject).SpawnX >= MinX AndAlso CType(Creature.Value, CreatureObject).SpawnX <= MaxX AndAlso CType(Creature.Value, CreatureObject).SpawnY >= MinY AndAlso CType(Creature.Value, CreatureObject).SpawnY <= MaxY Then
+                    CType(Creature.Value, CreatureObject).Destroy()
                 End If
             Next
         Catch ex As Exception
@@ -595,14 +595,14 @@ Public Module WS_Maps
         End Try
 
         For Each Gameobject As KeyValuePair(Of ULong, GameObjectObject) In WORLD_GAMEOBJECTs
-            If Gameobject.Value.MapID = TileMap AndAlso Gameobject.Value.positionX >= MinX AndAlso Gameobject.Value.positionX <= MaxX AndAlso Gameobject.Value.positionY >= MinY AndAlso Gameobject.Value.positionY <= MaxY Then
-                Gameobject.Value.Destroy()
+            If CType(Gameobject.Value, GameObjectObject).MapID = TileMap AndAlso CType(Gameobject.Value, GameObjectObject).positionX >= MinX AndAlso CType(Gameobject.Value, GameObjectObject).positionX <= MaxX AndAlso CType(Gameobject.Value, GameObjectObject).positionY >= MinY AndAlso CType(Gameobject.Value, GameObjectObject).positionY <= MaxY Then
+                CType(Gameobject.Value, GameObjectObject).Destroy()
             End If
         Next
 
         For Each Corpseobject As KeyValuePair(Of ULong, CorpseObject) In WORLD_CORPSEOBJECTs
-            If Corpseobject.Value.MapID = TileMap AndAlso Corpseobject.Value.positionX >= MinX AndAlso Corpseobject.Value.positionX <= MaxX AndAlso Corpseobject.Value.positionY >= MinY AndAlso Corpseobject.Value.positionY <= MaxY Then
-                Corpseobject.Value.Destroy()
+            If CType(Corpseobject.Value, CorpseObject).MapID = TileMap AndAlso CType(Corpseobject.Value, CorpseObject).positionX >= MinX AndAlso CType(Corpseobject.Value, CorpseObject).positionX <= MaxX AndAlso CType(Corpseobject.Value, CorpseObject).positionY >= MinY AndAlso CType(Corpseobject.Value, CorpseObject).positionY <= MaxY Then
+                CType(Corpseobject.Value, CorpseObject).Destroy()
             End If
         Next
 

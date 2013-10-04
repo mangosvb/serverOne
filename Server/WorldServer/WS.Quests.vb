@@ -447,9 +447,9 @@ Public Module WS_Quests
                 tmpProgress += CType(Progress(1), Integer) << 6
                 tmpProgress += CType(Progress(2), Integer) << 12
                 tmpProgress += CType(Progress(3), Integer) << 18
-                If Explored Then tmpProgress += 1 << 24
-                If Complete Then tmpProgress += 1 << 25
-                If Failed Then tmpProgress += 1 << 26
+                If Explored Then tmpProgress += CType(1, Integer) << 24
+                If Complete Then tmpProgress += CType(1, Integer) << 25
+                If Failed Then tmpProgress += CType(1, Integer) << 26
             Else
                 tmpProgress += CType(Progress(0), Integer)
                 tmpProgress += CType(Progress(1), Integer) << 8
@@ -1269,7 +1269,7 @@ Public Module WS_Quests
     Public Function GetQuestgiverStatus(ByVal c As CharacterObject, ByVal cGUID As ULong) As QuestgiverStatus
         'DONE: Invoke scripted quest status
         If WORLD_CREATUREs.ContainsKey(cGUID) = False Then Exit Function
-        Dim Status As QuestgiverStatus = WORLD_CREATUREs(cGUID).CreatureInfo.TalkScript.OnQuestStatus(c, cGUID)
+        Dim Status As QuestgiverStatus = CType(WORLD_CREATUREs(cGUID), CreatureObject).CreatureInfo.TalkScript.OnQuestStatus(c, cGUID)
         Dim MySQLQuery As New DataTable
         If GuidIsCreature(cGUID) = False AndAlso GuidIsGameObject(cGUID) = False Then Return QuestgiverStatus.DIALOG_STATUS_NONE
 
@@ -1278,9 +1278,9 @@ Public Module WS_Quests
         For i = 0 To QUEST_SLOTS
             If Not c.TalkQuests(i) Is Nothing Then
                 If GuidIsCreature(cGUID) Then
-                    WorldDatabase.Query(String.Format("SELECT questid FROM questfinishers WHERE type = {0} AND typeid = {1} AND questid = {2} LIMIT 1;", CType(QuestGiverType.QUEST_OBJECTTYPE_CREATURE, Byte), WORLD_CREATUREs(cGUID).ID, c.TalkQuests(i).ID), MySQLQuery)
+                    WorldDatabase.Query(String.Format("SELECT questid FROM questfinishers WHERE type = {0} AND typeid = {1} AND questid = {2} LIMIT 1;", CType(QuestGiverType.QUEST_OBJECTTYPE_CREATURE, Byte), CType(WORLD_CREATUREs(cGUID), CreatureObject).ID, c.TalkQuests(i).ID), MySQLQuery)
                 Else
-                    WorldDatabase.Query(String.Format("SELECT questid FROM questfinishers WHERE type = {0} AND typeid = {1} AND questid = {2} LIMIT 1;", CType(QuestGiverType.QUEST_OBJECTTYPE_GAMEOBJECT, Byte), WORLD_GAMEOBJECTs(cGUID).ID, c.TalkQuests(i).ID), MySQLQuery)
+                    WorldDatabase.Query(String.Format("SELECT questid FROM questfinishers WHERE type = {0} AND typeid = {1} AND questid = {2} LIMIT 1;", CType(QuestGiverType.QUEST_OBJECTTYPE_GAMEOBJECT, Byte), CType(WORLD_GAMEOBJECTs(cGUID), GameObjectObject).ID, c.TalkQuests(i).ID), MySQLQuery)
                 End If
                 If MySQLQuery.Rows.Count > 0 Then
                     If c.TalkQuests(i).Complete Then Status = QuestgiverStatus.DIALOG_STATUS_REWARD Else Status = QuestgiverStatus.DIALOG_STATUS_INCOMPLETE
@@ -1297,13 +1297,13 @@ Public Module WS_Quests
                                                   "AND NOT EXISTS(SELECT * FROM " & CharacterDatabase.SQLDBName & ".characters_quests WHERE char_guid = {3} AND quest_id = q.id) AND (q.Required_Quest1 = 0 OR EXISTS(SELECT * FROM " & CharacterDatabase.SQLDBName & ".characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest1)) " & _
                                                   "AND (q.Required_Quest2 = 0 OR EXISTS(SELECT * FROM " & CharacterDatabase.SQLDBName & ".characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest2)) AND (q.Required_Quest3 = 0 OR EXISTS(SELECT * FROM " & CharacterDatabase.SQLDBName & ".characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest3)) " & _
                                                   "AND (q.Required_Quest4 = 0 OR EXISTS(SELECT * FROM " & CharacterDatabase.SQLDBName & ".characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest4));", _
-                                                  CType(QuestGiverType.QUEST_OBJECTTYPE_CREATURE, Byte), WORLD_CREATUREs(cGUID).ID, c.Level, c.GUID, 1 << (c.Race - 1), 1 << (c.Classe - 1), c.Level - 6), MySQLQuery)
+                CType(QuestGiverType.QUEST_OBJECTTYPE_CREATURE, Byte), CType(WORLD_CREATUREs(cGUID), CreatureObject).ID, c.Level, c.GUID, 1 << (c.Race - 1), 1 << (c.Classe - 1), c.Level - 6), MySQLQuery)
             Else
                 WorldDatabase.Query(String.Format("SELECT questid FROM queststarters s LEFT JOIN quests q ON (s.questid=q.id) WHERE s.type = {0} AND s.typeid = {1} AND q.Level_Start <= {2} AND (q.Level_Normal = -1 OR q.Level_Normal > {6}) AND (q.Required_Race = 0 OR (Required_Race & {4}) > 0) AND (q.Required_Class = 0 OR (Required_Class & {5}) > 0) " & _
                                                   "AND NOT EXISTS(SELECT * FROM " & CharacterDatabase.SQLDBName & ".characters_quests WHERE char_guid = {3} AND quest_id = q.id) AND (q.Required_Quest1 = 0 OR EXISTS(SELECT * FROM " & CharacterDatabase.SQLDBName & ".characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest1)) " & _
                                                   "AND (q.Required_Quest2 = 0 OR EXISTS(SELECT * FROM " & CharacterDatabase.SQLDBName & ".characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest2)) AND (q.Required_Quest3 = 0 OR EXISTS(SELECT * FROM " & CharacterDatabase.SQLDBName & ".characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest3)) " & _
                                                   "AND (q.Required_Quest4 = 0 OR EXISTS(SELECT * FROM " & CharacterDatabase.SQLDBName & ".characters_quests WHERE char_guid = {3} AND quest_status = -1 AND quest_id = q.Required_Quest4));", _
-                                                  CType(QuestGiverType.QUEST_OBJECTTYPE_GAMEOBJECT, Byte), WORLD_GAMEOBJECTs(cGUID).ID, c.Level, c.GUID, 1 << (c.Race - 1), 1 << (c.Classe - 1), c.Level - 6), MySQLQuery)
+                CType(QuestGiverType.QUEST_OBJECTTYPE_GAMEOBJECT, Byte), CType(WORLD_GAMEOBJECTs(cGUID), GameObjectObject).ID, c.Level, c.GUID, 1 << (c.Race - 1), 1 << (c.Classe - 1), c.Level - 6), MySQLQuery)
             End If
             If MySQLQuery.Rows.Count = 0 Then
                 'DONE: Do SQL query for gray quests
@@ -1311,11 +1311,11 @@ Public Module WS_Quests
                 If GuidIsCreature(cGUID) Then
                     WorldDatabase.Query(String.Format("SELECT questid FROM queststarters s LEFT JOIN quests q ON (s.questid=q.id) WHERE s.type = {0} AND s.typeid = {1} AND q.Level_Start < {2} AND (q.Level_Normal = -1 OR q.Level_Normal > {6}) AND (q.Required_Race = 0 OR (Required_Race & {4}) > 0) AND (q.Required_Class = 0 OR (Required_Class & {5}) > 0) " & _
                                                       "AND NOT EXISTS(SELECT * FROM " & CharacterDatabase.SQLDBName & ".characters_quests WHERE char_guid = {3} AND quest_id = q.id);", _
-                                                      CType(QuestGiverType.QUEST_OBJECTTYPE_CREATURE, Byte), WORLD_CREATUREs(cGUID).ID, c.Level + 6, c.GUID, 1 << c.RaceMask, c.ClassMask, c.Level - 6), MySQLQuery)
+                    CType(QuestGiverType.QUEST_OBJECTTYPE_CREATURE, Byte), CType(WORLD_CREATUREs(cGUID), CreatureObject).ID, c.Level + 6, c.GUID, 1 << c.RaceMask, c.ClassMask, c.Level - 6), MySQLQuery)
                 Else
                     WorldDatabase.Query(String.Format("SELECT questid FROM queststarters s LEFT JOIN quests q ON (s.questid=q.id) WHERE s.type = {0} AND s.typeid = {1} AND q.Level_Start < {2} AND (q.Level_Normal = -1 OR q.Level_Normal > {6}) AND (q.Required_Race = 0 OR (Required_Race & {4}) > 0) AND (q.Required_Class = 0 OR (Required_Class & {5}) > 0) " & _
                                                       "AND NOT EXISTS(SELECT * FROM " & CharacterDatabase.SQLDBName & ".characters_quests WHERE char_guid = {3} AND quest_id = q.id);", _
-                                                      CType(QuestGiverType.QUEST_OBJECTTYPE_GAMEOBJECT, Byte), WORLD_GAMEOBJECTs(cGUID).ID, c.Level + 6, c.GUID, c.RaceMask, c.ClassMask, c.Level - 6), MySQLQuery)
+                    CType(QuestGiverType.QUEST_OBJECTTYPE_GAMEOBJECT, Byte), CType(WORLD_GAMEOBJECTs(cGUID), GameObjectObject).ID, c.Level + 6, c.GUID, c.RaceMask, c.ClassMask, c.Level - 6), MySQLQuery)
                 End If
 
                 If MySQLQueryForGray.Rows.Count <> 0 Then
@@ -1357,7 +1357,7 @@ Public Module WS_Quests
             response.AddInt32(Count) 'Count updated later
             Try
                 For Each cGUID As ULong In Client.Character.creaturesNear
-                    If WORLD_CREATUREs.ContainsKey(cGUID) AndAlso (WORLD_CREATUREs(cGUID).CreatureInfo.cNpcFlags And NPCFlags.UNIT_NPC_FLAG_QUESTGIVER) Then
+                If WORLD_CREATUREs.ContainsKey(cGUID) AndAlso (CType(WORLD_CREATUREs(cGUID), CreatureObject).CreatureInfo.cNpcFlags And NPCFlags.UNIT_NPC_FLAG_QUESTGIVER) Then
                         'DONE: Send creature questgivers
                         If Client.Character.GetReaction(WORLD_CREATUREs(cGUID).Faction) >= TReaction.NEUTRAL Then
                             status = GetQuestgiverStatus(Client.Character, cGUID)
@@ -1382,7 +1382,7 @@ Public Module WS_Quests
                             Count += 1
                         End If
                         'DONE: Activate/Deactivate chests used for quests
-                        If WORLD_GAMEOBJECTs(gGUID).Type = GameObjectType.GAMEOBJECT_TYPE_CHEST Then
+                    If CType(WORLD_GAMEOBJECTs(gGUID), GameObjectObject).Type = GameObjectType.GAMEOBJECT_TYPE_CHEST Then
                             Dim UsedForQuest As Byte = IsGameObjectUsedForQuest(WORLD_GAMEOBJECTs(gGUID), Client.Character)
                             If UsedForQuest > 0 Then
                                 Dim ChestActivate As New PacketClass(OPCODES.SMSG_UPDATE_OBJECT)
@@ -1396,7 +1396,7 @@ Public Module WS_Quests
                                     UpdateData.SetUpdateFlag(EGameObjectFields.GAMEOBJECT_DYN_FLAGS, 0)
                                 End If
                                 UpdateData.SetUpdateFlag(EGameObjectFields.GAMEOBJECT_FLAGS, WORLD_GAMEOBJECTs(gGUID).Flags)
-                                UpdateData.AddToPacket(ChestActivate, ObjectUpdateType.UPDATETYPE_VALUES, WORLD_GAMEOBJECTs(gGUID), 1)
+                            UpdateData.AddToPacket(ChestActivate, ObjectUpdateType.UPDATETYPE_VALUES, CType(WORLD_GAMEOBJECTs(gGUID), GameObjectObject), 1)
                                 Client.Send(ChestActivate)
                                 UpdateData.Dispose()
                                 ChestActivate.Dispose()
@@ -1427,7 +1427,7 @@ Public Module WS_Quests
 
             Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_QUESTGIVER_HELLO [GUID={2:X}]", Client.IP, Client.Port, GUID)
 
-            If CREATURESDatabase(WORLD_CREATUREs(GUID).ID).TalkScript.OnQuestHello(Client.Character, GUID) Then
+            If CType(CREATURESDatabase(CType(WORLD_CREATUREs(GUID), CreatureObject).ID), CreatureInfo).TalkScript.OnQuestHello(Client.Character, GUID) Then
                 SendQuestMenu(Client.Character, GUID, "I have some tasks for you, $N.")
             End If
         Catch e As Exception
@@ -1651,7 +1651,7 @@ Public Module WS_Quests
             If Client.Character.TalkCurrentQuest.RewardSpellCast <> 0 Then
                 Dim t As New SpellTargets
                 t.SetTarget_UNIT(Client.Character)
-                SPELLs(Client.Character.TalkCurrentQuest.RewardSpellCast).Cast(WORLD_CREATUREs(GUID), t, 0)
+                CType(SPELLs(Client.Character.TalkCurrentQuest.RewardSpellCast), SpellInfo).Cast(WORLD_CREATUREs(GUID), t, 0)
             End If
 
             'DONE: Remove quest

@@ -298,12 +298,12 @@ Public Module Functions
         Dim Year As Integer = time.Year - 2000
         Dim Month As Integer = time.Month - 1
         Dim Day As Integer = time.Day - 1
-        Dim DayOfWeek As Integer = time.DayOfWeek
+        Dim DayOfWeek As Integer = CType(time.DayOfWeek, Integer)
         Dim Hour As Integer = time.Hour
         Dim Minute As Integer = time.Minute
 
         'SMSG_LOGIN_SETTIMESPEED.AddInt32(CType((((((Minute + (Hour << 6)) + (DayOfWeek << 11)) + (Day << 14)) + (Year << 18)) + (Month << 20)), Integer))
-        SMSG_LOGIN_SETTIMESPEED.AddInt32((((((Minute + (Hour << 6)) + (DayOfWeek << 11)) + (Day << 14)) + (Month << 20)) + (Year << 24)))
+        SMSG_LOGIN_SETTIMESPEED.AddInt32(CType((((((Minute + (Hour << 6)) + (DayOfWeek << 11)) + (Day << 14)) + (Month << 20)) + (Year << 24)), Integer))
         SMSG_LOGIN_SETTIMESPEED.AddSingle(0.017F)
 
         Client.Send(SMSG_LOGIN_SETTIMESPEED)

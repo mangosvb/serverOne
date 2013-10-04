@@ -449,7 +449,7 @@ Public Module Packets
                 Offset += 1
             End If
 
-            Return BitConverter.ToUInt64(GUID, 0)
+            Return CType(BitConverter.ToUInt64(GUID, 0), ULong)
         End Function
         Public Function GetPackGUID(ByVal Offset As Integer) As ULong
             Dim flags As Byte = Data(Offset)
@@ -489,7 +489,7 @@ Public Module Packets
                 Offset += 1
             End If
 
-            Return BitConverter.ToUInt64(GUID, 0)
+            Return CType(BitConverter.ToUInt64(GUID, 0), ULong)
         End Function
 
         Public Sub Dispose() Implements System.IDisposable.Dispose

@@ -36,7 +36,7 @@ Public Module WS_Corpses
 
         Public Sub FillAllUpdateFlags(ByRef Update As UpdateClass, ByRef Character As CharacterObject)
             Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_GUID, GUID)
-            Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_TYPE, ObjectType.TYPE_CORPSE + ObjectType.TYPE_OBJECT)
+            Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_TYPE, CType(ObjectType.TYPE_CORPSE + ObjectType.TYPE_OBJECT, Integer))
             Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_ENTRY, 0)
             Update.SetUpdateFlag(EObjectFields.OBJECT_FIELD_SCALE_X, 1.0F)
 

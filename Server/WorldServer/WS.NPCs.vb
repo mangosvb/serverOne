@@ -74,7 +74,7 @@ Public Module WS_NPCs
 
         'DONE: Check requirements
         If Client.Character.Copper < CUInt(MySQLQuery.Rows(0).Item("spellcost")) Then Exit Sub
-        If Client.Character.Level < SPELLs(SpellID).spellLevel Then Exit Sub
+        If Client.Character.Level < CType(SPELLs(SpellID), SpellInfo).spellLevel Then Exit Sub
         If CInt(MySQLQuery.Rows(0).Item("reqspell")) <> 0 AndAlso Client.Character.HaveSpell(CInt(MySQLQuery.Rows(0).Item("reqspell"))) = False Then Exit Sub
         If CInt(MySQLQuery.Rows(0).Item("reqskill")) <> 0 AndAlso Client.Character.HaveSkill(CInt(MySQLQuery.Rows(0).Item("reqskill")), CInt(MySQLQuery.Rows(0).Item("reqskillvalue"))) = False Then Exit Sub
 
@@ -112,7 +112,7 @@ Public Module WS_NPCs
             CastSpellID = CType(MySQLQuery.Rows(0).Item("cast_spell"), Integer)
             If CastSpellID <> 0 Then
                 tmpTargets.unitTarget = Client.Character
-                SPELLs(CastSpellID).Cast(WORLD_CREATUREs(cGUID), tmpTargets, 0)
+                CType(SPELLs(CastSpellID), SpellInfo).Cast(CType(WORLD_CREATUREs(cGUID), CreatureObject), tmpTargets, 0)
             End If
 
             'TODO: Add The Code To Delete Lower Ranks Of Spells When a Higher Rank Is Learned.
@@ -199,7 +199,7 @@ Public Module WS_NPCs
         packet.AddInt32(SpellsList.Count)              'Trains Length
 
         For Each SellRow As DataRow In SpellsList
-            Dim SpellInfo As SpellInfo = WS_Spells.SPELLs(CType(SellRow.Item("learn_spell"), Integer))
+            Dim SpellInfo As SpellInfo = CType(WS_Spells.SPELLs(CType(SellRow.Item("learn_spell"), Integer)), SpellInfo)
 
             packet.AddInt32(CType(SellRow.Item("learn_spell"), Integer)) 'SpellID
 
@@ -258,7 +258,7 @@ Public Module WS_NPCs
         If (packet.Data.Length - 1) < 13 Then Exit Sub
         packet.GetInt16()
         Dim GUID As ULong = packet.GetUInt64
-        If WORLD_CREATUREs.ContainsKey(GUID) = False OrElse ((WORLD_CREATUREs(GUID).CreatureInfo.cNpcFlags And NPCFlags.UNIT_NPC_FLAG_ARMORER) = 0 AndAlso (WORLD_CREATUREs(GUID).CreatureInfo.cNpcFlags And NPCFlags.UNIT_NPC_FLAG_VENDOR) = 0) Then Exit Sub
+        If WORLD_CREATUREs.ContainsKey(GUID) = False OrElse ((CType(WORLD_CREATUREs(GUID), CreatureObject).CreatureInfo.cNpcFlags And NPCFlags.UNIT_NPC_FLAG_ARMORER) = 0 AndAlso (CType(WORLD_CREATUREs(GUID), CreatureObject).CreatureInfo.cNpcFlags And NPCFlags.UNIT_NPC_FLAG_VENDOR) = 0) Then Exit Sub
         Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_LIST_INVENTORY [GUID={2:X}]", Client.IP, Client.Port, GUID)
 
         SendListInventory(Client.Character, GUID)
@@ -282,7 +282,7 @@ Public Module WS_NPCs
                 Exit Sub
             End If
             'DONE: You can't sell someone else's items
-            If WORLD_ITEMs(itemGUID).OwnerGUID <> Client.Character.GUID Then
+            If CType(WORLD_ITEMs(itemGUID), ItemObject).OwnerGUID <> Client.Character.GUID Then
                 Dim okPckt As New PacketClass(OPCODES.SMSG_SELL_ITEM)
                 okPckt.AddUInt64(vendorGUID)
                 okPckt.AddUInt64(itemGUID)
@@ -301,7 +301,7 @@ Public Module WS_NPCs
                 Exit Sub
             End If
             'DONE: Can't sell quest items
-            If (ITEMDatabase(WORLD_ITEMs(itemGUID).ItemEntry).SellPrice = 0) Or (ITEMDatabase(WORLD_ITEMs(itemGUID).ItemEntry).ObjectClass = ITEM_CLASS.ITEM_CLASS_QUEST) Then
+            If (ITEMDatabase(WORLD_ITEMs(itemGUID).ItemEntry).SellPrice = 0) Or (CType(ITEMDatabase(WORLD_ITEMs(itemGUID).ItemEntry), ItemInfo).ObjectClass = ITEM_CLASS.ITEM_CLASS_QUEST) Then
                 Dim okPckt As New PacketClass(OPCODES.SMSG_SELL_ITEM)
                 okPckt.AddUInt64(vendorGUID)
                 okPckt.AddUInt64(itemGUID)
@@ -313,7 +313,7 @@ Public Module WS_NPCs
             'DONE: Can't cheat and sell items that are located in the buyback
             Dim i As Byte
             For i = BUYBACK_SLOT_START To BUYBACK_SLOT_END - 1
-                If Client.Character.Items.ContainsKey(i) AndAlso Client.Character.Items(i).GUID = itemGUID Then
+                If Client.Character.Items.ContainsKey(i) AndAlso CType(Client.Character.Items(i), ItemObject).GUID = itemGUID Then
                     Dim okPckt As New PacketClass(OPCODES.SMSG_SELL_ITEM)
                     okPckt.AddUInt64(vendorGUID)
                     okPckt.AddUInt64(itemGUID)
@@ -324,9 +324,9 @@ Public Module WS_NPCs
                 End If
             Next
 
-            If count < 1 Then count = WORLD_ITEMs(itemGUID).StackCount
-            If WORLD_ITEMs(itemGUID).StackCount > count Then
-                WORLD_ITEMs(itemGUID).StackCount -= count
+            If count < 1 Then count = CType(WORLD_ITEMs(itemGUID), ItemObject).StackCount
+            If CType(WORLD_ITEMs(itemGUID), ItemObject).StackCount > count Then
+                CType(WORLD_ITEMs(itemGUID), ItemObject).StackCount -= count
                 Dim tmpItem As ItemObject = LoadItemByGUID(itemGUID) 'Lets create a new stack to place in the buyback
                 ItemGUIDCounter += 1 'Get a new GUID for our new stack
                 tmpItem.GUID = ItemGUIDCounter
@@ -349,7 +349,7 @@ Public Module WS_NPCs
                         If Item.Key < EQUIPMENT_SLOT_END Then Client.Character.UpdateRemoveItemStats(Item.Value, Item.Key)
 
                         Client.Character.ItemREMOVE(Item.Value.GUID, False, True)
-                        Client.Character.ItemADD_BuyBack(Item.Value)
+                        Client.Character.ItemADD_BuyBack(CType(Item.Value, ItemObject))
 
                         Dim okPckt As New PacketClass(OPCODES.SMSG_SELL_ITEM)
                         okPckt.AddUInt64(vendorGUID)
@@ -368,7 +368,7 @@ Public Module WS_NPCs
                             Client.Character.SetUpdateFlag(EPlayerFields.PLAYER_FIELD_COINAGE, Client.Character.Copper)
 
                             Client.Character.ItemREMOVE(Item.Value.GUID, False, True)
-                            Client.Character.ItemADD_BuyBack(Item.Value)
+                            Client.Character.ItemADD_BuyBack(CType(Item.Value, ItemObject))
 
                             Dim okPckt As New PacketClass(OPCODES.SMSG_SELL_ITEM)
                             okPckt.AddUInt64(vendorGUID)
@@ -394,7 +394,7 @@ Public Module WS_NPCs
         Dim itemID As Integer = packet.GetInt32
         Dim count As Byte = packet.GetInt8
         Dim slot As Byte = packet.GetInt8       '??
-        If WORLD_CREATUREs.ContainsKey(vendorGUID) = False OrElse ((WORLD_CREATUREs(vendorGUID).CreatureInfo.cNpcFlags And NPCFlags.UNIT_NPC_FLAG_ARMORER) = 0 AndAlso (WORLD_CREATUREs(vendorGUID).CreatureInfo.cNpcFlags And NPCFlags.UNIT_NPC_FLAG_VENDOR) = 0) Then Exit Sub
+        If WORLD_CREATUREs.ContainsKey(vendorGUID) = False OrElse ((CType(WORLD_CREATUREs(vendorGUID), CreatureObject).CreatureInfo.cNpcFlags And NPCFlags.UNIT_NPC_FLAG_ARMORER) = 0 AndAlso (CType(WORLD_CREATUREs(vendorGUID), CreatureObject).CreatureInfo.cNpcFlags And NPCFlags.UNIT_NPC_FLAG_VENDOR) = 0) Then Exit Sub
         If ITEMDatabase.ContainsKey(itemID) = False Then Exit Sub
         Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_BUY_ITEM [vendorGUID={2:X} ItemID={3} Count={4} Slot={5}]", Client.IP, Client.Port, vendorGUID, itemID, count, slot)
 
@@ -403,7 +403,7 @@ Public Module WS_NPCs
         If count = 0 Then count = 1
 
         'DONE: Can't buy quest items
-        If ITEMDatabase(itemID).ObjectClass = ITEM_CLASS.ITEM_CLASS_QUEST Then
+        If CType(ITEMDatabase(itemID), ItemInfo).ObjectClass = ITEM_CLASS.ITEM_CLASS_QUEST Then
             Dim errorPckt As New PacketClass(OPCODES.SMSG_BUY_FAILED)
             errorPckt.AddUInt64(vendorGUID)
             errorPckt.AddInt32(itemID)
@@ -518,7 +518,7 @@ Public Module WS_NPCs
         Dim clientGUID As ULong = packet.GetUInt64
         Dim slot As Byte = packet.GetInt8
         Dim count As Byte = packet.GetInt8
-        If WORLD_CREATUREs.ContainsKey(vendorGUID) = False OrElse ((WORLD_CREATUREs(vendorGUID).CreatureInfo.cNpcFlags And NPCFlags.UNIT_NPC_FLAG_ARMORER) = 0 AndAlso (WORLD_CREATUREs(vendorGUID).CreatureInfo.cNpcFlags And NPCFlags.UNIT_NPC_FLAG_VENDOR) = 0) Then Exit Sub
+        If WORLD_CREATUREs.ContainsKey(vendorGUID) = False OrElse ((CType(WORLD_CREATUREs(vendorGUID), CreatureObject).CreatureInfo.cNpcFlags And NPCFlags.UNIT_NPC_FLAG_ARMORER) = 0 AndAlso (CType(WORLD_CREATUREs(vendorGUID), CreatureObject).CreatureInfo.cNpcFlags And NPCFlags.UNIT_NPC_FLAG_VENDOR) = 0) Then Exit Sub
         If ITEMDatabase.ContainsKey(itemID) = False Then Exit Sub
         Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_BUY_ITEM_IN_SLOT [vendorGUID={2:X} ItemID={3} Count={4} Slot={5}]", Client.IP, Client.Port, vendorGUID, itemID, count, slot)
 
@@ -526,7 +526,7 @@ Public Module WS_NPCs
         If count > ITEMDatabase(itemID).Stackable Then count = ITEMDatabase(itemID).Stackable
 
         'DONE: Can't buy quest items
-        If ITEMDatabase(itemID).ObjectClass = ITEM_CLASS.ITEM_CLASS_QUEST Then
+        If CType(ITEMDatabase(itemID), ItemInfo).ObjectClass = ITEM_CLASS.ITEM_CLASS_QUEST Then
             Dim errorPckt As New PacketClass(OPCODES.SMSG_BUY_FAILED)
             errorPckt.AddUInt64(vendorGUID)
             errorPckt.AddInt32(itemID)
@@ -764,12 +764,12 @@ Public Module WS_NPCs
 
     Public Sub SendListInventory(ByVal Character As CharacterObject, ByVal GUID As ULong)
         Try
-            If WORLD_CREATUREs.ContainsKey(GUID) = False OrElse ((WORLD_CREATUREs(GUID).CreatureInfo.cNpcFlags And NPCFlags.UNIT_NPC_FLAG_ARMORER) = 0 AndAlso (WORLD_CREATUREs(GUID).CreatureInfo.cNpcFlags And NPCFlags.UNIT_NPC_FLAG_VENDOR) = 0) Then Exit Sub
+            If WORLD_CREATUREs.ContainsKey(GUID) = False OrElse ((CType(WORLD_CREATUREs(GUID), CreatureObject).CreatureInfo.cNpcFlags And NPCFlags.UNIT_NPC_FLAG_ARMORER) = 0 AndAlso (CType(WORLD_CREATUREs(GUID), CreatureObject).CreatureInfo.cNpcFlags And NPCFlags.UNIT_NPC_FLAG_VENDOR) = 0) Then Exit Sub
             Dim packet As New PacketClass(OPCODES.SMSG_LIST_INVENTORY)
             packet.AddUInt64(GUID)
 
             Dim MySQLQuery As New DataTable
-            WorldDatabase.Query(String.Format("SELECT * FROM npc_vendor WHERE entry = {0};", WORLD_CREATUREs(GUID).ID), MySQLQuery)
+            WorldDatabase.Query(String.Format("SELECT * FROM npc_vendor WHERE entry = {0};", CType(WORLD_CREATUREs(GUID), CreatureObject).ID), MySQLQuery)
             Dim DataPos As Integer = packet.Data.Length
             packet.AddInt8(0) 'Will be updated later
 
@@ -934,9 +934,9 @@ Public Module WS_NPCs
             'DONE: Removing all talents
             For Each TalentInfo As KeyValuePair(Of Integer, TalentInfo) In Talents
                 For i = 0 To 4
-                    If TalentInfo.Value.RankID(i) <> 0 Then
-                        If Client.Character.HaveSpell(TalentInfo.Value.RankID(i)) Then
-                            Client.Character.UnLearnSpell(TalentInfo.Value.RankID(i))
+                    If CType(TalentInfo.Value, TalentInfo).RankID(i) <> 0 Then
+                        If Client.Character.HaveSpell(CType(TalentInfo.Value, TalentInfo).RankID(i)) Then
+                            Client.Character.UnLearnSpell(CType(TalentInfo.Value, TalentInfo).RankID(i))
                         End If
                     End If
                 Next i

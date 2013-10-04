@@ -60,7 +60,7 @@ Public Module WS_TimerBasedEvents
                     'DONE: If all invalid check passed then regenerate
                     'DONE: If dead don't regenerate
                     If (Not Character.Value.DEAD) AndAlso (Character.Value.underWaterTimer Is Nothing) AndAlso (Character.Value.LogoutTimer Is Nothing) AndAlso (Character.Value.Client IsNot Nothing) Then
-                        With Character.Value
+                        With CType(Character.Value, CharacterObject)
 
                             BaseMana = .Mana.Current
                             BaseRage = .Rage.Current
@@ -137,33 +137,33 @@ Public Module WS_TimerBasedEvents
                             'DONE: Send updates to players near
                             If BaseMana <> .Mana.Current Then
                                 _updateFlag = True
-                                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER1, .Mana.Current)
+                                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER1, CType(.Mana.Current, Integer))
                             End If
                             If BaseRage <> .Rage.Current Or ((.cUnitFlags And UnitFlags.UNIT_FLAG_IN_COMBAT) = UnitFlags.UNIT_FLAG_IN_COMBAT) Then
                                 _updateFlag = True
-                                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER2, .Rage.Current)
+                                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER2, CType(.Rage.Current, Integer))
                             End If
                             If BaseEnergy <> .Energy.Current Then
                                 _updateFlag = True
-                                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER4, .Energy.Current)
+                                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_POWER4, CType(.Energy.Current, Integer))
                             End If
                             If BaseLife <> .Life.Current Then
                                 _updateFlag = True
-                                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, .Life.Current)
+                                UpdateData.SetUpdateFlag(EUnitFields.UNIT_FIELD_HEALTH, CType(.Life.Current, Integer))
                             End If
 
                             If _updateFlag Then
                                 Dim myPacket As New PacketClass(OPCODES.SMSG_UPDATE_OBJECT)
                                 myPacket.AddInt32(1)      'Operations.Count
                                 myPacket.AddInt8(0)
-                                UpdateData.AddToPacket(myPacket, ObjectUpdateType.UPDATETYPE_VALUES, Character.Value, 1)
+                                UpdateData.AddToPacket(myPacket, ObjectUpdateType.UPDATETYPE_VALUES, CType(Character.Value, CharacterObject), 1)
                                 .Client.Send(myPacket)
                                 myPacket.Dispose()
 
                                 Dim tmpPacket As New PacketClass(OPCODES.SMSG_UPDATE_OBJECT)
                                 tmpPacket.AddInt32(1)      'Operations.Count
                                 tmpPacket.AddInt8(0)
-                                UpdateData.AddToPacket(tmpPacket, ObjectUpdateType.UPDATETYPE_VALUES, Character.Value, 0)
+                                UpdateData.AddToPacket(tmpPacket, ObjectUpdateType.UPDATETYPE_VALUES, CType(Character.Value, CharacterObject), 0)
                                 .SendToNearPlayers(tmpPacket)
                                 tmpPacket.Dispose()
                             End If

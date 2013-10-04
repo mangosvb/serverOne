@@ -410,7 +410,7 @@ Public Module WS_Handlers_Trade
             Exit Sub
         End If
 
-        If Not CHARACTERs(targetGUID).tradeInfo Is Nothing Then
+        If Not CType(CHARACTERs(targetGUID), CharacterObject).tradeInfo Is Nothing Then
             Dim response As New PacketClass(OPCODES.SMSG_TRADE_STATUS)
             response.AddInt32(TradeStatus.TRADE_TARGET_UNAVIABLE2)
             Client.Send(response)
@@ -418,7 +418,7 @@ Public Module WS_Handlers_Trade
             Exit Sub
         End If
 
-        If CHARACTERs(targetGUID).Side <> Client.Character.Side Then
+        If CType(CHARACTERs(targetGUID), CharacterObject).Side <> Client.Character.Side Then
             Dim response As New PacketClass(OPCODES.SMSG_TRADE_STATUS)
             response.AddInt32(TradeStatus.TRADE_TARGET_DIFF_FACTION)
             Client.Send(response)
@@ -426,7 +426,7 @@ Public Module WS_Handlers_Trade
             Exit Sub
         End If
 
-        If GetDistance(Client.Character, CHARACTERs(targetGUID)) > 30.0F Then
+        If GetDistance(CType(Client.Character, CharacterObject), CHARACTERs(targetGUID)) > 30.0F Then
             Dim response As New PacketClass(OPCODES.SMSG_TRADE_STATUS)
             response.AddInt32(TradeStatus.TRADE_TARGET_TOO_FAR)
             Client.Send(response)

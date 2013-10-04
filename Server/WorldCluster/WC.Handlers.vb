@@ -151,11 +151,11 @@ Public Module WC_Handlers
     End Sub
 
     Public Sub OnUnhandledPacket(ByRef packet As PacketClass, ByRef Client As ClientClass)
-        Log.WriteLine(LogType.WARNING, "[{0}:{1}] {2} [Unhandled Packet]", Client.IP, Client.Port, packet.OpCode)
+        Log.WriteLine(LogType.WARNING, "[{0}:{1}] {2} [Unhandled Packet]", Client.IP, Client.Port, CType(packet.OpCode, OPCODES))
     End Sub
 
     Public Sub OnClusterPacket(ByRef packet As PacketClass, ByRef Client As ClientClass)
-        Log.WriteLine(LogType.WARNING, "[{0}:{1}] {2} [Redirected Packet]", Client.IP, Client.Port, packet.OpCode)
+        Log.WriteLine(LogType.WARNING, "[{0}:{1}] {2} [Redirected Packet]", Client.IP, Client.Port, CType(packet.OpCode, OPCODES))
 
         If Client.Character Is Nothing OrElse Client.Character.IsInWorld = False Then
             Log.WriteLine(LogType.WARNING, "[{0}:{1}] Unknown Opcode 0x{2:X} [{2}], DataLen={4}", Client.IP, Client.Port, packet.OpCode, vbNewLine, packet.Length)

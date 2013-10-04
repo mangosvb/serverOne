@@ -28,7 +28,7 @@ Public Module WS_Handlers_Instance
         CharacterDatabase.Query(String.Format("SELECT * FROM characters_instances WHERE expire < {0};", t), q)
 
         For Each r As DataRow In q.Rows
-            InstanceMapExpire(r.Item("map"), r.Item("instance"))
+            If Maps.ContainsKey(r.Item("map")) Then InstanceMapExpire(r.Item("map"), r.Item("instance"))
         Next
 
         CharacterDatabase.Update(String.Format("DELETE FROM characters_instances WHERE expire < {0};", t))
