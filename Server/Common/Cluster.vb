@@ -71,7 +71,7 @@ Public Interface IWorld
                                    ByVal Face As Byte, ByVal HairStyle As Byte, ByVal HairColor As Byte, ByVal FacialHair As Byte, ByVal OutfitID As Byte) As Integer
 
     <Description("Respond to world server if still alive.")> _
-    Function Ping(ByVal Timestamp As Integer) As Integer
+    Function Ping(ByVal Timestamp As Integer, ByVal Latency As Integer) As Integer
 
     <Description("Tell the cluster about your CPU & Memory Usage")> _
     Sub ServerInfo(ByRef CPUUsage As Single, ByRef MemoryUsage As ULong)

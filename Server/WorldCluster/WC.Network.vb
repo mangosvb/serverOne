@@ -15,6 +15,7 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
+
 Imports System
 Imports System.IO
 Imports System.Threading
@@ -26,16 +27,18 @@ Imports System.Security.Permissions
 Imports mangosVB.Common.BaseWriter
 Imports mangosVB.Common
 
+
 Public Module WC_Network
 
-    #Region "WS.Sockets"
+#Region "WS.Sockets"
+
 
     Public WS As WorldServerClass
 
     Class WorldServerClass
-    Inherits MarshalByRefObject
-    Implements ICluster
-    Implements IDisposable
+        Inherits MarshalByRefObject
+        Implements ICluster
+        Implements IDisposable
 
         <CLSCompliant(False)> _
         Public m_flagStopListen As Boolean = False
@@ -187,7 +190,7 @@ Public Module WC_Network
                             Log.WriteLine(LogType.NETWORK, "World Map {0:000} ping: {1}ms", w.Key, SentPingTo(WorldsInfo(w.Key)))
                         Else
                             MyTime = timeGetTime
-                            ServerTime = w.Value.Ping(MyTime)
+                            ServerTime = w.Value.Ping(MyTime, WorldsInfo(w.Key).Latency)
                             Latency = Math.Abs(MyTime - ServerTime)
 
                             WorldsInfo(w.Key).Latency = Latency
@@ -309,17 +312,17 @@ Public Module WC_Network
             End With
         End Sub
         Public Sub BroadcastGuild(ByVal GuildID As Long, ByVal Data() As Byte) Implements Common.ICluster.BroadcastGuildOfficers
-        'TODO: Not implement yet
+            'TODO: Not implement yet
         End Sub
         Public Sub BroadcastGuildOfficers(ByVal GuildID As Long, ByVal Data() As Byte) Implements Common.ICluster.BroadcastRaid
-        'TODO: Not implement yet
+            'TODO: Not implement yet
         End Sub
 
         Public Function InstanceCheck(ByVal Client As ClientClass, ByVal MapID As UInteger) As Boolean
             If (Not WS.Worlds.ContainsKey(MapID)) Then
                 'We don't create new continents
                 If IsContinentMap(MapID) Then
-                    Log.WriteLine(LogType.WARNING, "[{0:000000}] Requestied instance map [{1}] is a continent", Client.Index, MapID)
+                    Log.WriteLine(LogType.WARNING, "[{0:000000}] Requested instance map [{1}] is a continent", Client.Index, MapID)
 
                     Dim SMSG_LOGOUT_COMPLETE As New PacketClass(OPCODES.SMSG_LOGOUT_COMPLETE)
                     Client.Send(SMSG_LOGOUT_COMPLETE)
@@ -349,7 +352,7 @@ Public Module WC_Network
                 End If
 
                 If ParentMap Is Nothing Then
-                    Log.WriteLine(LogType.WARNING, "[{0:000000}] Requestied instance map [{1}] can't be loaded", Client.Index, MapID)
+                    Log.WriteLine(LogType.WARNING, "[{0:000000}] Requested instance map [{1}] can't be loaded", Client.Index, MapID)
 
                     Dim SMSG_LOGOUT_COMPLETE As New PacketClass(OPCODES.SMSG_LOGOUT_COMPLETE)
                     Client.Send(SMSG_LOGOUT_COMPLETE)
@@ -384,8 +387,12 @@ Public Module WC_Network
 
                 Log.WriteLine(LogType.NETWORK, "[G{0:00000}] Group update request", CLIENTs(ID).Character.Group.ID)
 
-                CLIENTs(ID).Character.GetWorld.GroupUpdate(CLIENTs(ID).Character.Group.ID, CLIENTs(ID).Character.Group.Type, CLIENTs(ID).Character.Group.GetLeader.GUID, CLIENTs(ID).Character.Group.GetMembers)
-                CLIENTs(ID).Character.GetWorld.GroupUpdateLoot(CLIENTs(ID).Character.Group.ID, CLIENTs(ID).Character.Group.DungeonDifficulty, CLIENTs(ID).Character.Group.LootMethod, CLIENTs(ID).Character.Group.LootThreshold, CLIENTs(ID).Character.Group.GetLootMaster.GUID)
+                Try
+                    CLIENTs(ID).Character.GetWorld.GroupUpdate(CLIENTs(ID).Character.Group.ID, CLIENTs(ID).Character.Group.Type, CLIENTs(ID).Character.Group.GetLeader.GUID, CLIENTs(ID).Character.Group.GetMembers)
+                    CLIENTs(ID).Character.GetWorld.GroupUpdateLoot(CLIENTs(ID).Character.Group.ID, CLIENTs(ID).Character.Group.DungeonDifficulty, CLIENTs(ID).Character.Group.LootMethod, CLIENTs(ID).Character.Group.LootThreshold, CLIENTs(ID).Character.Group.GetLootMaster.GUID)
+                Catch
+                    WS.Disconnect("NULL", New Integer() {CLIENTs(ID).Character.Map})
+                End Try
             End If
         End Sub
         Public Sub GroupSendUpdate(ByVal GroupID As Long)
@@ -472,8 +479,8 @@ Public Module WC_Network
         Public Server As IWorld
     End Class
 
-    #End Region
-    #Region "WS.Analyzer"
+#End Region
+#Region "WS.Analyzer"
 
     Public Enum AccessLevel As Byte
         Trial = 0
@@ -485,8 +492,8 @@ Public Module WC_Network
 
     Public LastConnections As New Dictionary(Of UInteger, Date)
     Class ClientClass
-    Inherits ClientInfo
-    Implements IDisposable
+        Inherits ClientInfo
+        Implements IDisposable
 
         Public Socket As Socket = Nothing
         Public Queue As New Queue
@@ -593,10 +600,10 @@ Public Module WC_Network
                     ThreadPool.QueueUserWorkItem(AddressOf OnPacket)
                 End If
             Catch Err As Exception
-                #If DEBUG Then
+#If DEBUG Then
                 'NOTE: If it's a error here it means the connection is closed?
                 Log.WriteLine(LogType.WARNING, "Connection from [{0}:{1}] cause error {2}{3}", IP, Port, Err.ToString, vbNewLine)
-                #End If
+#End If
                 Me.Dispose()
             End Try
         End Sub
@@ -763,7 +770,7 @@ Public Module WC_Network
         End Sub
     End Class
 
-    #End Region
+#End Region
 
     Function IP2Int(ByVal IP As String) As UInteger
         Dim IpSplit() As String = IP.Split(".")

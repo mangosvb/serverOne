@@ -31,17 +31,25 @@ Imports mangosVB.Common
 
 Public Module WS_Network
 
+
+    Private LastPing As Integer = 0
+    Public WC_MsTime As Integer = 0
+
+    Public Function msTime() As Integer
+        'DONE: Calculate the clusters timeGetTime
+        Return WC_MsTime + (timeGetTime - LastPing)
+    End Function
+
     Public Class WorldServerClass
-    Inherits MarshalByRefObject
-    Implements IWorld
-    Implements IDisposable
+        Inherits MarshalByRefObject
+        Implements IWorld
+        Implements IDisposable
 
         <CLSCompliant(False)> _
         Public _flagStopListen As Boolean = False
         Private m_RemoteChannel As Channels.IChannel = Nothing
         Private m_RemoteURI As String = ""
         Private m_LocalURI As String = ""
-        Private LastPing As Integer = 0
         Private m_Connection As Timer
         Private m_TimerCPU As Timer
         Private LastInfo As Date
@@ -180,9 +188,11 @@ Public Module WS_Network
             Return CreateCharacter(Account, Name, Race, Classe, Gender, Skin, Face, HairStyle, HairColor, FacialHair, OutfitID)
         End Function
 
-        Public Function Ping(ByVal Timestamp As Integer) As Integer Implements Common.IWorld.Ping
+        Public Function Ping(ByVal Timestamp As Integer, ByVal Latency As Integer) As Integer Implements IWorld.Ping
             Log.WriteLine(LogType.INFORMATION, "Cluster ping: [{0}ms]", timeGetTime - Timestamp)
             LastPing = timeGetTime
+            WC_MsTime = Timestamp + Latency
+
             Return timeGetTime
         End Function
 
