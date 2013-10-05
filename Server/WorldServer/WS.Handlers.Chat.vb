@@ -45,9 +45,20 @@ Public Module WS_Handlers_Chat
         If Client.Character.Spell_Language <> -1 Then msgLanguage = Client.Character.Spell_Language
 
         Select Case msgType
-            Case ChatMsg.CHAT_MSG_SAY, ChatMsg.CHAT_MSG_YELL, ChatMsg.CHAT_MSG_EMOTE
+            Case ChatMsg.CHAT_MSG_SAY, ChatMsg.CHAT_MSG_YELL, ChatMsg.CHAT_MSG_EMOTE, ChatMsg.CHAT_MSG_WHISPER
                 Dim Message As String = packet.GetString()
-                Client.Character.SendChatMessage(Client.Character, Message, msgType, msgLanguage, "", True)
+                'Handle admin/gm commands
+                If Message.StartsWith(Config.CommandCharacter) AndAlso Client.Character.Access > AccessLevel.Player Then
+                    Message = Message.Remove(0, 1) ' Remove Command Start Character From Message
+                    Dim toCommand As PacketClass = BuildChatMessage(WardenGUID, Message, ChatMsg.CHAT_MSG_WHISPER_INFORM, LANGUAGES.LANG_UNIVERSAL)
+                    Client.Send(toCommand)
+                    toCommand.Dispose()
+
+                    OnCommand(Client, Message)
+                    Exit Sub
+                Else
+                    Client.Character.SendChatMessage(Client.Character, Message, msgType, msgLanguage, "", True)
+                End If
                 Exit Select
 
             Case ChatMsg.CHAT_MSG_GUILD
@@ -83,24 +94,6 @@ Public Module WS_Handlers_Chat
                 End If
                 Client.Character.SetUpdateFlag(EPlayerFields.PLAYER_FLAGS, Client.Character.cPlayerFlags)
                 Client.Character.SendCharacterUpdate()
-                Exit Select
-
-            Case ChatMsg.CHAT_MSG_WHISPER
-                Dim ToUser As String = UCase(packet.GetString())
-                If (packet.Data.Length - 1) < (14 + ToUser.Length) Then Exit Sub
-                Dim Message As String = packet.GetString()
-
-                'DONE: Handle admin/gm commands
-                'If ToUser = "WARDEN" AndAlso Client.Character.Access > 0 Then
-                '    Dim toWarden As PacketClass = BuildChatMessage(WardenGUID, Message, ChatMsg.CHAT_MSG_REPLY, LANGUAGES.LANG_UNIVERSAL)
-                '    Client.Send(toWarden)
-                '    toWarden.Dispose()
-
-                '    OnCommand(Client, Message)
-                '    Exit Sub
-                'Else
-                '    Log.WriteLine(LogType.WARNING, "This chat message type should not be here!")
-                'End If
                 Exit Select
 
             Case ChatMsg.CHAT_MSG_CHANNEL, ChatMsg.CHAT_MSG_PARTY, ChatMsg.CHAT_MSG_RAID, ChatMsg.CHAT_MSG_RAID_WARNING, ChatMsg.CHAT_MSG_RAID_LEADER

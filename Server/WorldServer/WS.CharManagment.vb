@@ -1742,9 +1742,16 @@ Public Module WS_CharManagment
             packet.Dispose()
         End Sub
         Public Sub CommandResponse(ByVal Message As String)
-            'Dim packet As PacketClass = BuildChatMessage(WardenGUID, Message, ChatMsg.CHAT_MSG_WHISPER, LANGUAGES.LANG_UNIVERSAL)
-            'Client.Send(packet)
-            'packet.Dispose()
+            Dim Messages() As String = Message.Split(New String() {vbNewLine}, StringSplitOptions.RemoveEmptyEntries)
+            If Messages.Length = 0 Then
+                ReDim Messages(0)
+                Messages(0) = Message
+            End If
+            For Each Msg As String In Messages
+                Dim packet As PacketClass = BuildChatMessage(WardenGUID, Msg, ChatMsg.CHAT_MSG_WHISPER, LANGUAGES.LANG_UNIVERSAL)
+                Client.Send(packet)
+                packet.Dispose()
+            Next
             Log.WriteLine(LogType.DEBUG, "[{0}:{1}] SMSG_MESSAGECHAT", Client.IP, Client.Port)
         End Sub
         Public Sub SystemMessage(ByVal Message As String)
@@ -5108,9 +5115,9 @@ CheckXPAgain:
         End Try
 
         'DONE: Can't create character named as the bot
-        'If UCase(Character.Name) = UCase(WardenNAME) Then
-        '    Return AuthResponseCodes.CHAR_CREATE_NAME_IN_USE
-        'End If
+        If UCase(Character.Name) = UCase(WardenNAME) Then
+            Return AuthResponseCodes.CHAR_CREATE_NAME_IN_USE
+        End If
 
         'DONE: Disbale Draenei and Blood Elf races if don't have expansion
         If Account_Expansion = ExpansionLevel.NORMAL AndAlso (Race = Races.RACE_DRAENEI OrElse Race = Races.RACE_BLOOD_ELF) Then

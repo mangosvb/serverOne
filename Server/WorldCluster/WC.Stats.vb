@@ -114,10 +114,14 @@ Public Module WC_Stats
         Log.WriteLine(BaseWriter.LogType.DEBUG, "Generating stats")
         PrepareStats()
 
-        If IO.File.Exists(Config.StatsLocation) = False Then
-            Log.WriteLine(BaseWriter.LogType.WARNING, "Can't find stat.xsl")
-            Exit Sub
-        End If
+        ' What is this doing? - It is checking for stats.xml then saying stats.xsl is not found
+        ' If it does not find the stats.xml file it exits the sub, so the stats.xml file is never
+        ' created, since this method would create one if it did not exist.
+        ' Do we even need this check?
+        'If IO.File.Exists(Config.StatsLocation) = False Then
+        '    Log.WriteLine(BaseWriter.LogType.WARNING, "Can't find stats.xsl")
+        '    Exit Sub
+        'End If
 
         Dim f As XmlWriter = XmlWriter.Create(Config.StatsLocation)
         f.WriteStartDocument(True)

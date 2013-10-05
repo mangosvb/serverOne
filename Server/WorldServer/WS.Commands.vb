@@ -65,8 +65,10 @@ End Class
 
 Public Module WS_Commands
 
-    #Region "WS.Commands.Framework"
+#Region "WS.Commands.Framework"
 
+    Public Const WardenGUID As ULong = Integer.MaxValue
+    Public Const WardenNAME As String = "Warden"
     Public Enum AccessLevel As Byte
         Trial = 0
         Player = 1
@@ -98,7 +100,7 @@ Public Module WS_Commands
                         cmd.CommandAccess = info.cmdAccess
                         cmd.CommandDelegate = ChatCommandDelegate.CreateDelegate(GetType(ChatCommandDelegate), tmpMethod)
 
-                        ChatCommands.Add(UCase(info.CmdName), cmd)
+                        ChatCommands.Add(UCase(info.cmdName), cmd)
                     Next
                 End If
             Next
@@ -116,7 +118,7 @@ Public Module WS_Commands
                             cmd.CommandAccess = info.cmdAccess
                             cmd.CommandDelegate = ChatCommandDelegate.CreateDelegate(GetType(ChatCommandDelegate), tmpMethod)
 
-                            ChatCommands.Add(UCase(info.CmdName), cmd)
+                            ChatCommands.Add(UCase(info.cmdName), cmd)
                         Next
                     End If
                 Next
@@ -155,7 +157,7 @@ Public Module WS_Commands
         End Try
     End Sub
 
-    #End Region
+#End Region
     #Region "WS.Commands.InternalCommands"
 
     <ChatCommandAttribute("CommandList", "Command List" & vbNewLine & "Displays usage information about commands, if no command specified - displays list of available commands.")> _
@@ -172,7 +174,7 @@ Public Module WS_Commands
         Else
             Dim cmdList As String = "Listing available commands:" & vbNewLine
             For Each Command As KeyValuePair(Of String, ChatCommand) In ChatCommands
-                If CType(Command.Value, ChatCommand).CommandAccess <= c.Access Then cmdList += UCase(Command.Key) & ", "
+                If CType(Command.Value, ChatCommand).CommandAccess <= c.Access Then cmdList += UCase(Command.Key) & vbNewLine '", "
             Next
             cmdList += vbNewLine + "Use CommandList <CMD> for usage information about particular command."
             c.CommandResponse(cmdList)
@@ -1403,6 +1405,7 @@ Public Module WS_Commands
             Dim tmpCreature As New CreatureObject(20472, c.positionX, c.positionY, c.positionZ, c.orientation, c.MapID)
             tmpCreature.CreatedBy = c.GUID
             tmpCreature.CreatedBySpell = 35239
+            tmpCreature.aiScript = New DefaultAI(tmpCreature)
             tmpCreature.AddToWorld()
         Next
 
