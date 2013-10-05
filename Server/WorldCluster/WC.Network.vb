@@ -27,13 +27,13 @@ Imports System.Security.Permissions
 Imports mangosVB.Common.BaseWriter
 Imports mangosVB.Common
 
-
 Public Module WC_Network
 
 #Region "WS.Sockets"
 
 
     Public WS As WorldServerClass
+    Public Authenticator As Authenticator
 
     Class WorldServerClass
         Inherits MarshalByRefObject
@@ -67,7 +67,15 @@ Public Module WC_Network
                         m_RemoteChannel = New Channels.Tcp.TcpChannel(Config.ClusterPort)
                 End Select
                 Channels.ChannelServices.RegisterChannel(m_RemoteChannel, False)
-                RemotingServices.Marshal(CType(Me, ICluster), "Cluster.rem")
+
+                'NOTE: Not protected remoting
+                'RemotingServices.Marshal(CType(Me, ICluster), "Cluster.rem")
+
+                'NOTE: Password protected remoting
+                Authenticator = New Authenticator(Me, Config.ClusterPassword)
+
+                RemotingServices.Marshal(CType(Authenticator, Authenticator), "Cluster.rem")
+                Log.WriteLine(LogType.INFORMATION, "Interface UP at: {0}://{1}:{2}/Cluster.rem", Config.ClusterMethod, Config.ClusterHost, Config.ClusterPort)
 
                 'Creating ping timer
                 m_TimerPing = New Timer(AddressOf Ping, Nothing, 0, 15000)
@@ -112,11 +120,17 @@ Public Module WC_Network
         Public WorldsInfo As New Dictionary(Of UInteger, WorldInfo)
         Public Battlegrounds As New Dictionary(Of Integer, Battleground)
 
-        Public Function Connect(ByVal URI As String, ByVal Maps As System.Collections.ICollection) As Boolean Implements Common.ICluster.Connect
+        Public Function Connect(ByVal URI As String, ByVal Maps As System.Collections.ICollection) As Boolean Implements ICluster.Connect
             Try
                 Disconnect(URI, Maps)
 
-                Dim WorldServer As IWorld = CType(RemotingServices.Connect(GetType(IWorld), URI), IWorld)
+                'NOTE: Password protected remoting
+                Dim a As Authenticator = Activator.GetObject(GetType(Authenticator), URI)
+                Dim WorldServer As IWorld = a.Login(Config.ClusterPassword)
+
+                'NOTE: Not protected remoting
+                'Dim WorldServer As IWorld = CType(RemotingServices.Connect(GetType(IWorld), URI), IWorld)
+
                 Dim WorldServerInfo As New WorldInfo
                 Log.WriteLine(LogType.INFORMATION, "Connected World Server: {0}", URI)
 
@@ -134,7 +148,7 @@ Public Module WC_Network
 
             Return True
         End Function
-        Public Sub Disconnect(ByVal URI As String, ByVal Maps As System.Collections.ICollection) Implements Common.ICluster.Disconnect
+        Public Sub Disconnect(ByVal URI As String, ByVal Maps As System.Collections.ICollection) Implements ICluster.Disconnect
             If Maps.Count = 0 Then Return
 
             'TODO: Unload arenas or battlegrounds that is hosted on this server!
@@ -167,7 +181,7 @@ Public Module WC_Network
                         SyncLock CType(Worlds, ICollection).SyncRoot
                             Worlds.Remove(Map)
                             WorldsInfo.Remove(Map)
-                            Log.WriteLine(LogType.INFORMATION, "Disconnected World Map: {0:000}", Map)
+                            Log.WriteLine(LogType.INFORMATION, "Disconnected World Server: {0:000}", Map)
                         End SyncLock
                     End Try
                 End If
@@ -187,23 +201,23 @@ Public Module WC_Network
                 For Each w As KeyValuePair(Of UInteger, IWorld) In Worlds
                     Try
                         If SentPingTo.ContainsKey(WorldsInfo(w.Key)) Then
-                            Log.WriteLine(LogType.NETWORK, "World Map {0:000} ping: {1}ms", w.Key, SentPingTo(WorldsInfo(w.Key)))
+                            Log.WriteLine(LogType.NETWORK, "World [M{0:0000}] ping: {1}ms", w.Key, SentPingTo(WorldsInfo(w.Key)))
                         Else
                             MyTime = timeGetTime
                             ServerTime = w.Value.Ping(MyTime, WorldsInfo(w.Key).Latency)
-                            Latency = Math.Abs(MyTime - ServerTime)
+                            Latency = Math.Abs(MyTime - timeGetTime)
 
                             WorldsInfo(w.Key).Latency = Latency
                             SentPingTo(WorldsInfo(w.Key)) = Latency
 
-                            Log.WriteLine(LogType.NETWORK, "World Map {0:000} ping: {1}ms", w.Key, Latency)
+                            Log.WriteLine(LogType.NETWORK, "World [M{0:0000}] ping: {1}ms", w.Key, Latency)
 
                             'Query CPU and Memory usage
                             w.Value.ServerInfo(WorldsInfo(w.Key).CPUUsage, WorldsInfo(w.Key).MemoryUsage)
                         End If
 
                     Catch ex As Exception
-                        Log.WriteLine(LogType.WARNING, "World Map {0:000} Unavailable!", w.Key)
+                        Log.WriteLine(LogType.WARNING, "World [M{0:0000}] down.", w.Key)
 
                         DeadServers.Add(w.Key)
                     End Try
@@ -211,7 +225,7 @@ Public Module WC_Network
             End SyncLock
 
             'Notification message
-            If Worlds.Count = 0 Then Log.WriteLine(LogType.WARNING, "All world servers are offline!")
+            If Worlds.Count = 0 Then Log.WriteLine(LogType.WARNING, "No world servers available!")
 
             'Drop WorldServers
             Disconnect("NULL", DeadServers)
@@ -230,10 +244,10 @@ Public Module WC_Network
             End If
         End Sub
 
-        Public Sub ClientSend(ByVal ID As UInteger, ByVal Data() As Byte) Implements Common.ICluster.ClientSend
+        Public Sub ClientSend(ByVal ID As UInteger, ByVal Data() As Byte) Implements ICluster.ClientSend
             If CLIENTs.ContainsKey(ID) Then CLIENTs(ID).Send(Data)
         End Sub
-        Public Sub ClientDrop(ByVal ID As UInteger) Implements Common.ICluster.ClientDrop
+        Public Sub ClientDrop(ByVal ID As UInteger) Implements ICluster.ClientDrop
             Try
                 Log.WriteLine(LogType.INFORMATION, "[{0:000000}] Client drop [M{1:0000}]", ID, CLIENTs(ID).Character.Map)
                 CLIENTs(ID).Character.IsInWorld = False
@@ -242,7 +256,7 @@ Public Module WC_Network
                 Log.WriteLine(LogType.INFORMATION, "[{0:000000}] Client drop exception: {1}", ID, ex.ToString)
             End Try
         End Sub
-        Public Sub ClientTransfer(ByVal ID As UInteger, ByVal posX As Single, ByVal posY As Single, ByVal posZ As Single, ByVal ori As Single, ByVal map As UInteger) Implements Common.ICluster.ClientTransfer
+        Public Sub ClientTransfer(ByVal ID As UInteger, ByVal posX As Single, ByVal posY As Single, ByVal posZ As Single, ByVal ori As Single, ByVal map As UInteger) Implements ICluster.ClientTransfer
             Log.WriteLine(LogType.INFORMATION, "[{0:000000}] Client transfer [M{1:0000}->M{2:0000}]", ID, CLIENTs(ID).Character.Map, map)
 
             Dim p As New PacketClass(OPCODES.SMSG_NEW_WORLD)
@@ -255,19 +269,23 @@ Public Module WC_Network
 
             CLIENTs(ID).Character.Map = map
         End Sub
-        Public Sub ClientUpdate(ByVal ID As UInteger, ByVal Zone As UInteger, ByVal Level As Byte) Implements Common.ICluster.ClientUpdate
+        Public Sub ClientUpdate(ByVal ID As UInteger, ByVal Zone As UInteger, ByVal Level As Byte) Implements ICluster.ClientUpdate
             If CLIENTs(ID).Character Is Nothing Then Return
             Log.WriteLine(LogType.INFORMATION, "[{0:000000}] Client zone update [Z{1:0000}]", ID, Zone)
 
             CLIENTs(ID).Character.Zone = Zone
             CLIENTs(ID).Character.Level = Level
         End Sub
-        Public Sub ClientSetChatFlag(ByVal ID As UInteger, ByVal Flag As Byte) Implements Common.ICluster.ClientSetChatFlag
+        Public Sub ClientSetChatFlag(ByVal ID As UInteger, ByVal Flag As Byte) Implements ICluster.ClientSetChatFlag
             If CLIENTs(ID).Character Is Nothing Then Return
             Log.WriteLine(LogType.DEBUG, "[{0:000000}] Client chat flag update [0x{1:X}]", ID, Flag)
 
             CLIENTs(ID).Character.ChatFlag = Flag
         End Sub
+        Public Function ClientGetCryptKey(ByVal ID As UInteger) As Byte() Implements ICluster.ClientGetCryptKey
+            Log.WriteLine(LogType.DEBUG, "[{0:000000}] Requested client crypt key", ID)
+            Return CLIENTs(ID).SS_Hash
+        End Function
 
         Public Sub Broadcast(ByVal p As PacketClass)
             CHARACTERs_Lock.AcquireReaderLock(DEFAULT_LOCK_TIMEOUT)
@@ -276,7 +294,7 @@ Public Module WC_Network
             Next
             CHARACTERs_Lock.ReleaseReaderLock()
         End Sub
-        Public Sub Broadcast(ByVal Data() As Byte) Implements Common.ICluster.Broadcast
+        Public Sub Broadcast(ByVal Data() As Byte) Implements ICluster.Broadcast
             Dim b As Byte()
             CHARACTERs_Lock.AcquireReaderLock(DEFAULT_LOCK_TIMEOUT)
             For Each c As KeyValuePair(Of ULong, CharacterObject) In CHARACTERs
@@ -289,10 +307,10 @@ Public Module WC_Network
             Next
             CHARACTERs_Lock.ReleaseReaderLock()
         End Sub
-        Public Sub BroadcastGroup(ByVal GroupID As Long, ByVal Data() As Byte) Implements Common.ICluster.BroadcastGroup
+        Public Sub BroadcastGroup(ByVal GroupID As Long, ByVal Data() As Byte) Implements ICluster.BroadcastGroup
             With GROUPs(GroupID)
                 For i As Byte = 0 To .Members.Length - 1
-                    If Not .Members(i) Is Nothing Then
+                    If .Members(i) IsNot Nothing Then
                         Dim buffer() As Byte = Data.Clone
                         .Members(i).Client.Send(buffer)
                     End If
@@ -300,10 +318,10 @@ Public Module WC_Network
                 Next
             End With
         End Sub
-        Public Sub BroadcastRaid(ByVal GroupID As Long, ByVal Data() As Byte) Implements Common.ICluster.BroadcastGuild
+        Public Sub BroadcastRaid(ByVal GroupID As Long, ByVal Data() As Byte) Implements ICluster.BroadcastGuild
             With GROUPs(GroupID)
                 For i As Byte = 0 To .Members.Length - 1
-                    If Not .Members(i) Is Nothing Then
+                    If .Members(i) IsNot Nothing AndAlso .Members(i).Client IsNot Nothing Then
                         Dim buffer() As Byte = Data.Clone
                         .Members(i).Client.Send(buffer)
                     End If
@@ -311,10 +329,10 @@ Public Module WC_Network
                 Next
             End With
         End Sub
-        Public Sub BroadcastGuild(ByVal GuildID As Long, ByVal Data() As Byte) Implements Common.ICluster.BroadcastGuildOfficers
+        Public Sub BroadcastGuild(ByVal GuildID As Long, ByVal Data() As Byte) Implements ICluster.BroadcastGuildOfficers
             'TODO: Not implement yet
         End Sub
-        Public Sub BroadcastGuildOfficers(ByVal GuildID As Long, ByVal Data() As Byte) Implements Common.ICluster.BroadcastRaid
+        Public Sub BroadcastGuildOfficers(ByVal GuildID As Long, ByVal Data() As Byte) Implements ICluster.BroadcastRaid
             'TODO: Not implement yet
         End Sub
 
@@ -382,7 +400,7 @@ Public Module WC_Network
             Return tmpList
         End Function
 
-        Public Sub GroupRequestUpdate(ByVal ID As UInteger) Implements Common.ICluster.GroupRequestUpdate
+        Public Sub GroupRequestUpdate(ByVal ID As UInteger) Implements ICluster.GroupRequestUpdate
             If CLIENTs.ContainsKey(ID) AndAlso CLIENTs(ID).Character IsNot Nothing AndAlso CLIENTs(ID).Character.IsInWorld AndAlso CLIENTs(ID).Character.IsInGroup Then
 
                 Log.WriteLine(LogType.NETWORK, "[G{0:00000}] Group update request", CLIENTs(ID).Character.Group.ID)
@@ -505,9 +523,12 @@ Public Module WC_Network
         Protected SocketBuffer(8192) As Byte
         Protected SocketBytes As Integer
 
+        Protected SavedBytes() As Byte = {}
+
         Public DEBUG_CONNECTION As Boolean = False
         Private Key() As Byte = {0, 0, 0, 0}
         Private Buffer() As Byte = {0}
+        Private HandingPackets As Boolean = False
 
         Public Function GetClientInfo() As ClientInfo
             Dim ci As New ClientInfo
@@ -569,12 +590,19 @@ Public Module WC_Network
                     Interlocked.Add(DataTransferIn, SocketBytes)
 
                     While SocketBytes > 0
-                        If Encryption Then Decode(SocketBuffer)
+                        If SavedBytes.Length > 0 Then
+                            SocketBuffer = Concat(SavedBytes, SocketBuffer)
+                            SavedBytes = New Byte() {}
+                        Else
+                            If Encryption Then Decode(SocketBuffer)
+                        End If
 
                         'Calculate Length from packet
                         Dim PacketLen As Integer = (SocketBuffer(1) + SocketBuffer(0) * 256) + 2
 
                         If SocketBytes < PacketLen Then
+                            SavedBytes = New Byte(SocketBytes - 1) {}
+                            Array.Copy(SocketBuffer, 0, SavedBytes, 0, SocketBytes)
                             Log.WriteLine(LogType.CRITICAL, "[{0}:{1}] BAD PACKET {2}({3}) bytes, ", IP, Port, SocketBytes, PacketLen)
                             Exit While
                         End If
@@ -597,7 +625,7 @@ Public Module WC_Network
 
                     Socket.BeginReceive(SocketBuffer, 0, SocketBuffer.Length, SocketFlags.None, AddressOf OnData, Nothing)
 
-                    ThreadPool.QueueUserWorkItem(AddressOf OnPacket)
+                    If HandingPackets = False Then ThreadPool.QueueUserWorkItem(AddressOf OnPacket)
                 End If
             Catch Err As Exception
 #If DEBUG Then
@@ -609,6 +637,7 @@ Public Module WC_Network
         End Sub
         <MethodImplAttribute(MethodImplOptions.Synchronized)> _
         Public Sub OnPacket()
+            HandingPackets = True
             While Queue.Count > 0
                 Dim p As PacketClass
 
@@ -622,7 +651,7 @@ Public Module WC_Network
                     Try
                         PacketHandlers(p.OpCode).Invoke(p, Me)
                     Catch e As Exception
-                        Log.WriteLine(LogType.FAILED, "Opcode handler {2}:{2:X} caused an error:{1}{0}", e.Message, vbNewLine, p.OpCode)
+                        Log.WriteLine(LogType.FAILED, "Opcode handler {2}:{2:X} caused an error:{1}{0}", e.ToString, vbNewLine, p.OpCode)
                     End Try
                 Else
                     If Character Is Nothing OrElse Character.IsInWorld = False Then
@@ -640,6 +669,7 @@ Public Module WC_Network
 
                 p.Dispose()
             End While
+            HandingPackets = False
         End Sub
 
         Public Sub Send(ByVal data() As Byte)
@@ -657,8 +687,7 @@ Public Module WC_Network
         End Sub
         Public Sub Send(ByRef packet As PacketClass)
             If packet Is Nothing Then Throw New ApplicationException("Packet doesn't contain data!")
-
-            If Not Socket.Connected Then Exit Sub
+            If Socket Is Nothing OrElse Socket.Connected = False Then Exit Sub
 
             Try
                 Dim data As Byte() = packet.Data

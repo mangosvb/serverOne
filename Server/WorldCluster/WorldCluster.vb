@@ -61,6 +61,7 @@ Public Module WorldCluster
         <XmlElement(ElementName:="CharacterDatabase")> Public CharacterDatabase As String = "root;password;localhost;3306;mvb_dev;MySQL"
         <XmlElement(ElementName:="WorldDatabase")> Public WorldDatabase As String = "root;password;localhost;3306;mvb_dev;MySQL"
 
+        <XmlElement(ElementName:="ClusterPassword")> Public ClusterPassword As String = "changeme"
         <XmlElement(ElementName:="ClusterListenMethod")> Public ClusterMethod As String = "tcp"
         <XmlElement(ElementName:="ClusterListenHost")> Public ClusterHost As String = "localhost"
         <XmlElement(ElementName:="ClusterListenPort")> Public ClusterPort As Integer = 50001

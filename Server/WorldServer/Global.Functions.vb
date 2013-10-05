@@ -19,10 +19,11 @@ Imports System.Threading
 Imports System.Reflection
 Imports System.Text.RegularExpressions
 Imports mangosVB.Common.BaseWriter
+Imports System.Security.Cryptography
 
 Public Module Functions
 
-    #Region "System"
+#Region "System"
 
     Public Function ToInteger(ByVal Value As Boolean) As Integer
         If Value Then
@@ -32,8 +33,62 @@ Public Module Functions
         End If
     End Function
 
+    Public Function ToHex(ByVal bBytes() As Byte, Optional ByVal start As Integer = 0) As String
+        If bBytes.Length = 0 Then Return "''"
+        Dim tmpStr As String = "0x"
+        For i As Integer = start To bBytes.Length - 1
+            If bBytes(i) < 16 Then
+                tmpStr &= "0" & Hex(bBytes(i))
+            Else
+                tmpStr &= Hex(bBytes(i))
+            End If
+        Next
+        Return tmpStr
+    End Function
+
+    Public Function ByteToCharArray(ByVal bBytes() As Byte) As Char()
+        If bBytes.Length = 0 Then Return New Char() {}
+        Dim bChar(bBytes.Length - 1) As Char
+        For i As Integer = 0 To bBytes.Length - 1
+            bChar(i) = Chr(bBytes(i))
+        Next
+        Return bChar
+    End Function
+
+    Public Function ByteToIntArray(ByVal bBytes() As Byte) As Integer()
+        If bBytes.Length = 0 Then Return New Integer() {}
+        Dim bInt(((bBytes.Length - 1) \ 4)) As Integer
+        For i As Integer = 0 To bBytes.Length - 1 Step 4
+            bInt(i \ 4) = BitConverter.ToInt32(bBytes, i)
+        Next
+        Return bInt
+    End Function
+
+    Public Function IntToByteArray(ByVal bInt() As Integer) As Byte()
+        If bInt.Length = 0 Then Return New Byte() {}
+        Dim bBytes((bInt.Length * 4) - 1) As Byte
+        For i As Integer = 0 To bInt.Length - 1
+            Dim tmpBytes() As Byte = BitConverter.GetBytes(bInt(i))
+            Array.Copy(tmpBytes, 0, bBytes, (i * 4), 4)
+        Next
+        Return bBytes
+    End Function
+
+    Public Function Concat(ByVal a As Byte(), ByVal b As Byte()) As Byte()
+        Dim buffer1 As Byte() = New Byte((a.Length + b.Length) - 1) {}
+        Dim num1 As Integer
+        For num1 = 0 To a.Length - 1
+            buffer1(num1) = a(num1)
+        Next num1
+        Dim num2 As Integer
+        For num2 = 0 To b.Length - 1
+            buffer1((num2 + a.Length)) = b(num2)
+        Next num2
+        Return buffer1
+    End Function
+
     Public Function HaveFlag(ByVal value As UInteger, ByVal flagPos As Byte) As Boolean
-        value = value >> flagPos
+        value = value >> CUInt(flagPos)
         value = value Mod 2
 
         If value = 1 Then
@@ -47,20 +102,32 @@ Public Module Functions
     End Function
     Public Sub SetFlag(ByRef value As UInteger, ByVal flagPos As Byte, ByVal flagValue As Boolean)
         If flagValue Then
-            value = (value Or (&H1UI << flagPos))
+            value = (value Or (&H1UI << CUInt(flagPos)))
         Else
-            value = (value And ((&H0UI << flagPos) And &HFFFFFFFFUI))
+            value = (value And ((&H0UI << CUInt(flagPos)) And &HFFFFFFFFUI))
         End If
     End Sub
 
-    Public Function GetTimestamp(ByVal fromDateTime As DateTime) As Integer
+    Public Function GetNextDay(ByVal iDay As DayOfWeek, Optional ByVal Hour As Integer = 0) As DateTime
+        Dim iDiff As Integer = CInt(iDay) - CInt(Today.DayOfWeek)
+        If iDiff <= 0 Then iDiff += 7
+        Dim nextFriday As DateTime = Today.AddDays(iDiff)
+        nextFriday = nextFriday.AddHours(Hour)
+        Return nextFriday
+    End Function
+    Public Function GetNextDate(ByVal Days As Integer, Optional ByVal Hours As Integer = 0) As DateTime
+        Dim nextDate As DateTime = Today.AddDays(Days)
+        nextDate = nextDate.AddHours(Hours)
+        Return nextDate
+    End Function
+    Public Function GetTimestamp(ByVal fromDateTime As DateTime) As UInteger
         Dim startDate As DateTime = #1/1/1970#
         Dim timeSpan As System.TimeSpan
 
         timeSpan = fromDateTime.Subtract(startDate)
-        Return CType(Math.Abs(timeSpan.TotalSeconds()), Integer)
+        Return CType(Math.Abs(timeSpan.TotalSeconds()), UInteger)
     End Function
-    Public Function GetDateFromTimestamp(ByVal unixTimestamp As Integer) As DateTime
+    Public Function GetDateFromTimestamp(ByVal unixTimestamp As UInteger) As DateTime
         Dim timeSpan As System.TimeSpan
         Dim startDate As Date = #1/1/1970#
 
@@ -69,18 +136,29 @@ Public Module Functions
         timeSpan = New System.TimeSpan(0, 0, unixTimestamp)
         Return startDate.Add(timeSpan)
     End Function
+    Public Function GetTimeLeftString(ByVal seconds As UInteger) As String
+        If seconds < 60 Then
+            Return seconds & "s"
+        ElseIf seconds < 3600 Then
+            Return (seconds \ 60) & "m " & (seconds Mod 60) & "s"
+        ElseIf seconds < 86400 Then
+            Return (seconds \ 3600) & "h " & ((seconds \ 60) Mod 60) & "m " & (seconds Mod 60) & "s"
+        Else
+            Return (seconds \ 86400) & "d " & ((seconds \ 3600) Mod 24) & "h " & ((seconds \ 60) Mod 60) & "m " & (seconds Mod 60) & "s"
+        End If
+    End Function
 
-    #If LINUX Then
+#If LINUX Then
     Public Function timeGetTime() As Integer
     Return System.Environment.TickCount()
     End Function
     Public Function timeBeginPeriod(ByVal uPeriod As Integer) As Integer
     Return 0
     End Function
-    #Else
+#Else
     Public Declare Function timeGetTime Lib "winmm.dll" () As Integer
     Public Declare Function timeBeginPeriod Lib "winmm.dll" (ByVal uPeriod As Integer) As Integer
-    #End If
+#End If
 
     Public Function EscapeString(ByVal s As String) As String
         Return s.Replace("""", "").Replace("'", "")
@@ -106,8 +184,28 @@ Public Module Functions
         Return Regex_Guild.IsMatch(strName)
     End Function
 
-    #End Region
-    #Region "Database"
+    Public Function FixName(ByVal strName As String) As String
+        Return strName.Replace("""", "'").Replace("<", "").Replace(">", "").Replace("*", "").Replace("/", "").Replace("\", "").Replace(":", "").Replace("|", "").Replace("?", "")
+    End Function
+
+
+    Public Sub RAND_bytes(ByRef bBytes() As Byte, ByVal length As Integer)
+        If length = 0 Then Exit Sub
+        bBytes = New Byte(length - 1) {}
+
+        Dim rnd As New Random()
+        For i As Integer = 0 To length - 1
+            If i = bBytes.Length Then Exit For
+            bBytes(i) = rnd.Next(0, 256)
+        Next
+    End Sub
+
+    Public Function MathLerp(ByVal value1 As Single, ByVal value2 As Single, ByVal amount As Single) As Single
+        Return value1 + (value2 - value1) * amount
+    End Function
+
+#End Region
+#Region "Database"
 
     Public Sub Ban_Account(ByVal Name As String, ByVal Reason As String)
         AccountDatabase.Update("UPDATE accounts SET banned = 1 WHERE account = """ & Name & """;")
@@ -115,8 +213,8 @@ Public Module Functions
         Log.WriteLine(LogType.INFORMATION, "Account [{0}] banned by server. Reason: [{1}].", Name, Reason)
     End Sub
 
-    #End Region
-    #Region "Game"
+#End Region
+#Region "Game"
 
     Public Function GetClassName(ByRef Classe As Integer) As String
         Select Case Classe
@@ -167,7 +265,7 @@ Public Module Functions
             Case Races.RACE_BLOOD_ELF
                 GetRaceName = "Blood Elf"
             Case Races.RACE_DRAENEI
-                GetRaceName = "Draenei" 
+                GetRaceName = "Draenei"
             Case Else
                 GetRaceName = "Unknown Race"
         End Select
@@ -243,8 +341,8 @@ Public Module Functions
         Return False
     End Function
 
-    #End Region
-    #Region "Packets"
+#End Region
+#Region "Packets"
 
     Public Sub SendMessageMOTD(ByRef Client As ClientClass, ByVal Message As String)
         Dim packet As New PacketClass(OPCODES.SMSG_MOTD)
@@ -443,6 +541,6 @@ Public Module Functions
         Return packet
     End Function
 
-    #End Region
+#End Region
 
 End Module

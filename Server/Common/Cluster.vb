@@ -13,6 +13,31 @@ Public Enum AccessLevel As Byte
     Admin = 4
 End Enum
 
+Public Class Authenticator
+    Inherits MarshalByRefObject
+
+    Private aObject As Object = Nothing
+    Private aPassword As String = ""
+
+    Public Sub New(ByVal pObject As Object, ByVal pPassword As String)
+        aPassword = pPassword
+        aObject = pObject
+    End Sub
+
+    Public Function Login(ByVal Password As String) As Object
+        If aPassword = Password Then
+            Return aObject
+        Else
+            Return Nothing
+        End If
+    End Function
+
+    ' Make object live forever
+    Public Overrides Function InitializeLifetimeService() As Object
+        Return Nothing
+    End Function
+End Class
+
 Public Interface ICluster
 
     <Description("Signal realm server for new world server.")> _
@@ -35,6 +60,8 @@ Public Interface ICluster
     Sub ClientUpdate(ByVal ID As UInteger, ByVal Zone As UInteger, ByVal Level As Byte)
     <Description("Set client chat flag.")> _
     Sub ClientSetChatFlag(ByVal ID As UInteger, ByVal Flag As Byte)
+    <Description("Get client crypt key.")> _
+    Function ClientGetCryptKey(ByVal ID As UInteger) As Byte()
 
     Function BattlegroundList(ByVal Type As Byte) As List(Of Integer)
 
