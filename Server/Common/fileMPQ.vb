@@ -31,7 +31,7 @@ Imports ICSharpCode.SharpZipLib.Zip.Compression.Streams
 Namespace MPQ
 
     Public Class MPQArchive
-    Implements IDisposable
+        Implements IDisposable
 
         Public Const UINT32_MAX As Integer = &HFFFFFFFF
         Public Const UINT32_MIN As Integer = 0
@@ -268,7 +268,7 @@ Namespace MPQ
             Return result
         End Function
 
-        #Region "FileInfoSupport"
+#Region "FileInfoSupport"
         Public Class FileInfo
             Public CompressedSize As Long
             <CLSCompliant(False)> Public Flags As MpqFileFlags
@@ -335,7 +335,7 @@ Namespace MPQ
             End Get
         End Property
         <CLSCompliant(False)> Protected _Files As FileInfo()
-        #End Region
+#End Region
 
         Private mBlocks() As MpqBlock
         Private mBlockSize As Integer
@@ -425,7 +425,7 @@ Namespace MPQ
 
     'A Stream based class for reading a file from an MPQ file
     Public Class MpqStream
-    Inherits Stream
+        Inherits Stream
 
         Friend Sub New(ByVal File As MPQArchive, ByVal Block As MpqBlock)
             mCurrentBlockIndex = -1
@@ -485,28 +485,28 @@ Namespace MPQ
             End If
 
             If ((comptype And 1) <> 0) Then
-            'Dim result As Byte() = MpqHuffman.Decompress(sinput)
-            'comptype = CByte((comptype And 254))
-            'If (comptype = 0) Then
-            '    Return result
-            'End If
-            'sinput = New MemoryStream(result)
+                'Dim result As Byte() = MpqHuffman.Decompress(sinput)
+                'comptype = CByte((comptype And 254))
+                'If (comptype = 0) Then
+                '    Return result
+                'End If
+                'sinput = New MemoryStream(result)
             End If
             If ((comptype And 128) <> 0) Then
-            'Dim result As Byte() = MpqWavCompression.Decompress(sinput, 2)
-            'comptype = CByte((comptype And 127))
-            'If (comptype = 0) Then
-            '    Return result
-            'End If
-            'sinput = New MemoryStream(result)
+                'Dim result As Byte() = MpqWavCompression.Decompress(sinput, 2)
+                'comptype = CByte((comptype And 127))
+                'If (comptype = 0) Then
+                '    Return result
+                'End If
+                'sinput = New MemoryStream(result)
             End If
             If ((comptype And 64) <> 0) Then
-            'Dim result As Byte() = MpqWavCompression.Decompress(sinput, 1)
-            'comptype = CByte((comptype And 191))
-            'If (comptype = 0) Then
-            '    Return result
-            'End If
-            'sinput = New MemoryStream(result)
+                'Dim result As Byte() = MpqWavCompression.Decompress(sinput, 1)
+                'comptype = CByte((comptype And 191))
+                'If (comptype = 0) Then
+                '    Return result
+                'End If
+                'sinput = New MemoryStream(result)
             End If
 
             Throw New Exception(String.Format("Unhandled compression flags: 0x{0:X}", comptype))

@@ -27,7 +27,7 @@ Imports mangosVB.Common
 
 Public Module WorldCluster
 
-    #Region "Global.Variables"
+#Region "Global.Variables"
     'Players' containers
     Public CLIETNIDs As Long = 0
 
@@ -43,8 +43,8 @@ Public Module WorldCluster
     Public Rnd As New Random
     Delegate Sub HandlePacket(ByRef Packet As PacketClass, ByRef Client As ClientClass)
 
-    #End Region
-    #Region "Global.Config"
+#End Region
+#Region "Global.Config"
     Public Config As XMLConfigFile
     <XmlRoot(ElementName:="WorldCluster")> _
     Public Class XMLConfigFile
@@ -73,6 +73,16 @@ Public Module WorldCluster
 
     Public Sub LoadConfig()
         Try
+            'Make sure WorldCluster.ini exists
+            If System.IO.File.Exists("WorldCluster.ini") = False Then
+                Console.ForegroundColor = ConsoleColor.Red
+                Console.WriteLine("[{0}] Cannot Continue. {1} does not exist.", Format(TimeOfDay, "hh:mm:ss"), "WorldCluster.ini")
+                Console.WriteLine("Please copy the ini files into the same directory as the mangosVB exe files.")
+                Console.WriteLine("Press any key to exit server: ")
+                Console.ReadKey()
+                End
+            End If
+
             Console.Write("[{0}] Loading Configuration...", Format(TimeOfDay, "hh:mm:ss"))
 
             Config = New XMLConfigFile
@@ -142,9 +152,9 @@ Public Module WorldCluster
             Console.WriteLine(e.ToString)
         End Try
     End Sub
-    #End Region
+#End Region
 
-    #Region "WS.DataAccess"
+#Region "WS.DataAccess"
     Public Database As New SQL
     'Public Database As New Sql
     Public AccountDatabase As New SQL
@@ -178,7 +188,7 @@ Public Module WorldCluster
                 Log.WriteLine(LogType.SUCCESS, "[WORLD] " & OutBuf)
         End Select
     End Sub
-    #End Region
+#End Region
 
     <System.MTAThreadAttribute()> _
     Sub Main()
@@ -250,12 +260,12 @@ Public Module WorldCluster
         End If
         WorldDatabase.Update("SET NAMES 'utf8';")
 
-        #If DEBUG Then
+#If DEBUG Then
         Log.WriteLine(LogType.DEBUG, "Setting MySQL into debug mode..[done]")
         AccountDatabase.Update("SET SESSION sql_mode='STRICT_ALL_TABLES';")
         CharacterDatabase.Update("SET SESSION sql_mode='STRICT_ALL_TABLES';")
         WorldDatabase.Update("SET SESSION sql_mode='STRICT_ALL_TABLES';")
-        #End If
+#End If
         InitializeInternalDatabase()
         IntializePacketHandlers()
         WS = New WorldServerClass

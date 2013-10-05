@@ -150,9 +150,9 @@ Public Module WC_Handlers_Tickets
 
         Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_GMSURVEY_SUBMIT [{2}]", Client.IP, Client.Port, Questions)
 
-        #If DEBUG Then
+#If DEBUG Then
         DumpPacket(packet.Data, Client)
-        #End If
+#End If
     End Sub
     Public Sub On_CMSG_WHOIS(ByRef packet As PacketClass, ByRef Client As ClientClass)
         packet.GetInt16()

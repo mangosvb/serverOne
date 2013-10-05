@@ -24,32 +24,32 @@ Imports MySql.Data.MySqlClient
 
 <CLSCompliant(True), ComClass(SQL.ClassId, SQL.InterfaceId, SQL.EventsId)> _
 Public Class SQL
-Implements IDisposable
+    Implements IDisposable
 
-    #Region "Class's used"
+#Region "Class's used"
     <CLSCompliant(False)> _
     Private MySQLConn As MySqlConnection
     Private MSSQLConn As SqlConnection
     'Private OracleConn As OracleConnection
-    #End Region
+#End Region
 
-    #Region "Events and event ID's"
+#Region "Events and event ID's"
     Public Enum EMessages
         ID_Error = 0
         ID_Message = 1
     End Enum
 
     Public Event SQLMessage(ByVal MessageID As EMessages, ByVal OutBuf As String)
-    #End Region
+#End Region
 
-    #Region "COM GUIDs"
+#Region "COM GUIDs"
     ' These  GUIDs provide the COM identity for this class
     ' and its COM interfaces. If you change them, existing
     ' clients will no longer be able to access the class.
     Public Const ClassId As String = "ECC3DCA3-E394-4D4F-BCC9-FBC3A999B8D3"
     Public Const InterfaceId As String = "4A2A2AF5-39A2-44BA-9881-57AA6D867D33"
     Public Const EventsId As String = "BD50B4A8-D148-4C52-B8FC-469119FBB71D"
-    #End Region
+#End Region
 
     ' A creatable COM class must have a Public Sub New()
     ' with no parameters, otherwise, the class will not be
@@ -59,7 +59,7 @@ Implements IDisposable
         MyBase.New()
     End Sub
 
-    #Region "Version Info <Update VInfo and rvDate as needed>"
+#Region "Version Info <Update VInfo and rvDate as needed>"
     Private VInfo As String = "2.1.0a"
     Private rvDate As String = "9:36 PM, Wednesday, September, 25, 2006"
 
@@ -69,9 +69,9 @@ Implements IDisposable
             Return "Version: " + VInfo + ", Updated at: " + rvDate
         End Get
     End Property
-    #End Region
+#End Region
 
-    #Region "SQL startup Propertys, connections and disposal"
+#Region "SQL startup Propertys, connections and disposal"
     'SQL Host name/password/etc..
     Private v_SQLHost As String = "localhost"
     Private v_SQLPort As String = "3306"
@@ -94,8 +94,8 @@ Implements IDisposable
 
     Private v_SQLType As DB_Type
 
-    #Region "Main propertys"
-    #Region "Server type selection      MySQL|MSSQL|Oracle Supported"
+#Region "Main propertys"
+#Region "Server type selection      MySQL|MSSQL|Oracle Supported"
     <Description("SQL Server selection.")> _
     Public Property SQLTypeServer() As DB_Type
         Get
@@ -105,8 +105,8 @@ Implements IDisposable
             v_SQLType = value
         End Set
     End Property
-    #End Region
-    #Region "Server host ip"
+#End Region
+#Region "Server host ip"
     <Description("SQL Host name.")> _
     Public Property SQLHost() As String
         Get
@@ -116,8 +116,8 @@ Implements IDisposable
             v_SQLHost = value
         End Set
     End Property
-    #End Region
-    #Region "Server host port"
+#End Region
+#Region "Server host port"
     <Description("SQL Host port.")> _
     Public Property SQLPort() As String
         Get
@@ -127,8 +127,8 @@ Implements IDisposable
             v_SQLPort = value
         End Set
     End Property
-    #End Region
-    #Region "Server username"
+#End Region
+#Region "Server username"
     <Description("SQL User name.")> _
     Public Property SQLUser() As String
         Get
@@ -138,8 +138,8 @@ Implements IDisposable
             v_SQLUser = value
         End Set
     End Property
-    #End Region
-    #Region "Server Password"
+#End Region
+#Region "Server Password"
     <Description("SQL Password.")> _
     Public Property SQLPass() As String
         Get
@@ -149,8 +149,8 @@ Implements IDisposable
             v_SQLPass = value
         End Set
     End Property
-    #End Region
-    #Region "Database Name"
+#End Region
+#Region "Database Name"
     <Description("SQL Database name.")> _
     Public Property SQLDBName() As String
         Get
@@ -160,10 +160,10 @@ Implements IDisposable
             v_SQLDBName = value
         End Set
     End Property
-    #End Region
-    #End Region
-    #Region "Main Functions"
-    #Region "Connect()                  MySQL|MSSQL|Oracle Supported"
+#End Region
+#End Region
+#Region "Main Functions"
+#Region "Connect()                  MySQL|MSSQL|Oracle Supported"
     <Description("Start up the SQL connection.")> _
     Public Function Connect() As Integer
         Try
@@ -219,8 +219,8 @@ Implements IDisposable
         End Try
         Return ReturnState.Success
     End Function
-    #End Region
-    #Region "Restart()                  MySQL|MSSQL|Oracle Supported"
+#End Region
+#Region "Restart()                  MySQL|MSSQL|Oracle Supported"
     <Description("Restart the SQL connection.")> _
     Public Sub Restart()
         Try
@@ -268,8 +268,8 @@ Implements IDisposable
         '    RaiseEvent SQLMessage(EMessages.ID_Error, "Oracle Connection Error [" & e.Message & "]")
         End Try
     End Sub
-    #End Region
-    #Region "Dispose()                  MySQL|MSSQL|Oracle Supported"
+#End Region
+#Region "Dispose()                  MySQL|MSSQL|Oracle Supported"
     Public Sub Dispose() Implements System.IDisposable.Dispose
         Select Case v_SQLType
             Case DB_Type.MySQL
@@ -283,15 +283,15 @@ Implements IDisposable
         '    OracleConn.Dispose()
         End Select
     End Sub
-    #End Region
-    #End Region
-    #End Region
+#End Region
+#End Region
+#End Region
 
-    #Region "SQL Wraper for VB 6.0."
+#Region "SQL Wraper for VB 6.0."
     Private mQuery As String = ""
     Private mResult As DataTable
 
-    #Region "Query Wraper"
+#Region "Query Wraper"
     <Description("SQLQuery. EG.: (SELECT * FROM db_accounts WHERE account = 'name';')")> _
     Public Function QuerySQL(ByVal SQLQuery As String) As Boolean
         mQuery = SQLQuery
@@ -304,8 +304,8 @@ Implements IDisposable
             Return False
         End If
     End Function
-    #End Region
-    #Region "SQL Get [STRING], [DataTable]"
+#End Region
+#Region "SQL Get [STRING], [DataTable]"
     <Description("SQLGet. Used after the query to get a section value")> _
     Public Function GetSQL(ByVal TableSection As String) As String
         Return (mResult.Rows(0).Item(TableSection)).ToString
@@ -313,23 +313,23 @@ Implements IDisposable
     Public Function GetDataTableSQL() As DataTable
         Return mResult
     End Function
-    #End Region
-    #Region "Insert Wraper"
+#End Region
+#Region "Insert Wraper"
     <Description("SQLInsert. EG.: (INSERT INTO db_textpage (pageid, text, nextpageid, wdbversion, checksum) VALUES ('pageid DWORD', 'pagetext STRING', 'nextpage DWORD', 'version DWORD', 'checksum DWORD')")> _
     Public Sub InsertSQL(ByVal SQLInsertionQuery As String)
         Insert(SQLInsertionQuery)
     End Sub
-    #End Region
-    #Region "Update Wraper"
+#End Region
+#Region "Update Wraper"
     <Description("SQLUpdate. EG.: (UPDATE db_textpage SET pagetext='pagetextstring' WHERE pageid = 'pageiddword';")> _
     Public Sub UpdateSQL(ByVal SQLUpdateQuery As String)
         Update(SQLUpdateQuery)
     End Sub
-    #End Region
-    #End Region
+#End Region
+#End Region
 
-    #Region "Main SQL Functions Used."
-    #Region "Query      MySQL|MSSQL|Oracle Supported       [SELECT * FROM db_accounts WHERE account = 'name';']"
+#Region "Main SQL Functions Used."
+#Region "Query      MySQL|MSSQL|Oracle Supported       [SELECT * FROM db_accounts WHERE account = 'name';']"
     Public Function Query(ByVal sqlquery As String, ByRef Result As DataTable) As Integer
         Select Case v_SQLType
             Case DB_Type.MySQL
@@ -421,8 +421,8 @@ Implements IDisposable
         End Try
         Return ExitCode
     End Function
-    #End Region
-    #Region "Insert     MySQL|MSSQL|Oracle Supported       [INSERT INTO db_textpage (pageid, text, nextpageid, wdbversion, checksum) VALUES ('pageid DWORD', 'pagetext STRING', 'nextpage DWORD', 'version DWORD', 'checksum DWORD']"
+#End Region
+#Region "Insert     MySQL|MSSQL|Oracle Supported       [INSERT INTO db_textpage (pageid, text, nextpageid, wdbversion, checksum) VALUES ('pageid DWORD', 'pagetext STRING', 'nextpage DWORD', 'version DWORD', 'checksum DWORD']"
     Public Sub Insert(ByVal sqlquery As String)
         Select Case v_SQLType
             Case DB_Type.MySQL
@@ -501,8 +501,8 @@ Implements IDisposable
             End Select
         End Try
     End Sub
-    #End Region
-    #Region "Update     MySQL|MSSQL|Oracle Supported       [UPDATE db_textpage SET pagetext='pagetextstring' WHERE pageid = 'pageiddword';]"
+#End Region
+#Region "Update     MySQL|MSSQL|Oracle Supported       [UPDATE db_textpage SET pagetext='pagetextstring' WHERE pageid = 'pageiddword';]"
     Public Sub Update(ByVal sqlquery As String)
         Select Case v_SQLType
             Case DB_Type.MySQL
@@ -578,7 +578,7 @@ Implements IDisposable
             End Select
         End Try
     End Sub
-    #End Region
-    #End Region
+#End Region
+#End Region
 
 End Class

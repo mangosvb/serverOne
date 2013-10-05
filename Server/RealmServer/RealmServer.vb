@@ -27,7 +27,7 @@ Imports mangosVB.Common
 Imports mangosVB.Common.BaseWriter
 
 Public Module RS_Main
-    #Region "Global.Constants"
+#Region "Global.Constants"
 
     Dim WS_STATUS() As String = {"ONLINE/G", "ONLINE/R", "OFFLINE "}
     Public ConsoleColor As New ConsoleColor
@@ -78,9 +78,9 @@ Public Module RS_Main
         LOGIN_PARENTALCONTROL = &HF            'Access to this account has been blocked by parental controls.  Your settings may be changed in your account preferences at http://www.worldofwarcraft.com.
     End Enum
 
-    #End Region
+#End Region
 
-    #Region "Global.Config"
+#Region "Global.Config"
     Public Config As XMLConfigFile
     <XmlRoot(ElementName:="RealmServer")> _
     Public Class XMLConfigFile
@@ -142,9 +142,9 @@ Public Module RS_Main
             Console.WriteLine(e.ToString)
         End Try
     End Sub
-    #End Region
+#End Region
 
-    #Region "RS.Sockets"
+#Region "RS.Sockets"
     Public LastConnections As New Dictionary(Of UInteger, Date)
     Public RS As RealmServerClass
     Class RealmServerClass
@@ -188,8 +188,8 @@ Public Module RS_Main
             lstConnection.Stop()
         End Sub
     End Class
-    #End Region
-    #Region "RS.Data Access"
+#End Region
+#Region "RS.Data Access"
     Public Database As New SQL
     Public Sub SLQEventHandler(ByVal MessageID As SQL.EMessages, ByVal OutBuf As String)
         Select Case MessageID
@@ -203,15 +203,15 @@ Public Module RS_Main
         Console.ForegroundColor = System.ConsoleColor.Gray
     End Sub
 
-    #End Region
-    #Region "RS.Analyzer"
+#End Region
+#Region "RS.Analyzer"
 
     Public Enum ExpansionLevel As Byte
         NORMAL = 0          'WoW
         EXPANSION_1 = 1     'WoW: Burning Crusade
     End Enum
     Class ClientClass
-    Implements IDisposable
+        Implements IDisposable
 
         Public Socket As Socket
         Public IP As Net.IPAddress = Net.IPAddress.Parse("0.0.0.0")
@@ -309,11 +309,11 @@ Public Module RS_Main
             Try
                 Dim i As Integer = Socket.Send(data, 0, data.Length, SocketFlags.None)
 
-                #If DEBUG Then
+#If DEBUG Then
                 Console.ForegroundColor = System.ConsoleColor.DarkGray
                 Console.WriteLine("[{0}] [{1}:{2}] Data sent, result code={3}", Format(TimeOfDay, "hh:mm:ss"), IP, Port, i)
                 Console.ForegroundColor = System.ConsoleColor.Gray
-                #End If
+#End If
             Catch Err As Exception
                 Console.ForegroundColor = System.ConsoleColor.Red
                 Console.WriteLine("[{0}] Connection from [{1}:{2}] do not exist - ERROR!!!", Format(TimeOfDay, "hh:mm:ss"), IP, Port)
@@ -328,9 +328,9 @@ Public Module RS_Main
         End Sub
     End Class
 
-    #End Region
+#End Region
 
-    #Region "RS_OPCODES"
+#Region "RS_OPCODES"
     Public Sub On_RS_LOGON_CHALLENGE(ByRef data() As Byte, ByRef Client As ClientClass)
         Dim i As Integer
         Dim iUpper As Integer = (CInt(data(33)) - 1)

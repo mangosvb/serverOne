@@ -23,7 +23,7 @@ Imports mangosVB.Common.BaseWriter
 Public Module WC_Character
 
     Class CharacterObject
-    Implements IDisposable
+        Implements IDisposable
 
         Public GUID As ULong
         Public Client As ClientClass

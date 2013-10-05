@@ -27,7 +27,7 @@ Imports mangosVB.Common
 
 Public Module WC_Handlers_Social
 
-    #Region "Framework"
+#Region "Framework"
 
     Public Sub LoadIgnoreList(ByRef c As CharacterObject)
         'DONE: Query DB
@@ -130,8 +130,8 @@ Public Module WC_Handlers_Social
         friendpacket.Dispose()
     End Sub
 
-    #End Region
-    #Region "Handlers"
+#End Region
+#Region "Handlers"
 
     Public Sub On_CMSG_WHO(ByRef packet As PacketClass, ByRef Client As ClientClass)
         Log.WriteLine(LogType.DEBUG, "[{0}:{1}] CMSG_WHO", Client.IP, Client.Port)
@@ -385,6 +385,6 @@ Public Module WC_Handlers_Social
         SendContactList(Client, Client.Character)
     End Sub
 
-    #End Region
+#End Region
 
 End Module

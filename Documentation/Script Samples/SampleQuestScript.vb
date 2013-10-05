@@ -1,6 +1,6 @@
 Imports System
 Imports Microsoft.VisualBasic
-Imports Spurious.WorldServer
+Imports mangosVB.WorldServer
 
 Namespace Scripts
     Public Class QuestScript

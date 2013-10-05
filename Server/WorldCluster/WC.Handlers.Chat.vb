@@ -377,18 +377,18 @@ Public Module WC_Handlers_Chat
 
         ChannelName = ChannelName.ToUpper
         If CHAT_CHANNELs.ContainsKey(ChannelName) Then
-        'SMSG_USERLIST_ADD
-        'SMSG_USERLIST_UPDATE
-        '       Join GUID
-        '       Join Flags
-        '       Channel Flags
-        '       Channel Count
-        '       Channel Name
-        'SMSG_USERLIST_REMOVE
-        '       Join GUID
-        '       Channel Flags
-        '       Channel Count
-        '       Channel Name
+            'SMSG_USERLIST_ADD
+            'SMSG_USERLIST_UPDATE
+            '       Join GUID
+            '       Join Flags
+            '       Channel Flags
+            '       Channel Count
+            '       Channel Name
+            'SMSG_USERLIST_REMOVE
+            '       Join GUID
+            '       Channel Flags
+            '       Channel Count
+            '       Channel Name
         End If
     End Sub
     Public Sub On_CMSG_CLEAR_CHANNEL_WATCH(ByRef packet As PacketClass, ByRef Client As ClientClass)

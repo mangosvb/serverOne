@@ -28,14 +28,14 @@ Imports mangosVB.Common
 Public Module WC_Handlers
 
     Public Sub IntializePacketHandlers()
-    'NOTE: These opcodes are not used in any way
-    '   none
+        'NOTE: These opcodes are not used in any way
+        '   none
 
-    'NOTE: These opcodes below are handled by Voice Server
-    '   none
+        'NOTE: These opcodes below are handled by Voice Server
+        '   none
 
-    'NOTE: TODO Opcodes
-    '   none
+        'NOTE: TODO Opcodes
+        '   none
 
     End Sub
 

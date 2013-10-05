@@ -17,7 +17,7 @@
 '
 Public Module Converter
 
-    #Region "ToByte|ToBytes"
+#Region "ToByte|ToBytes"
     Public Function ToByte(ByVal d As Byte(), ByRef offset As Integer) As Byte
         Return d(offset + 1)
     End Function
@@ -84,22 +84,22 @@ Public Module Converter
             t = t + 1
         Next num1
     End Sub
-    #End Region
-    #Region "ToDouble"
+#End Region
+#Region "ToDouble"
     Public Function ToDouble(ByVal d As Byte(), ByRef offset As Integer) As Double
         Dim num1 As Double = BitConverter.ToDouble(d, offset)
         offset = (offset + 8)
         Return num1
     End Function
-    #End Region
-    #Region "ToFloat"
+#End Region
+#Region "ToFloat"
     Public Function ToFloat(ByVal d As Byte(), ByRef offset As Integer) As Single
         Dim single1 As Single = BitConverter.ToSingle(d, offset)
         offset = (offset + 4)
         Return single1
     End Function
-    #End Region
-    #Region "ToInt16, ToUint16"
+#End Region
+#Region "ToInt16, ToUint16"
     Public Function ToInt16(ByVal d As Byte(), ByRef offset As Integer) As Short
         Dim num1 As Short = BitConverter.ToInt16(d, offset)
         offset = (offset + 2)
@@ -110,8 +110,8 @@ Public Module Converter
         offset = (offset + 2)
         Return num1
     End Function
-    #End Region
-    #Region "ToInt32, ToUint32"
+#End Region
+#Region "ToInt32, ToUint32"
     Public Function ToInt32(ByVal d As Byte(), ByRef offset As Integer) As Integer
         Dim num1 As Integer = BitConverter.ToInt32(d, offset)
         offset = (offset + 4)
@@ -122,8 +122,8 @@ Public Module Converter
         offset = (offset + 4)
         Return num1
     End Function
-    #End Region
-    #Region "ToInt64, ToUint64"
+#End Region
+#Region "ToInt64, ToUint64"
     Public Function ToInt64(ByVal d As Byte(), ByRef offset As Integer) As Long
         Dim num1 As Long = BitConverter.ToInt64(d, offset)
         offset = (offset + 8)
@@ -134,6 +134,6 @@ Public Module Converter
         offset = (offset + 8)
         Return num1
     End Function
-    #End Region
+#End Region
 
 End Module

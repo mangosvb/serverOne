@@ -20,7 +20,7 @@ Imports System.ComponentModel
 
 Namespace WDB
     Public Class BaseWDB
-    Implements IDisposable
+        Implements IDisposable
 
         'Variables
         Protected fs As FileStream

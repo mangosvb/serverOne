@@ -22,10 +22,10 @@ Imports mangosVB.Common.BaseWriter
 Imports mangosVB.Common
 
 Public Class AuthEngineClass
-Implements IDisposable
+    Implements IDisposable
     Public Log As New BaseWriter
 
-    #Region "AuthEngine.Constructive"
+#Region "AuthEngine.Constructive"
     Shared Sub New()
         Dim buffer1 As Byte() = New Byte(16 - 1) {}
         AuthEngineClass.unk3 = buffer1
@@ -78,9 +78,9 @@ Implements IDisposable
 
     Public Sub Dispose() Implements System.IDisposable.Dispose
     End Sub
-    #End Region
+#End Region
 
-    #Region "AuthEngine.Calculations"
+#Region "AuthEngine.Calculations"
     Private Sub CalculateB()
         Dim encoding1 As New UTF7Encoding
         AuthEngineClass.RAND_bytes(Me.b, 20)
@@ -279,9 +279,9 @@ Implements IDisposable
         buffer1 = AuthEngineClass.Concat(opad, buffer2)
         SS_Hash = sha1.ComputeHash(buffer1)
     End Sub
-    #End Region
+#End Region
 
-    #Region "AuthEngine.Functions"
+#Region "AuthEngine.Functions"
     Private Shared Function Combine(ByVal Bytes1 As Byte(), ByVal Bytes2 As Byte()) As Byte()
         If (Bytes1.Length <> Bytes2.Length) Then Return Nothing
 
@@ -354,9 +354,9 @@ Implements IDisposable
 
         Return ReturnList
     End Function
-    #End Region
+#End Region
 
-    #Region "AuthEngine.Variables"
+#Region "AuthEngine.Variables"
 
     Private A As Byte()
     Private b As Byte()
@@ -375,9 +375,9 @@ Implements IDisposable
 
     Public M1 As Byte()
     Public SS_Hash As Byte()
-    #End Region
+#End Region
 
-    #Region "AuthEngine.BigIntegers"
+#Region "AuthEngine.BigIntegers"
     Private BNA As IntPtr
     Private BNb As IntPtr
     Private BNPublicB As IntPtr
@@ -388,6 +388,6 @@ Implements IDisposable
     Private BNU As IntPtr
     Private BNv As IntPtr
     Private BNx As IntPtr
-    #End Region
+#End Region
 
 End Class

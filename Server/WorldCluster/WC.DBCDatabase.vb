@@ -69,7 +69,7 @@ Public Module WS_DBCDatabase
     End Class
 
     #End Region
-    #Region "Chat Channels"
+#Region "Chat Channels"
 
     <Flags()> _
     Public Enum ChatChannelsFlags
@@ -91,6 +91,6 @@ Public Module WS_DBCDatabase
         Public Name As String
     End Class
 
-    #End Region
+#End Region
 
 End Module

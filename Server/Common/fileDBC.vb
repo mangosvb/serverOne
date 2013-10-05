@@ -109,7 +109,7 @@ Namespace DBC
         End Sub
 
         <Description("Access to item by row and column.")> _
-       Public Overrides ReadOnly Property Item(ByVal Row As Integer, ByVal Column As Integer, Optional ByVal ValueType As DBCValueType = DBCValueType.DBC_INTEGER) As Object
+        Public Overrides ReadOnly Property Item(ByVal Row As Integer, ByVal Column As Integer, Optional ByVal ValueType As DBCValueType = DBCValueType.DBC_INTEGER) As Object
             Get
                 If Row >= Rows Then Throw New ApplicationException("DBC: Row index outside file definition.")
                 If Column >= Columns Then Throw New ApplicationException("DBC: Column index outside file definition.")

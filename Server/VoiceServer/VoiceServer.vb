@@ -27,7 +27,7 @@ Imports mangosVB.Common
 
 Public Module WorldCluster
 
-    #Region "Global.Variables"
+#Region "Global.Variables"
 
     'System Things...
     Public Log As New BaseWriter
@@ -36,8 +36,8 @@ Public Module WorldCluster
     'Public PacketHandlers As New Dictionary(Of OPCODES, HandlePacket)
     'Delegate Sub HandlePacket(ByRef Packet As PacketClass, ByRef Client As ClientClass)
 
-    #End Region
-    #Region "Global.Config"
+#End Region
+#Region "Global.Config"
     Public Config As XMLConfigFile
     <XmlRoot(ElementName:="VoiceServer")> _
     Public Class XMLConfigFile
@@ -96,7 +96,7 @@ Public Module WorldCluster
             Console.WriteLine(e.ToString)
         End Try
     End Sub
-    #End Region
+#End Region
 
     <System.MTAThreadAttribute()> _
     Sub Main()
