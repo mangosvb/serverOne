@@ -143,7 +143,34 @@ Public Module Functions
             Case Else
                 GetClassName = "Unknown Class"
         End Select
-
+    End Function
+    Public Function GetRaceName(ByRef Race As Integer) As String
+        Select Case Race
+            Case Races.RACE_DWARF
+                GetRaceName = "Dwarf"
+            Case Races.RACE_GNOME
+                GetRaceName = "Gnome"
+            Case Races.RACE_GOBLIN
+                GetRaceName = "Goblin"
+            Case Races.RACE_HUMAN
+                GetRaceName = "Human"
+            Case Races.RACE_NIGHT_ELF
+                GetRaceName = "Night Elf"
+            Case Races.RACE_ORC
+                GetRaceName = "Orc"
+            Case Races.RACE_TAUREN
+                GetRaceName = "Tauren"
+            Case Races.RACE_TROLL
+                GetRaceName = "Troll"
+            Case Races.RACE_UNDEAD
+                GetRaceName = "Undead"
+            Case Races.RACE_BLOOD_ELF
+                GetRaceName = "Blood Elf"
+            Case Races.RACE_DRAENEI
+                GetRaceName = "Draenei" 
+            Case Else
+                GetRaceName = "Unknown Race"
+        End Select
     End Function
     Public Function GetRaceModel(ByVal Race As Races, ByVal Gender As Integer) As Integer
         Select Case Race
