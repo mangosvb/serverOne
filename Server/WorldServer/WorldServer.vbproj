@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -7,7 +7,7 @@
     <ProjectGuid>{95F188B3-62F6-4C78-86EE-12329F33A2B4}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ApplicationIcon>mangostools_Icon_64x64.ico</ApplicationIcon>
+    <ApplicationIcon>mvb0___vanilla_256x256.ico</ApplicationIcon>
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
     <AssemblyName>WorldServer</AssemblyName>
@@ -31,8 +31,6 @@
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -45,8 +43,10 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\..\ServerFiles\</OutputPath>
@@ -55,7 +55,7 @@
     <BaseAddress>285212672</BaseAddress>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>ENABLE_PPOINTS=true,LINUX=false</DefineConstants>
+    <DefineConstants>ENABLE_PPOINTS=false,VMAPS=true,VMAPS_DEBUG=false,LINUX=false,WARDEN=false</DefineConstants>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <DebugSymbols>true</DebugSymbols>
@@ -68,6 +68,8 @@
     <DebugType>full</DebugType>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <WarningsAsErrors>42105,42106,42107</WarningsAsErrors>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>..\..\ServerFiles\</OutputPath>
@@ -122,7 +124,7 @@
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>..\..\ServerFiles\</OutputPath>
-    <DefineConstants>ENABLE_PPOINTS=true,LINUX=false</DefineConstants>
+    <DefineConstants>ENABLE_PPOINTS=false,VMAPS=true,VMAPS_DEBUG=false,LINUX=false,WARDEN=false</DefineConstants>
     <BaseAddress>285212672</BaseAddress>
     <Optimize>true</Optimize>
     <WarningLevel>1</WarningLevel>
@@ -131,6 +133,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <WarningsAsErrors>42105,42106,42107</WarningsAsErrors>
     <UseVSHostingProcess>false</UseVSHostingProcess>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DefineTrace>true</DefineTrace>
@@ -304,7 +307,9 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="mvb0___vanilla_256x256.ico" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="My Project\app.manifest" />
@@ -314,9 +319,6 @@
       <Project>{0697622C-938D-4486-A3A4-D438D0B7503F}</Project>
       <Name>Common</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="mangostools_Icon_64x64.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <PropertyGroup>

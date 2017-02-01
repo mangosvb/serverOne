@@ -1,5 +1,5 @@
 '
-' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
+' Copyright (C) 2013 - 2017 getMaNGOS <http://www.getmangos.eu>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -784,28 +784,16 @@ Public Module RS_Main
 
         Console.ForegroundColor = System.ConsoleColor.Yellow
 
-        Console.WriteLine(" ####       ####            ###     ###   ########    #######     ######## ")
-        Console.WriteLine(" #####     #####            ####    ###  ##########  #########   ##########")
-        Console.WriteLine(" #####     #####            #####   ###  ##########  #########   ##########")
-        Console.WriteLine(" ######   ######            #####   ###  ###        ####   ####  ###       ")
-        Console.WriteLine(" ######   ######    ####    ######  ###  ###        ###     ###  ###       ")
-        Console.WriteLine(" ####### #######   ######   ######  ###  ###  ##### ###     ###  ########  ")
-        Console.WriteLine(" ### ### ### ###   ######   ####### ###  ###  ##### ###     ###  ######### ")
-        Console.WriteLine(" ### ### ### ###  ###  ###  ### ### ###  ###  ##### ###     ###   #########")
-        Console.WriteLine(" ### ####### ###  ###  ###  ###  ######  ###    ### ###     ###        ####")
-        Console.WriteLine(" ### ####### ###  ###  ###  ###  ######  ###    ### ###     ###         ###")
-        Console.WriteLine(" ###  #####  ### ########## ###   #####  ###   #### ####   ####        ####")
-        Console.WriteLine(" ###  #####  ### ########## ###   #####  #########   #########   ##########")
-        Console.WriteLine(" ###  #####  ### ###    ### ###    ####  #########   #########   ######### ")
-        Console.WriteLine(" ###   ###   ### ###    ### ###     ###   #######     #######     #######  ")
+        Console.WriteLine("  __  __      _  _  ___  ___  ___   __   __ ___                 ")
+        Console.WriteLine(" |  \/  |__ _| \| |/ __|/ _ \/ __|  \ \ / /| _ )   We Love the  ")
+        Console.WriteLine(" | |\/| / _` | .` | (_ | (_) \__ \   \ V / | _ \ Burning Crusade")
+        Console.WriteLine(" |_|  |_\__,_|_|\_|\___|\___/|___/    \_/  |___/                ")
+        Console.WriteLine("                                             ___                ")
+        Console.WriteLine(" For help and support please visit:         / _ \ _ _  ___      ")
+        Console.WriteLine("      Website: https://getmangos.eu        | (_) | ' \/ -_)     ")
+        Console.WriteLine(" Forum / Wiki: https://getmangos.eu         \___/|_||_\___|     ")
+        Console.WriteLine(" _______________________________________________________________")
         Console.WriteLine("")
-        Console.WriteLine(" Website: http://www.getmangos.co.uk                         ##  ##  ##### ")
-        Console.WriteLine("                                                             ##  ##  ##  ##")
-        Console.WriteLine("    Wiki: http://github.com/mangoswiki/wiki                  ##  ##  ##### ")
-        Console.WriteLine("                                                              ####   ##  ##")
-        Console.WriteLine("   Forum: http://community.getmangos.co.uk                     ##    ##### ")
-        Console.WriteLine("")
-
 
         Console.ForegroundColor = System.ConsoleColor.Magenta
 

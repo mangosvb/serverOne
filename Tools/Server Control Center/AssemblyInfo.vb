@@ -8,7 +8,7 @@ Imports System.Runtime.InteropServices
 
 <Assembly: AssemblyTitle("MaNGOSVB Control Center")> 
 <Assembly: AssemblyDescription("Monitors MaNGOSVB Servers")> 
-<Assembly: AssemblyCompany("http://Getmangos.co.uk")> 
+<Assembly: AssemblyCompany("https://getmangos.eu")> 
 <Assembly: AssemblyProduct("")>
 <Assembly: AssemblyCopyright("")>
 <Assembly: AssemblyTrademark("")>

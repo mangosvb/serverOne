@@ -1,5 +1,5 @@
 '
-' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
+' Copyright (C) 2013 - 2017 getMaNGOS <http://www.getmangos.eu>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@
 ' along with this program; if not, write to the Free Software
 ' Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '
+
 Imports System.Threading
 Imports System.Net.Sockets
 Imports System.Xml.Serialization
@@ -204,8 +205,19 @@ Public Module WorldCluster
         Console.WriteLine()
 
         Console.ForegroundColor = System.ConsoleColor.Magenta
-        Console.WriteLine("http://www.getMangos.co.uk")
-        Console.WriteLine()
+
+        Console.WriteLine("  __  __      _  _  ___  ___  ___   __   __ ___                 ")
+        Console.WriteLine(" |  \/  |__ _| \| |/ __|/ _ \/ __|  \ \ / /| _ )   We Love the  ")
+        Console.WriteLine(" | |\/| / _` | .` | (_ | (_) \__ \   \ V / | _ \ Burning Crusade")
+        Console.WriteLine(" |_|  |_\__,_|_|\_|\___|\___/|___/    \_/  |___/                ")
+        Console.WriteLine("                                             ___                ")
+        Console.WriteLine(" For help and support please visit:         / _ \ _ _  ___      ")
+        Console.WriteLine("      Website: https://getmangos.eu        | (_) | ' \/ -_)     ")
+        Console.WriteLine(" Forum / Wiki: https://getmangos.eu         \___/|_||_\___|     ")
+        Console.WriteLine(" _______________________________________________________________")
+        Console.WriteLine("")
+
+        Console.ForegroundColor = System.ConsoleColor.Magenta
 
         Console.ForegroundColor = System.ConsoleColor.White
         Console.WriteLine(CType([Assembly].GetExecutingAssembly().GetCustomAttributes(GetType(System.Reflection.AssemblyTitleAttribute), False)(0), AssemblyTitleAttribute).Title)
@@ -427,7 +439,7 @@ Public Module WorldCluster
         EX = e.ExceptionObject
 
         Log.WriteLine(LogType.CRITICAL, EX.ToString & vbNewLine)
-        Log.WriteLine(LogType.FAILED, "Unexpected error has occured. An 'Error-yyyy-mmm-d-h-mm.log' file has been created. Please post the file in the BUG SECTION at getMaNGOS.co.uk (http://www.getMangos.co.uk/community)!")
+        Log.WriteLine(LogType.FAILED, "Unexpected error has occured. An 'Error-yyyy-mmm-d-h-mm.log' file has been created. Please post the file in the BUG SECTION at getMaNGOS.co.uk (https://getmangos.eu)!")
 
         Dim tw As TextWriter
         tw = New StreamWriter(New FileStream(String.Format("Error-{0}.log", Format(Now, "yyyy-MMM-d-H-mm")), FileMode.Create))

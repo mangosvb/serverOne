@@ -1,5 +1,5 @@
 ' 
-' Copyright (C) 2013 getMaNGOS <http://www.getMangos.co.uk>
+' Copyright (C) 2013 - 2017 getMaNGOS <http://www.getmangos.eu>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyDescription("Proxy like packet logger for dev purposes.")> 
 <Assembly: AssemblyCompany("MaNGOSVB Development")> 
 <Assembly: AssemblyProduct("MaNGOSVB Tools Pack")> 
-<Assembly: AssemblyCopyright("Copyright (C) 2013")> 
+<Assembly: AssemblyCopyright("Copyright (C) 2017")> 
 <Assembly: AssemblyTrademark("")>  
 
 'The following GUID is for the ID of the typelib if this project is exposed to COM
