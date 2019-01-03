@@ -1,5 +1,5 @@
 '
-' Copyright (C) 2013 - 2017 getMaNGOS <http://www.getmangos.eu>
+' Copyright (C) 2013-2019 getMaNGOS <http://www.getmangos.eu>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -25,16 +25,16 @@ Imports System.Runtime.InteropServices
 
 ' Review the values of the assembly attributes
 
-<Assembly: AssemblyTitle("WorldServer")> 
-<Assembly: AssemblyDescription("World Server part of MaNGOSvb Server Emulator.")> 
-<Assembly: AssemblyCompany("getMaNGOS")> 
-<Assembly: AssemblyProduct("MaNGOSvb Server Pack")> 
-<Assembly: AssemblyCopyright("Copyright (C) 2017, getMaNGOS")> 
-<Assembly: AssemblyTrademark("")> 
-<Assembly: CLSCompliant(False)> 
+<Assembly: AssemblyTitle("WorldServer")>
+<Assembly: AssemblyDescription("World Server part of MaNGOSvb Server Emulator.")>
+<Assembly: AssemblyCompany("getMaNGOS")>
+<Assembly: AssemblyProduct("MaNGOSvb Server Pack")>
+<Assembly: AssemblyCopyright("Copyright (C) 2019 getMaNGOS.eu")>
+<Assembly: AssemblyTrademark("")>
+<Assembly: CLSCompliant(False)>
 
 'The following GUID is for the ID of the typelib if this project is exposed to COM
-<Assembly: Guid("186B6D35-EDED-46C8-BC5E-292D4FCCDBE8")> 
+<Assembly: Guid("186B6D35-EDED-46C8-BC5E-292D4FCCDBE8")>
 
 ' Version information for an assembly consists of the following four values:
 '
@@ -46,6 +46,6 @@ Imports System.Runtime.InteropServices
 ' You can specify all the values or you can default the Build and Revision Numbers
 ' by using the '*' as shown below:
 
-<Assembly: AssemblyVersion("0.3.*")> 
+<Assembly: AssemblyVersion("0.3.*")>
 
-<Assembly: ComVisibleAttribute(False)> 
+<Assembly: ComVisibleAttribute(False)>

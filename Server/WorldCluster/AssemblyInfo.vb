@@ -11,8 +11,8 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyTitle("WorldCluster")> 
 <Assembly: AssemblyDescription("World Cluster part of MaNGOSvb Server Emulator.")> 
 <Assembly: AssemblyCompany("getMaNGOS")> 
-<Assembly: AssemblyProduct("MaNGOSvb Server Pack")> 
-<Assembly: AssemblyCopyright("Copyright (C) 2017, getMaNGOS")> 
+<Assembly: AssemblyProduct("MaNGOSvb Server Pack")>
+<Assembly: AssemblyCopyright("Copyright (C) 2019 getMaNGOS.eu")>
 <Assembly: AssemblyTrademark("")> 
 <Assembly: CLSCompliant(False)> 
 

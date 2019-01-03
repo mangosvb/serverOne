@@ -1,5 +1,5 @@
 '
-' Copyright (C) 2013 - 2017 getMaNGOS <http://www.getmangos.eu>
+' Copyright (C) 2013-2019 getMaNGOS <http://www.getmangos.eu>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -28,8 +28,8 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyTitle("VoiceServer")> 
 <Assembly: AssemblyDescription("Voice Server part of MaNGOSvb Server Emulator.")> 
 <Assembly: AssemblyCompany("getMaNGOS")> 
-<Assembly: AssemblyProduct("MaNGOSvb Server Pack")> 
-<Assembly: AssemblyCopyright("Copyright (C) 2017, getMaNGOS")> 
+<Assembly: AssemblyProduct("MaNGOSvb Server Pack")>
+<Assembly: AssemblyCopyright("Copyright (C) 2019 getMaNGOS.eu")>
 <Assembly: AssemblyTrademark("")> 
 <Assembly: CLSCompliant(False)> 
 
