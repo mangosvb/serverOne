@@ -4,6 +4,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Build Status:</b>
 Windows: Coming Soon
  <br><b>Repository Status:</b> 
+[<img src='https://api.codacy.com/project/badge/Grade/b26a884fd15f4418bc9bf1230b45c456' border=0 valign="middle"/>](https://app.codacy.com/gh/mangosvb/serverZero/dashboard)
 [<img src='https://www.codefactor.io/repository/github/mangosvb/serverOne/badge' border=0 valign="middle"/>](https://www.codefactor.io/repository/github/mangosvb/serverOne)
 [<img src='https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat' border=0 valign="middle"/>](http://makeapullrequest.com)
 [<img src='https://img.shields.io/discord/286167585270005763.svg' border=0 valign="middle"/>](https://discord.gg/fPxMjHS8xs "Our community hub on Discord")
