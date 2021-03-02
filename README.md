@@ -11,7 +11,7 @@ Windows: Coming Soon
 
 ---
 
-[<img src="https://www.getmangos.eu/!assets_mangos/MangosVB1.png" width="48" valign="middle"/>](http://getmangos.eu)
+[<img src="https://www.getmangos.eu/!assets_mangos/MangosVB1.png" width="48" valign="middle"/>][3]
  **MangosVB1 - The Burning Crusade WoW server**
 ===
 
