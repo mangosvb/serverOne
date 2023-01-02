@@ -29,7 +29,7 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyDescription("Realm Server part of MaNGOSvb Server Emulator.")>
 <Assembly: AssemblyCompany("getMaNGOS")>
 <Assembly: AssemblyProduct("MaNGOSvb Server Pack")>
-<Assembly: AssemblyCopyright("Copyright (C) 2019 getMaNGOS.eu")>
+<Assembly: AssemblyCopyright("Copyright (C) 2023 getMaNGOS.eu")>
 <Assembly: AssemblyTrademark("")>
 
 'The following GUID is for the ID of the typelib if this project is exposed to COM

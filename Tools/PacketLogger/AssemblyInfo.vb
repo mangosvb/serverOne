@@ -29,7 +29,7 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyDescription("Proxy like packet logger for dev purposes.")> 
 <Assembly: AssemblyCompany("MaNGOSVB Development")> 
 <Assembly: AssemblyProduct("MaNGOSVB Tools Pack")> 
-<Assembly: AssemblyCopyright("Copyright (C) 2017")> 
+<Assembly: AssemblyCopyright("Copyright (C) 2023")> 
 <Assembly: AssemblyTrademark("")>  
 
 'The following GUID is for the ID of the typelib if this project is exposed to COM
