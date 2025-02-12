@@ -1,5 +1,5 @@
 '
-' Copyright (C) 2013-2023 getMaNGOS <http://www.getmangos.eu>
+' Copyright (C) 2013-2025 getMaNGOS <http://www.getmangos.eu>
 '
 ' This program is free software; you can redistribute it and/or modify
 ' it under the terms of the GNU General Public License as published by
@@ -238,8 +238,8 @@ Public Module WS_Main
         Console.WriteLine(" |_|  |_\__,_|_|\_|\___|\___/|___/    \_/  |___/                ")
         Console.WriteLine("                                             ___                ")
         Console.WriteLine(" For help and support please visit:         / _ \ _ _  ___      ")
-        Console.WriteLine("      Website: https://getmangos.eu        | (_) | ' \/ -_)     ")
-        Console.WriteLine(" Forum / Wiki: https://getmangos.eu         \___/|_||_\___|     ")
+        Console.WriteLine("      Website: https://www.getmangos.eu    | (_) | ' \/ -_)     ")
+        Console.WriteLine(" Forum / Wiki: https://www.getmangos.eu     \___/|_||_\___|     ")
         Console.WriteLine(" _______________________________________________________________")
         Console.WriteLine("")
 
@@ -486,7 +486,7 @@ Public Module WS_Main
         EX = e.ExceptionObject
 
         Log.WriteLine(LogType.CRITICAL, EX.ToString & vbNewLine)
-        Log.WriteLine(LogType.FAILED, "Unexpected error has occured. An 'Error-yyyy-mmm-d-h-mm.log' file has been created. Please post the file in the BUG SECTION at getMaNGOS.co.uk (https://getmangos.eu)!")
+        Log.WriteLine(LogType.FAILED, "Unexpected error has occured. An 'Error-yyyy-mmm-d-h-mm.log' file has been created. Please post the file in the BUG SECTION at getMaNGOS.co.uk (https://www.getmangos.eu)!")
 
         Dim tw As TextWriter
         tw = New StreamWriter(New FileStream(String.Format("Error-{0}.log", Format(Now, "yyyy-MMM-d-H-mm")), FileMode.Create))
